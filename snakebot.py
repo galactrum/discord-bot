@@ -3,9 +3,7 @@ import asyncio
 import requests
 import simplejson as json
 
-db = open('snekdb', 'r+')
-db = db.read()
-global i
+i = 0
 client = discord.Client()
 
 @client.event
@@ -40,22 +38,31 @@ async def on_message(message):
 @client.event
 async def start_get_user_bal(message, author):
 	global i, db_get
-	i = 0
-	db_get = db.splitlines()
-	print(i)
+	with open('snekdb', 'r+') as db:
+		db_get = db.read()
+		db.close()
+	db_get = db_get.splitlines()
 	print(db_get)
 	try:
 		if str(author) in db_get[i]:
 			db_get = db_get[i].split("/")
 			print(db_get[1])
+			await client.send_message(message.channel, str(db_get[1])+" NET")
+			db_get = ""
+			return
 		else:
 			i +=1
-			await start_get_user_bal(message)
-	except IndexError:
+			await start_get_user_bal(message, author)
+	except IndexError as err:
+		print(err)
 		await client.send_message(message.channel, "Attempting to add new user to db...")
-	await client.send_message(message.channel, str(db_get[1])+" NET")
-	db_get = ""
-	return
+		add_user(author)
+
+def add_user(author):
+	with open('snekdb','a') as f:
+		f.write(str(author)+"/0.0000000\n")
+		print("Writing: "+str(author)+"/0.0000000")
+		f.close()
 
 def rpcdat(method,params,port):
 	rpcdata = json.dumps({
