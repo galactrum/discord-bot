@@ -10,7 +10,7 @@ def rpcdat(method,params,port):
 			"params": params,
 			"port": port
 			})
-		req = requests.get('http://127.0.0.1:'+port, data=rpcdata, auth=('srf2UUR0', 'srf2UUR0XomxYkWw'), timeout=8)
+		req = requests.get('http://127.0.0.1:'+port, data=rpcdata, auth=('user', 'pass'), timeout=8)
 		return req.json()['result']
 	except Exception as e:
 		return "Error: "+str(e)
