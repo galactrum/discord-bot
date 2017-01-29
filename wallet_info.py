@@ -1,4 +1,4 @@
-import discord, json, requests, pymysql.cursors
+import discord, json, requests
 from discord.ext import commands
 
 def rpcdat(method,params,port):
@@ -15,7 +15,7 @@ def rpcdat(method,params,port):
     except Exception as e:
         return "Error: "+str(e)
 
-class wallet_info:
+class wallet:
     def __init__(self, bot):
         self.bot = bot
 
@@ -40,4 +40,4 @@ class wallet_info:
                                "to send this")
 
 def setup(bot):
-    bot.add_cog(wallet_info(bot))
+    bot.add_cog(wallet(bot))
