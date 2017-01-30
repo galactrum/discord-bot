@@ -33,7 +33,6 @@ class Balance:
             port =  "11311"
             params = str(author)
             user_wallet_bal = rpcdat('getbalance',[params],port)
-            print(user_wallet_bal)
             if float(db_bal) > float(user_wallet_bal) or float(db_bal) < float(user_wallet_bal):
                 params = str(author)
                 get_transactions = rpcdat('listtransactions',[params],port)
@@ -73,7 +72,7 @@ class Balance:
 
     ###############################################################
     ###################MAKE A NEW USER IN THE DB###################
-    def make_new_user(self, author):
+    async def make_new_user(self, author):
         connection = pymysql.connect(host='localhost',
                                      user='root',
                                      password='',
@@ -90,7 +89,16 @@ class Balance:
                         """, str(author))
         result_set = cursor.fetchone()
         db_bal = result_set["balance"]
-        self.embed_bal(user, db_bal)
+
+        embed = discord.Embed(colour=discord.Colour.red())
+        embed.add_field(name="User", value=user)
+        embed.add_field(name="Balance (NET)", value=db_bal)
+        embed.set_footer(text="Sponsored by altcointrain.com")
+
+        try:
+            await self.bot.say(embed=embed)
+        except discord.HTTPException:
+            await self.bot.say("I need the `Embed links` permission to send this")
 
     ###############################################################
     ########################BALANCE COMMAND########################
@@ -100,7 +108,6 @@ class Balance:
         author = ctx.message.author
         params = str(author)
         user_wallet_bal = rpcdat('getbalance',[params],port)
-        print(user_wallet_bal)
 
         connection = pymysql.connect(host='localhost',
                                      user='root',
@@ -116,7 +123,6 @@ class Balance:
             result_set = cursor.fetchone()
             db_bal = result_set['balance']
             user = result_set['user']
-            print(db_bal)
             if str(float(db_bal)) == str(user_wallet_bal):
                 await self.embed_bal(user, db_bal)
             else:
@@ -132,7 +138,7 @@ class Balance:
         except Exception as e:
             try:
                 print("127: "+str(e))
-                self.make_new_user(author)
+                await self.make_new_user(author)
             except Exception as ex:
                 print("130: "+str(ex))
 
