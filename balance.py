@@ -15,15 +15,23 @@ def rpcdat(method,params,port):
     except Exception as e:
         return "Error: "+str(e)
 
-class balance:
+class Balance:
 
     def __init__(self, bot):
         self.bot = bot
 
     ###############################################################
     ##UPDATE BALANCE IN DB BASED ON TRANSACTIONS AFTER BLOCKINDEX##
-        def update_balance(result_set, db_bal):
+        def update_balance(result_set, db_bal, author):
+
+            connection = pymysql.connect(host='localhost',
+                                     user='root',
+                                     password='',
+                                     db='netcoin')
+            cursor = connection.cursor(pymysql.cursors.DictCursor)
+
             port =  "11311"
+            params = str(author)
             user_wallet_bal = rpcdat('getbalance',[params],port)
             print(user_wallet_bal)
             if float(db_bal) > float(user_wallet_bal) or float(db_bal) < float(user_wallet_bal):
@@ -45,7 +53,7 @@ class balance:
                 connection.commit()
                 self.new_balance = new_balance
             except Exception as e:
-                print("Error: "+str(e))
+                print("48 Error: "+str(e))
             return
         self.update_balance = update_balance
 
@@ -91,7 +99,6 @@ class balance:
         port =  "11311"
         author = ctx.message.author
         params = str(author)
-        print(params)
         user_wallet_bal = rpcdat('getbalance',[params],port)
         print(user_wallet_bal)
 
@@ -113,7 +120,7 @@ class balance:
             if str(float(db_bal)) == str(user_wallet_bal):
                 await self.embed_bal(user, db_bal)
             else:
-                self.update_balance(result_set, db_bal)
+                self.update_balance(result_set, db_bal, author)
                 embed = discord.Embed(colour=discord.Colour.red())
                 embed.add_field(name="User", value=user)
                 embed.add_field(name="Balance (NET)", value=self.new_balance)
@@ -124,10 +131,10 @@ class balance:
                     await self.bot.say("I need the `Embed links` permission to send this")
         except Exception as e:
             try:
-                print(str(e))
+                print("127: "+str(e))
                 self.make_new_user(author)
             except Exception as ex:
-                print(ex)
+                print("130: "+str(ex))
 
 def setup(bot):
-    bot.add_cog(balance(bot))
+    bot.add_cog(Balance(bot))
