@@ -22,29 +22,32 @@ class balance:
 
     ###############################################################
     ##UPDATE BALANCE IN DB BASED ON TRANSACTIONS AFTER BLOCKINDEX##
-    def update_balance(self, result_set, db_bal, user_wallet_bal, author):
-        port =  "11311"
-        if float(db_bal) > float(user_wallet_bal) or float(db_bal) < float(user_wallet_bal):
-            params = str(author)
-            get_transactions = rpcdat('listtransactions',[params],port)
-            top_index = get_transactions[-1]['blockindex']
-            i = abs(top_index-int(result_set['lastblockindex']))
-            new_balance = 0
-            for h in range(i+1):
-                new_balance += float(get_transactions[h]['amount'])
-                h +=1
-        try:
-            cursor.execute("""
-                            UPDATE db
-                            SET balance=%s, lastblockindex=%s
-                            WHERE user
-                            LIKE %s
-                            """, (new_balance, top_index, str(author)))
-            connection.commit()
-            self.new_balance = new_balance
-        except Exception as e:
-            print("Error: "+str(e))
-        return
+        def update_balance(result_set, db_bal):
+            port =  "11311"
+            user_wallet_bal = rpcdat('getbalance',[params],port)
+            print(user_wallet_bal)
+            if float(db_bal) > float(user_wallet_bal) or float(db_bal) < float(user_wallet_bal):
+                params = str(author)
+                get_transactions = rpcdat('listtransactions',[params],port)
+                top_index = get_transactions[-1]['blockindex']
+                i = abs(top_index-int(result_set['lastblockindex']))
+                new_balance = 0
+                for h in range(i+1):
+                    new_balance += float(get_transactions[h]['amount'])
+                    h +=1
+            try:
+                cursor.execute("""
+                                UPDATE db
+                                SET balance=%s, lastblockindex=%s
+                                WHERE user
+                                LIKE %s
+                                """, (new_balance, top_index, str(author)))
+                connection.commit()
+                self.new_balance = new_balance
+            except Exception as e:
+                print("Error: "+str(e))
+            return
+        self.update_balance = update_balance
 
     ###############################################################
     ###############EMBED BALANCE FOR DISPLAY IN CHAT###############
@@ -87,9 +90,10 @@ class balance:
     async def balance(self, ctx):
         port =  "11311"
         author = ctx.message.author
-        user = author
-        params = str(ctx.message.author)
+        params = str(author)
+        print(params)
         user_wallet_bal = rpcdat('getbalance',[params],port)
+        print(user_wallet_bal)
 
         connection = pymysql.connect(host='localhost',
                                      user='root',
@@ -105,10 +109,11 @@ class balance:
             result_set = cursor.fetchone()
             db_bal = result_set['balance']
             user = result_set['user']
+            print(db_bal)
             if str(float(db_bal)) == str(user_wallet_bal):
                 await self.embed_bal(user, db_bal)
             else:
-                self.update_balance(result_set, db_bal, user_wallet_bal, author)
+                update_balance(result_set, db_bal)
                 embed = discord.Embed(colour=discord.Colour.red())
                 embed.add_field(name="User", value=user)
                 embed.add_field(name="Balance (NET)", value=self.new_balance)
