@@ -113,7 +113,7 @@ class balance:
             if str(float(db_bal)) == str(user_wallet_bal):
                 await self.embed_bal(user, db_bal)
             else:
-                update_balance(result_set, db_bal)
+                self.update_balance(result_set, db_bal)
                 embed = discord.Embed(colour=discord.Colour.red())
                 embed.add_field(name="User", value=user)
                 embed.add_field(name="Balance (NET)", value=self.new_balance)
