@@ -1,4 +1,5 @@
 import discord, json, requests, pymysql.cursors
+from itertools import takewhile
 from discord.ext import commands
 
 def rpcdat(method,params,port):
@@ -36,32 +37,37 @@ class Balance:
             if float(db_bal) > float(user_wallet_bal) or float(db_bal) < float(user_wallet_bal):
                 params = str(author)
                 get_transactions = rpcdat('listtransactions',[params],port)
-                top_index = get_transactions[-1]['blockindex']
-                i = abs(top_index-int(result_set['lastblockindex']))
                 new_balance = 0
-                for h in range(i+1):
-                    new_balance += float(get_transactions[h]['amount'])
-                    h +=1
-            try:
-                cursor.execute("""
-                                UPDATE db
-                                SET balance=%s, lastblockindex=%s
-                                WHERE user
-                                LIKE %s
-                                """, (new_balance, top_index, str(author)))
-                connection.commit()
-                self.new_balance = new_balance
-            except Exception as e:
-                print("48 Error: "+str(e))
-            return
+
+                i = len(get_transactions)-1
+                lastblockhash = get_transactions[i]["blockhash"]
+                while i <= len(get_transactions)-1:
+                    if get_transactions[i]["blockhash"] != result_set["lastblockhash"]:
+                        self.new_balance += float(get_transactions[i]["amount"])
+                        i -= 1
+                    else:
+                        self.new_balance += float(get_transactions[i]["amount"])
+                        break
+                try:
+                    cursor.execute("""
+                        UPDATE db
+                        SET balance=%s, lastblockhash=%s
+                        WHERE user
+                        LIKE %s
+                        """, (new_balance, lastblockhash, str(author)))
+                    connection.commit()
+                except Exception as e:
+                    print("48 Error: "+str(e))
+                return
+            self.new_balance = new_balance
         self.update_balance = update_balance
 
     ###############################################################
     ###############EMBED BALANCE FOR DISPLAY IN CHAT###############
-    async def embed_bal(self, user, db_bal):
+    async def embed_bal(self, author, db_bal):
         embed = discord.Embed(colour=discord.Colour.red())
-        embed.add_field(name="User", value=user)
-        embed.add_field(name="Balance (NET)", value=db_bal)
+        embed.add_field(name="User", value=author)
+        embed.add_field(name="Balance (NET)", value="%.8f" % round(float(db_bal),8))
         embed.set_footer(text="Sponsored by altcointrain.com - Choo!!! Choo!!!")
 
         try:
@@ -91,8 +97,8 @@ class Balance:
         db_bal = result_set["balance"]
 
         embed = discord.Embed(colour=discord.Colour.red())
-        embed.add_field(name="User", value=user)
-        embed.add_field(name="Balance (NET)", value=db_bal)
+        embed.add_field(name="User", value=author)
+        embed.add_field(name="Balance (NET)", value="%.8f" % round(float(db_bal),8))
         embed.set_footer(text="Sponsored by altcointrain.com")
 
         try:
@@ -115,7 +121,7 @@ class Balance:
                                      db='netcoin')
         cursor = connection.cursor(pymysql.cursors.DictCursor)
         try:
-            cursor.execute("""SELECT balance, user, lastblockindex, tipped
+            cursor.execute("""SELECT balance, user, lastblockhash, tipped
                             FROM db
                             WHERE user
                             LIKE %s
@@ -124,12 +130,12 @@ class Balance:
             db_bal = result_set['balance']
             user = result_set['user']
             if str(float(db_bal)) == str(user_wallet_bal):
-                await self.embed_bal(user, db_bal)
+                await self.embed_bal(author, db_bal)
             else:
                 self.update_balance(result_set, db_bal, author)
                 embed = discord.Embed(colour=discord.Colour.red())
-                embed.add_field(name="User", value=user)
-                embed.add_field(name="Balance (NET)", value=self.new_balance)
+                embed.add_field(name="User", value=author)
+                embed.add_field(name="Balance (NET)", value="%.8f" % round(float(self.new_balance),8))
                 embed.set_footer(text="Sponsored by altcointrain.com")
                 try:
                     await self.bot.say(embed=embed)
