@@ -7,17 +7,17 @@ class rpc:
 		self.port = "11311"
 		self.rpc_user = 'srf2UUR0'
 		self.rpc_pass = 'srf2UUR0XomxYkWw'
-		self.serverURL = 'http://localhost:'+port
+		self.serverURL = 'http://localhost:'+self.port
 		self.headers = {'content-type': 'application/json'}
 
 	def listtransactions(self,params,count):
 		payload = json.dumps({"method": "listtransactions", "params": [params,count], "jsonrpc": "2.0"})
-		response = requests.get(self.serverURL, headers=self.headers, data=self.payload, auth=(self.rpc_user,self.rpc_pass))
+		response = requests.get(self.serverURL, headers=self.headers, data=payload, auth=(self.rpc_user,self.rpc_pass))
 		return(response.json()['result'])
 
 	def validateaddress(self,params):
 		payload = json.dumps({"method": "validateaddress", "params": [params], "jsonrpc": "2.0"})
-		response = requests.get(self.serverURL, headers=self.headers, data=self.payload, auth=(self.rpc_user,self.rpc_pass))
+		response = requests.get(self.serverURL, headers=self.headers, data=payload, auth=(self.rpc_user,self.rpc_pass))
 		return(response.json()['result'])
 
 class withdraw:
@@ -119,7 +119,7 @@ class withdraw:
 			# and return a tuple consisting of the author, and their balance
 
 	@commands.command(pass_context=True)
-	async def withdraw(self, ctx, address:string , amount:float):
+	async def withdraw(self, ctx, address:str , amount:float):
 		"""withdraws coins from wallet"""
 		port =  "11311"
 
@@ -148,7 +148,7 @@ class withdraw:
                     await self.bot.say("**:warning:You cannot withdraw more money than you have!:warning:**")
 			
 		else:
-			conf = rpc.validateaddress(address)     
+			conf = self.rpc.validateaddress(address)     
 			if not conf["isvalid"]:
 				await self.bot.say("m9"+address+"... Cash me ouside how bou dah")
 		# removes `message` amount from `wallet` and adds `message` amount to `address` provided
