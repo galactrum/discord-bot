@@ -1,19 +1,18 @@
 import discord, json, requests, pymysql.cursors
 from discord.ext import commands
 
-def rpcdat(method,params,port):
-	try:
-		rpcdata = json.dumps({
-			"jsonrpc": 1.0,
-			"id":"rpctest",
-			"method": str(method),
-			"params": params,
-			"port": port
-			})
-		req = requests.get('http://127.0.0.1:'+port, data=rpcdata, auth=('user', 'pass'), timeout=8)
-		return req.json()['result']
-	except Exception as e:
-		return "Error: "+str(e)
+class rpc:
+
+	def listtransactions(params,count):
+		port = "11311"
+		rpc_user = 'srf2UUR0'
+		rpc_pass = 'srf2UUR0XomxYkWw'
+		serverURL = 'http://localhost:'+port
+		headers = {'content-type': 'application/json'}
+
+		payload = json.dumps({"method": "listtransactions", "params": [params,count], "jsonrpc": "2.0"})
+		response = requests.get(serverURL, headers=headers, data=payload, auth=(rpc_user,rpc_pass))
+		return(response.json()['result'])
 
 class withdraw:
 	def __init__(self, bot):
@@ -119,6 +118,7 @@ class withdraw:
 		"""withdraws coins from wallet"""
 		port =  "11311"
 		params = ctx.message.author
+		author = ctx.message.author
 		
 		self.check_for_user(params)
 
