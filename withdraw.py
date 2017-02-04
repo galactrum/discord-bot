@@ -78,6 +78,8 @@ class withdraw:
 			db_bal = new_balance
 			self.update_db(author, db_bal, lastblockhash)
 			return (author, db_bal)
+		# Updates balance
+		# and return a tuple consisting of the author, and their balance
 
 	async def parse_whole_bal(self,result_set,author):
 		params = author
@@ -110,6 +112,7 @@ class withdraw:
 			self.update_db(author, db_bal, lastblockhash)
 			return (author, db_bal)
 			#Now update db with new balance
+			# and return a tuple consisting of the author, and their balance
 
 	@commands.command(pass_context=True)
 	async def withdraw(self, ctx,message:float):
@@ -122,7 +125,7 @@ class withdraw:
 		user_addy = rpcdat('getaddressesbyaccount',[str(params)],port)
 		deposite_addr = user_addy[0]
 
-		to_exec = " SELECT balance FROM db WHERE user LIKE %s "
+		to_exec = " SELECT balance,lastblockhash FROM db WHERE user LIKE %s "
 		user_bal = 0.0
 
 		self.cursor.execute(to_exec,(str(params)))
