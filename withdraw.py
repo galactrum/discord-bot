@@ -3,7 +3,7 @@ from discord.ext import commands
 
 class rpc:
 
-	def __init__(self)
+	def __init__(self):
 		self.port = "11311"
 		self.rpc_user = 'srf2UUR0'
 		self.rpc_pass = 'srf2UUR0XomxYkWw'
@@ -15,11 +15,11 @@ class rpc:
 		response = requests.get(self.serverURL, headers=self.headers, data=self.payload, auth=(self.rpc_user,self.rpc_pass))
 		return(response.json()['result'])
 
-  def validateaddress(self,params)
-        payload = json.dumps({"method": "validateaddress", "params": [params], "jsonrpc": "2.0"})
-        response = requests.get(self.serverURL, headers=self.headers, data=self.payload, auth=(self.rpc_user,self.rpc_pass))
-        return(response.json()['result'])
-      
+	def validateaddress(self,params):
+		payload = json.dumps({"method": "validateaddress", "params": [params], "jsonrpc": "2.0"})
+		response = requests.get(self.serverURL, headers=self.headers, data=self.payload, auth=(self.rpc_user,self.rpc_pass))
+		return(response.json()['result'])
+
 class withdraw:
 	def __init__(self, bot):
 		self.bot = bot
@@ -118,12 +118,12 @@ class withdraw:
 			# and return a tuple consisting of the author, and their balance
 
 	@commands.command(pass_context=True)
-	async def withdraw(self, ctx,message):
+	async def withdraw(self, ctx,*,message):
 		"""withdraws coins from wallet"""
 		port =  "11311"
 
-                address = str(message[0])
-                amount = float(message[1])
+		address,amount = message.split(' ')
+		amount = float(amount)
 
 		params = str(ctx.message.author)
 		author = str(ctx.message.author)
@@ -151,6 +151,9 @@ class withdraw:
                     await self.bot.say("The wallet does not have sufficient baance i.e "+str(amount)+' > '+str(result_set["balance"]))
 			
 		else:
+			conf = rpc.validateaddress(address)     
+			if not conf["isvalid"]:
+				await self.bot.say("m9"+str(address)+"... Cash me ouside how bou dah")
 		# removes `message` amount from `wallet` and adds `message` amount to `address` provided
                     
                     
