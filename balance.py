@@ -24,22 +24,22 @@ class Balance:
 	def __init__(self, bot):
 		self.bot = bot
 
-	def update_db(self, author, db_bal, lastblockhash):
-		print("author => "+str(author))
-		connection = pymysql.connect(host='localhost',
+		#//Establish connection to db//
+		self.connection = pymysql.connect(host='localhost',
 									user='root',
 									password='',
 									db='netcoin')
-		cursor = connection.cursor(pymysql.cursors.DictCursor)
+		self.cursor = self.connection.cursor(pymysql.cursors.DictCursor)
+
+	def update_db(self, author, db_bal, lastblockhash):
 		try:
-			cursor.execute("""
+			self.cursor.execute("""
 						UPDATE db
 						SET balance=%s, lastblockhash=%s
 						WHERE user
 						LIKE %s
 			""", (db_bal,lastblockhash,str(author)))
-			connection.commit()
-			print("Commited")
+			self.connection.commit()
 		except Exception as e:
 			print("Error: "+str(e))
 		return
@@ -71,21 +71,22 @@ class Balance:
 			new_balance = float(result_set["balance"])
 			lastblockhash = get_transactions[i]["blockhash"]
 			print("LBH: ",lastblockhash)
-			while i <= len(get_transactions):
-				if get_transactions[i]["blockhash"] != result_set["lastblockhash"]:
-					new_balance += float(get_transactions[i]["amount"])
-					i -= 1
-				else:
-					new_balance += float(get_transactions[i]["amount"])
-					print("New Balance: ",new_balance)
-					break
-			db_bal = float(new_balance)
-			print("db_bal => "+str(db_bal))
-			self.update_db(db_bal, author, lastblockhash)
-			await self.do_embed(author, db_bal)
+			if lastblockhash == result_set["lastblockhash"]:
+				db_bal = result_set["balance"]
+				await self.do_embed(author, db_bal)
+				return
+			else:
+				while i <= len(get_transactions):
+					if get_transactions[i]["blockhash"] != result_set["lastblockhash"]:
+						new_balance += float(get_transactions[i]["amount"])
+						i -= 1
+				db_bal = float(new_balance)
+				self.update_db(author, db_bal, lastblockhash)
+				await self.do_embed(author, db_bal)
 
 	async def parse_whole_bal(self,result_set,author):
 		params = author
+		user = params
 		count = 1000
 		get_transactions = rpc.listtransactions(params,count)
 		print(len(get_transactions))
@@ -111,7 +112,7 @@ class Balance:
 					print("New Balance: ",new_balance)
 					break
 			db_bal = new_balance
-			self.update_db(db_bal,author,lastblockhash)
+			self.update_db(author, db_bal, lastblockhash)
 			await self.do_embed(author, db_bal)
 			#Now update db with new balance
 
@@ -120,22 +121,14 @@ class Balance:
 		#//Set important variables//
 		author = str(ctx.message.author)
 
-		#//Establish connection to db
-		connection = pymysql.connect(host='localhost',
-										user='root',
-										password='',
-										db='netcoin')
-		cursor = connection.cursor(pymysql.cursors.DictCursor)
-
 		#//Execute and return SQL Query
 		try:
-			cursor.execute("""SELECT balance, user, lastblockhash, tipped
+			self.cursor.execute("""SELECT balance, user, lastblockhash, tipped
 							FROM db
 							WHERE user
 							LIKE %s
 							""", str(author))
-			result_set = cursor.fetchone()
-			cursor.close()
+			result_set = self.cursor.fetchone()
 		except Exception as e:
 			print("Error in SQL query: ",str(e))
 			return
