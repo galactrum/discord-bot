@@ -30,6 +30,7 @@ class withdraw:
 			password='',
 			db='netcoin')
 		self.cursor = self.connection.cursor(pymysql.cursors.DictCursor)
+		self.rpc = rpc()
 
 	def make_user(self, author):
 		print(author)
@@ -61,7 +62,7 @@ class withdraw:
 	async def parse_part_bal(self,result_set,author):
 		params = author
 		count = 1000
-		get_transactions = rpc.listtransactions(params,count)
+		get_transactions = self.rpc.listtransactions(params,count)
 		print(len(get_transactions))
 		i = len(get_transactions)-1
 
@@ -89,7 +90,7 @@ class withdraw:
 		params = author
 		user = params
 		count = 1000
-		get_transactions = rpc.listtransactions(params,count)
+		get_transactions = self.rpc.listtransactions(params,count)
 		print(len(get_transactions))
 		i = len(get_transactions)-1
 
@@ -118,42 +119,38 @@ class withdraw:
 			# and return a tuple consisting of the author, and their balance
 
 	@commands.command(pass_context=True)
-	async def withdraw(self, ctx,*,message):
+	async def withdraw(self, ctx, address:string , amount:float):
 		"""withdraws coins from wallet"""
 		port =  "11311"
 
-		address,amount = message.split(' ')
-		amount = float(amount)
-
-		params = str(ctx.message.author)
-		author = str(ctx.message.author)
+		author_name = str(ctx.message.author)
 		
-		self.check_for_user(params)
+		self.check_for_user(author_name)
 
-		#user_addy = rpcdat('getaddressesbyaccount',[str(params)],port)
+		#user_addy = rpcdat('getaddressesbyaccount',[author_name],port)
 		#deposite_addr = user_addy[0]
 
 		to_exec = " SELECT balance,lastblockhash FROM db WHERE user LIKE %s "
 		user_bal = 0.0
 
-		self.cursor.execute(to_exec,(str(params)))
+		self.cursor.execute(to_exec,(author_name))
 		result_set = self.cursor.fetchone()
 		
 		if result_set["lastblockhash"] == "0":
-			user_bal = await self.parse_whole_bal(result_set,author)
+			user_bal = await self.parse_whole_bal(result_set,author_name)
 		else:
-			user_bal = await self.parse_part_bal(result_set,author)
+			user_bal = await self.parse_part_bal(result_set,author_name)
 		
-		self.cursor.execute(to_exec,(str(params)))
+		self.cursor.execute(to_exec,(author_name))
 		result_set = self.cursor.fetchone()
 		
 		if float(result_set["balance"]) < amount:
-                    await self.bot.say("The wallet does not have sufficient baance i.e "+str(amount)+' > '+str(result_set["balance"]))
+                    await self.bot.say("**:warning:You cannot withdraw more money than you have!:warning:**")
 			
 		else:
 			conf = rpc.validateaddress(address)     
 			if not conf["isvalid"]:
-				await self.bot.say("m9"+str(address)+"... Cash me ouside how bou dah")
+				await self.bot.say("m9"+address+"... Cash me ouside how bou dah")
 		# removes `message` amount from `wallet` and adds `message` amount to `address` provided
                     
                     
