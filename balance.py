@@ -25,10 +25,12 @@ class Balance:
 		self.bot = bot
 
 		#//Establish connection to db//
-		self.connection = pymysql.connect(host='localhost',
-									user='root',
-									password='',
-									db='netcoin')
+		self.connection = pymysql.connect(
+			host='localhost',
+			user='root',
+			password='',
+			db='netcoin')
+		
 		self.cursor = self.connection.cursor(pymysql.cursors.DictCursor)
 
 	def make_user(self, author):
@@ -44,11 +46,11 @@ class Balance:
 	def check_for_user(self, author):
 		try:
 			to_exec("""
-					SELECT user
-					FROM db
-					WHERE user
-					LIKE '%s'
-					""")
+				SELECT user
+				FROM db
+				WHERE user
+				LIKE '%s'
+				""")
 			self.cursor.execute(to_exec, str(author))
 			result_set = self.cursor.fetchone()
 		except Exception as e:
@@ -58,16 +60,14 @@ class Balance:
 			self.make_user(author)
 			return
 		
-		
-
 	def update_db(self, author, db_bal, lastblockhash):
 		try:
 			to_exec("""
-					UPDATE db
-					SET balance='%s', lastblockhash='%s'
-					WHERE user
-					LIKE '%s'
-					""")
+				UPDATE db
+				SET balance='%s', lastblockhash='%s'
+				WHERE user
+				LIKE '%s'
+				""")
 			self.cursor.execute(to_exec, db_bal,lastblockhash,str(author))
 			self.connection.commit()
 		except Exception as e:
@@ -152,15 +152,14 @@ class Balance:
 		#//Check if user exists in db
 		self.check_for_user(author)
 
-
 		#//Execute and return SQL Query
 		try:
 			to_exec("""
-					SELECT balance, user, lastblockhash, tipped
-					FROM db
-					WHERE user
-					LIKE '%s'
-					""")
+				SELECT balance, user, lastblockhash, tipped
+				FROM db
+				WHERE user
+				LIKE '%s'
+				""")
 			self.cursor.execute(to_exec,str(author))
 			result_set = self.cursor.fetchone()
 		except Exception as e:
