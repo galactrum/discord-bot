@@ -31,6 +31,29 @@ class Balance:
 									db='netcoin')
 		self.cursor = self.connection.cursor(pymysql.cursors.DictCursor)
 
+	def make_user(self, author):
+		print(author)
+		self.cursor.execute("""INSERT INTO db(user,balance) VALUES(%s,%s)""", (str(author), '0'))
+		self.connection.commit()
+		return
+
+	def check_for_user(self, author):
+		try:
+			self.cursor.execute("""SELECT user
+							FROM db
+							WHERE user
+							LIKE %s
+							""", str(author))
+			result_set = self.cursor.fetchone()
+		except Exception as e:
+			print("Error in SQL query: ",str(e))
+			return
+		if result_set == None:
+			self.make_user(author)
+			return
+		
+		
+
 	def update_db(self, author, db_bal, lastblockhash):
 		try:
 			self.cursor.execute("""
@@ -120,6 +143,10 @@ class Balance:
 	async def balance(self, ctx):
 		#//Set important variables//
 		author = str(ctx.message.author)
+
+		#//Check if user exists in db
+		self.check_for_user(author)
+
 
 		#//Execute and return SQL Query
 		try:
