@@ -19,6 +19,11 @@ class rpc:
 		payload = json.dumps({"method": "validateaddress", "params": [params], "jsonrpc": "2.0"})
 		response = requests.get(self.serverURL, headers=self.headers, data=payload, auth=(self.rpc_user,self.rpc_pass))
 		return(response.json()['result'])
+	
+	def sendtoaddress(self, address, amount):
+		payload = json.dumps({"method": "validateaddress", "params": [address, amount], "jsonrpc": "2.0"})
+		response = requests.get(self.serverURL, headers=self.headers, data=payload, auth=(self.rpc_user,self.rpc_pass))
+		return(response.json()['result'])
 
 class withdraw:
 	def __init__(self, bot):
@@ -146,11 +151,18 @@ class withdraw:
 		
 		if float(result_set["balance"]) < amount:
                     await self.bot.say("**:warning:You cannot withdraw more money than you have!:warning:**")
-			
+		    return
 		else:
 			conf = self.rpc.validateaddress(address)     
 			if not conf["isvalid"]:
-				await self.bot.say("m9"+address+"... Cash me ouside how bou dah")
+				await self.bot.say("**:warning:Invalid address!:warning:**")
+				return
+			
+	        self.rpc.sendtoaddress(address, amount)
+                await self.parse_part_bal(result_set, author_name)
+		
+
+			
 		# removes `message` amount from `wallet` and adds `message` amount to `address` provided
                     
                     
