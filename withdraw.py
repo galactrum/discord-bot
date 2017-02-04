@@ -117,13 +117,13 @@ class withdraw:
 	async def withdraw(self, ctx,message:float):
 		"""withdraws coins from wallet"""
 		port =  "11311"
-		params = ctx.message.author
-		author = ctx.message.author
+		params = str(ctx.message.author)
+		author = str(ctx.message.author)
 		
 		self.check_for_user(params)
 
-		user_addy = rpcdat('getaddressesbyaccount',[str(params)],port)
-		deposite_addr = user_addy[0]
+		#user_addy = rpcdat('getaddressesbyaccount',[str(params)],port)
+		#deposite_addr = user_addy[0]
 
 		to_exec = " SELECT balance,lastblockhash FROM db WHERE user LIKE %s "
 		user_bal = 0.0
