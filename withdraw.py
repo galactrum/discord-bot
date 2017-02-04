@@ -137,7 +137,7 @@ class withdraw:
 		self.cursor.execute(to_exec,(str(params)))
 		result_set = self.cursor.fetchone()
 		
-		if result_set["balance"] < message:
+		if float(result_set["balance"]) < message:
 			await self.bot.say("The wallet does not have sufficient baance i.e "+str(message)+' > '+str(result_set["balance"]))
 			
 		else:
