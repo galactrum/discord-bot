@@ -14,6 +14,17 @@ class rpc:
 		response = requests.get(serverURL, headers=headers, data=payload, auth=(rpc_user,rpc_pass))
 		return(response.json()['result'])
 
+	def validateaddress(params):
+		port = "11311"
+		rpc_user = 'srf2UUR0'
+		rpc_pass = 'srf2UUR0XomxYkWw'
+		serverURL = 'http://localhost:'+port
+		headers = {'content-type': 'application/json'}
+
+		payload = json.dumps({"method": "validateaddress", "params": [params], "jsonrpc": "2.0"})
+		response = requests.get(serverURL, headers=headers, data=payload, auth=(rpc_user,rpc_pass))
+		return(response.json()['result'])
+
 class withdraw:
 	def __init__(self, bot):
 		self.bot = bot
