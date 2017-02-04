@@ -15,11 +15,11 @@ class rpc:
 		response = requests.get(self.serverURL, headers=self.headers, data=self.payload, auth=(self.rpc_user,self.rpc_pass))
 		return(response.json()['result'])
 
-	def validateaddress(self,params)
+  def validateaddress(self,params)
         payload = json.dumps({"method": "validateaddress", "params": [params], "jsonrpc": "2.0"})
         response = requests.get(self.serverURL, headers=self.headers, data=self.payload, auth=(self.rpc_user,self.rpc_pass))
         return(response.json()['result'])
-
+      
 class withdraw:
 	def __init__(self, bot):
 		self.bot = bot
