@@ -64,7 +64,6 @@ class withdraw:
 		print("LBH: ",lastblockhash)
 		if lastblockhash == result_set["lastblockhash"]:
 			db_bal = result_set["balance"]
-			await self.do_embed(author, db_bal)
 			return
 		else:
 			while i <= len(get_transactions):
@@ -91,7 +90,6 @@ class withdraw:
 		if len(get_transactions) == 0:
 			print("0 transactions found for "+author+", balance must be 0")
 			db_bal = 0
-			await self.do_embed(author, db_bal)
 		else:
 			new_balance = 0
 			lastblockhash = get_transactions[i]["blockhash"]
