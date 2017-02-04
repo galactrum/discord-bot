@@ -3,16 +3,22 @@ from discord.ext import commands
 
 class rpc:
 
-	def listtransactions(params,count):
-		port = "11311"
-		rpc_user = 'srf2UUR0'
-		rpc_pass = 'srf2UUR0XomxYkWw'
-		serverURL = 'http://localhost:'+port
-		headers = {'content-type': 'application/json'}
+	def __init__(self)
+		self.port = "11311"
+		self.rpc_user = 'srf2UUR0'
+		self.rpc_pass = 'srf2UUR0XomxYkWw'
+		self.serverURL = 'http://localhost:'+port
+		self.headers = {'content-type': 'application/json'}
 
+	def listtransactions(self,params,count):
 		payload = json.dumps({"method": "listtransactions", "params": [params,count], "jsonrpc": "2.0"})
-		response = requests.get(serverURL, headers=headers, data=payload, auth=(rpc_user,rpc_pass))
+		response = requests.get(self.serverURL, headers=self.headers, data=self.payload, auth=(self.rpc_user,self.rpc_pass))
 		return(response.json()['result'])
+
+	def validateaddress(self,params)
+        payload = json.dumps({"method": "validateaddress", "params": [params], "jsonrpc": "2.0"})
+        response = requests.get(self.serverURL, headers=self.headers, data=self.payload, auth=(self.rpc_user,self.rpc_pass))
+        return(response.json()['result'])
 
 class withdraw:
 	def __init__(self, bot):
@@ -112,9 +118,13 @@ class withdraw:
 			# and return a tuple consisting of the author, and their balance
 
 	@commands.command(pass_context=True)
-	async def withdraw(self, ctx,message:float):
+	async def withdraw(self, ctx,message):
 		"""withdraws coins from wallet"""
 		port =  "11311"
+
+                address = str(message[0])
+                amount = float(message[1])
+
 		params = str(ctx.message.author)
 		author = str(ctx.message.author)
 		
@@ -137,12 +147,13 @@ class withdraw:
 		self.cursor.execute(to_exec,(str(params)))
 		result_set = self.cursor.fetchone()
 		
-		if float(result_set["balance"]) < message:
-			await self.bot.say("The wallet does not have sufficient baance i.e "+str(message)+' > '+str(result_set["balance"]))
+		if float(result_set["balance"]) < amount:
+                    await self.bot.say("The wallet does not have sufficient baance i.e "+str(amount)+' > '+str(result_set["balance"]))
 			
 		else:
-		# removes `message` amount from `wallet` and adds `message` amount to `user`
-			await self.bot.say('if you see this, then some thing are working')
+		# removes `message` amount from `wallet` and adds `message` amount to `address` provided
+                    
+                    
 """		
 		try:
 			if user_addy[0] == "":
