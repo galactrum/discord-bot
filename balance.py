@@ -7,165 +7,165 @@ from discord.ext import commands
 #wallet_bal = nomenclature for wallet reponse
 class rpc:
 
-	def listtransactions(params,count):
-		port = "11311"
-		rpc_user = 'srf2UUR0'
-		rpc_pass = 'srf2UUR0XomxYkWw'
-		serverURL = 'http://localhost:'+port
-		headers = {'content-type': 'application/json'}
+    def listtransactions(params,count):
+        port = "11311"
+        rpc_user = 'srf2UUR0'
+        rpc_pass = 'srf2UUR0XomxYkWw'
+        serverURL = 'http://localhost:'+port
+        headers = {'content-type': 'application/json'}
 
-		payload = json.dumps({"method": "listtransactions", "params": [params,count], "jsonrpc": "2.0"})
-		response = requests.get(serverURL, headers=headers, data=payload, auth=(rpc_user,rpc_pass))
-		return(response.json()['result'])
+        payload = json.dumps({"method": "listtransactions", "params": [params,count], "jsonrpc": "2.0"})
+        response = requests.get(serverURL, headers=headers, data=payload, auth=(rpc_user,rpc_pass))
+        return(response.json()['result'])
 
 class Balance:
 
-	def __init__(self, bot):
-		self.bot = bot
+    def __init__(self, bot):
+        self.bot = bot
 
-		#//Establish connection to db//
-		self.connection = pymysql.connect(
-			host='localhost',
-			user='root',
-			password='',
-			db='netcoin')
-		self.cursor = self.connection.cursor(pymysql.cursors.DictCursor)
+        #//Establish connection to db//
+        self.connection = pymysql.connect(
+            host='localhost',
+            user='root',
+            password='',
+            db='netcoin')
+        self.cursor = self.connection.cursor(pymysql.cursors.DictCursor)
 
-	def make_user(self, author):
-		#//If check_for_user() returns None, then INSERT new user info in db
-		print(author)
-		to_exec = """INSERT INTO db(user,balance) 
-		VALUES(%s,%s)"""
-		self.cursor.execute(to_exec, (str(author), '0'))
-		self.connection.commit()
+    def make_user(self, author):
+        #//If check_for_user() returns None, then INSERT new user info in db
+        print(author)
+        to_exec = """INSERT INTO db(user,balance)
+        VALUES(%s,%s)"""
+        self.cursor.execute(to_exec, (str(author), '0'))
+        self.connection.commit()
 
-	def check_for_user(self, author):
-		#//Check if the user exists in the db by querying the db.
-		#//If the db returns None, then the row does not exist
-		try:
-			to_exec = """SELECT user 
-			FROM db 
-			WHERE user 
-			LIKE %s"""
-			self.cursor.execute(to_exec, (str(author)))
-			result_set = self.cursor.fetchone()
-		except Exception as e:
-			print("Error in SQL query: ",str(e))
-		if result_set == None:
-			self.make_user(author)
-		
-	def update_db(self, author, db_bal, lastblockhash):
-		#//If user balance has been updated in parse_part... or parse_whole, 
-		#//update the db
-		try:
-			to_exec = """UPDATE db 
-			SET balance=%s, lastblockhash=%s 
-			WHERE user 
-			LIKE %s"""
-			self.cursor.execute(to_exec, (db_bal,lastblockhash,str(author)))
-			self.connection.commit()
-		except Exception as e:
-			print("Error: "+str(e))
+    def check_for_user(self, author):
+        #//Check if the user exists in the db by querying the db.
+        #//If the db returns None, then the row does not exist
+        try:
+            to_exec = """SELECT user
+            FROM db
+            WHERE user
+            LIKE %s"""
+            self.cursor.execute(to_exec, (str(author)))
+            result_set = self.cursor.fetchone()
+        except Exception as e:
+            print("Error in SQL query: ",str(e))
+        if result_set == None:
+            self.make_user(author)
 
-	async def do_embed(self, author, db_bal):
-		#//Simple embed function for displaying username and balance
-		embed = discord.Embed(colour=discord.Colour.red())
-		embed.add_field(name="User", value=author)
-		embed.add_field(name="Balance (NET)", value="%.8f" % round(float(db_bal),8))
-		embed.set_footer(text="Sponsored by altcointrain.com - Choo!!! Choo!!!")
+    def update_db(self, author, db_bal, lastblockhash):
+        #//If user balance has been updated in parse_part... or parse_whole,
+        #//update the db
+        try:
+            to_exec = """UPDATE db
+            SET balance=%s, lastblockhash=%s
+            WHERE user
+            LIKE %s"""
+            self.cursor.execute(to_exec, (db_bal,lastblockhash,str(author)))
+            self.connection.commit()
+        except Exception as e:
+            print("Error: "+str(e))
 
-		try:
-			await self.bot.say(embed=embed)
-		except discord.HTTPException:
-			await self.bot.say("I need the `Embed links` permission to send this")
+    async def do_embed(self, author, db_bal):
+        #//Simple embed function for displaying username and balance
+        embed = discord.Embed(colour=discord.Colour.red())
+        embed.add_field(name="User", value=author)
+        embed.add_field(name="Balance (NET)", value="%.8f" % round(float(db_bal),8))
+        embed.set_footer(text="Sponsored by altcointrain.com - Choo!!! Choo!!!")
 
-	async def parse_part_bal(self,result_set,author):
-		#//If user has a lastblockhash value in the db, then stop parsing
-		#//trans-list at a specific ["blockhash"] and submit
-		#//changes to update_db
-		params = author
-		count = 1000
-		get_transactions = rpc.listtransactions(params,count)
-		print(len(get_transactions))
-		i = len(get_transactions)-1
+        try:
+            await self.bot.say(embed=embed)
+        except discord.HTTPException:
+            await self.bot.say("I need the `Embed links` permission to send this")
 
-		new_balance = float(result_set["balance"])
-		lastblockhash = get_transactions[i]["blockhash"]
-		print("LBH: ",lastblockhash)
-		if lastblockhash == result_set["lastblockhash"]:
-			db_bal = result_set["balance"]
-			await self.do_embed(author, db_bal)
-		else:
-			for tx in get_transactions:
-				new_balance += float(tx["amount"])
-				if tx["blockhash"] == result_set["lastblockhash"]:
-					break
-			db_bal = new_balance
-			self.update_db(author, db_bal, lastblockhash)
-			await self.do_embed(author, db_bal)
+    async def parse_part_bal(self,result_set,author):
+        #//If user has a lastblockhash value in the db, then stop parsing
+        #//trans-list at a specific ["blockhash"] and submit
+        #//changes to update_db
+        params = author
+        count = 1000
+        get_transactions = rpc.listtransactions(params,count)
+        print(len(get_transactions))
+        i = len(get_transactions)-1
 
-	async def parse_whole_bal(self,result_set,author):
-		#//If a user does not have a lastblockhash in the db, the parse
-		#//the entire trans-list for that user. Submit changes to
-		#//update_db
-		params = author
-		user = params
-		count = 1000
-		get_transactions = rpc.listtransactions(params,count)
-		print(len(get_transactions))
-		i = len(get_transactions)-1
+        new_balance = float(result_set["balance"])
+        lastblockhash = get_transactions[i]["blockhash"]
+        print("LBH: ",lastblockhash)
+        if lastblockhash == result_set["lastblockhash"]:
+            db_bal = result_set["balance"]
+            await self.do_embed(author, db_bal)
+        else:
+            for tx in get_transactions:
+                new_balance += float(tx["amount"])
+                if tx["blockhash"] == result_set["lastblockhash"]:
+                    break
+            db_bal = new_balance
+            self.update_db(author, db_bal, lastblockhash)
+            await self.do_embed(author, db_bal)
 
-		if len(get_transactions) == 0:
-			print("0 transactions found for "+author+", balance must be 0")
-			db_bal = 0
-			await self.do_embed(author, db_bal)
-		else:
-			new_balance = 0
-			lastblockhash = get_transactions[i]["blockhash"]
-			firstblockhash = get_transactions[0]["blockhash"]
-			print("FBH: ",firstblockhash)
-			print("LBH: ",lastblockhash)
-			while i <= len(get_transactions)-1:
-				if get_transactions[i]["blockhash"] != firstblockhash:
-					new_balance += float(get_transactions[i]["amount"])
-					i -= 1
-					print("New Balance: ",new_balance)
-				else:
-					new_balance += float(get_transactions[i]["amount"])
-					print("New Balance: ",new_balance)
-					break
-			db_bal = new_balance
-			print("db_bal =>"+str(db_bal))
-			self.update_db(author, db_bal, lastblockhash)
-			await self.do_embed(author, db_bal)
-			#Now update db with new balance
+    async def parse_whole_bal(self,result_set,author):
+        #//If a user does not have a lastblockhash in the db, the parse
+        #//the entire trans-list for that user. Submit changes to
+        #//update_db
+        params = author
+        user = params
+        count = 1000
+        get_transactions = rpc.listtransactions(params,count)
+        print(len(get_transactions))
+        i = len(get_transactions)-1
 
-	@commands.command(pass_context=True)
-	async def balance(self, ctx):
-		#//Set important variables//
-		author = str(ctx.message.author)
+        if len(get_transactions) == 0:
+            print("0 transactions found for "+author+", balance must be 0")
+            db_bal = 0
+            await self.do_embed(author, db_bal)
+        else:
+            new_balance = 0
+            lastblockhash = get_transactions[i]["blockhash"]
+            firstblockhash = get_transactions[0]["blockhash"]
+            print("FBH: ",firstblockhash)
+            print("LBH: ",lastblockhash)
+            while i <= len(get_transactions)-1:
+                if get_transactions[i]["blockhash"] != firstblockhash:
+                    new_balance += float(get_transactions[i]["amount"])
+                    i -= 1
+                    print("New Balance: ",new_balance)
+                else:
+                    new_balance += float(get_transactions[i]["amount"])
+                    print("New Balance: ",new_balance)
+                    break
+            db_bal = new_balance
+            print("db_bal =>"+str(db_bal))
+            self.update_db(author, db_bal, lastblockhash)
+            await self.do_embed(author, db_bal)
+            #Now update db with new balance
 
-		#//Check if user exists in db
-		self.check_for_user(author)
+    @commands.command(pass_context=True)
+    async def balance(self, ctx):
+        #//Set important variables//
+        author = str(ctx.message.author)
+
+        #//Check if user exists in db
+        self.check_for_user(author)
 
 
-		#//Execute and return SQL Query
-		try:
-			to_exec = """
-			SELECT balance, user, lastblockhash, tipped 
-			FROM db 
-			WHERE user 
-			LIKE %s"""
-			self.cursor.execute(to_exec, (str(author)))
-			result_set = self.cursor.fetchone()
-		except Exception as e:
-			print("Error in SQL query: ",str(e))
-			return
-		#//
-		if result_set["lastblockhash"] == "0":
-			await self.parse_whole_bal(result_set,author)
-		else:
-			await self.parse_part_bal(result_set,author)
+        #//Execute and return SQL Query
+        try:
+            to_exec = """
+            SELECT balance, user, lastblockhash, tipped
+            FROM db
+            WHERE user
+            LIKE %s"""
+            self.cursor.execute(to_exec, (str(author)))
+            result_set = self.cursor.fetchone()
+        except Exception as e:
+            print("Error in SQL query: ",str(e))
+            return
+        #//
+        if result_set["lastblockhash"] == "0":
+            await self.parse_whole_bal(result_set,author)
+        else:
+            await self.parse_part_bal(result_set,author)
 
 def setup(bot):
-	bot.add_cog(Balance(bot))
+    bot.add_cog(Balance(bot))
