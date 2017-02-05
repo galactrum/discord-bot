@@ -5,8 +5,9 @@ The files included in this repo are intended to be used as "cogs" in the RED Dis
 These files are intended to function as a multi-functional tipbot for "Netcoin"
 
 # Requirements
+* The RED Discord API wrapper/bot
 * Python 2.7(+)
-* phpMyAdmin (I'm using XAMPP to host)
+* A mySQL database
 * The Netcoin wallet w/ RPC enabled.
 
 # Functions
