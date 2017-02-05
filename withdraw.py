@@ -39,10 +39,10 @@ class withdraw:
 
 	def make_user(self, author):
 		print(author)
-		to_exec("""
+		to_exec = """
 				INSERT INTO db(user,balance)
 				VALUES(%s,%s)
-				""")
+				"""
 		self.cursor.execute(to_exec, str(author), '0')
 		self.connection.commit()
 		return
