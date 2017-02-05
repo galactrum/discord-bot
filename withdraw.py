@@ -72,14 +72,14 @@ class withdraw:
 		i = len(get_transactions)-1
 
 		new_balance = float(result_set["balance"])
-		lastblockhash = get_transactions[i]["blockhash"]
+		lastblockhash = get_transactions[i]["txid"]
 		print("LBH: ",lastblockhash)
 		if lastblockhash == result_set["lastblockhash"]:
 			db_bal = result_set["balance"]
 			return
 		else:
 			while i <= len(get_transactions):
-				if get_transactions[i]["blockhash"] != result_set["lastblockhash"]:
+				if get_transactions[i]["txid"] != result_set["lastblockhash"]:
 					new_balance += float(get_transactions[i]["amount"])
 					i -= 1
 				else:
@@ -104,12 +104,12 @@ class withdraw:
 			db_bal = 0
 		else:
 			new_balance = 0
-			lastblockhash = get_transactions[i]["blockhash"]
-			firstblockhash = get_transactions[0]["blockhash"]
+			lastblockhash = get_transactions[i]["txid"]
+			firstblockhash = get_transactions[0]["txid"]
 			print("FBH: ",firstblockhash)
 			print("LBH: ",lastblockhash)
 			while i <= len(get_transactions)-1:
-				if get_transactions[i]["blockhash"] != firstblockhash:
+				if get_transactions[i]["txid"] != firstblockhash:
 					new_balance += float(get_transactions[i]["amount"])
 					i -= 1
 					print("New Balance: ",new_balance)

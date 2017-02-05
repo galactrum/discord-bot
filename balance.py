@@ -81,7 +81,7 @@ class Balance:
 
     async def parse_part_bal(self,result_set,author):
         #//If user has a lastblockhash value in the db, then stop parsing
-        #//trans-list at a specific ["blockhash"] and submit
+        #//trans-list at a specific ["txid"] and submit
         #//changes to update_db
         params = author
         count = 1000
@@ -90,15 +90,15 @@ class Balance:
         i = len(get_transactions)-1
 
         new_balance = float(result_set["balance"])
-        lastblockhash = get_transactions[i]["blockhash"]
+        lastblockhash = get_transactions[i]["txid"]
         print("LBH: ",lastblockhash)
-        if lastblockhash == result_set["lastblockhash"]:
+        if lastblockhash == result_set["lasttxid"]:
             db_bal = result_set["balance"]
             await self.do_embed(author, db_bal)
         else:
             for tx in get_transactions:
                 new_balance += float(tx["amount"])
-                if tx["blockhash"] == result_set["lastblockhash"]:
+                if tx["txid"] == result_set["lasttxid"]:
                     break
             db_bal = new_balance
             self.update_db(author, db_bal, lastblockhash)
@@ -121,12 +121,12 @@ class Balance:
             await self.do_embed(author, db_bal)
         else:
             new_balance = 0
-            lastblockhash = get_transactions[i]["blockhash"]
-            firstblockhash = get_transactions[0]["blockhash"]
+            lastblockhash = get_transactions[i]["txid"]
+            firstblockhash = get_transactions[0]["txid"]
             print("FBH: ",firstblockhash)
             print("LBH: ",lastblockhash)
             while i <= len(get_transactions)-1:
-                if get_transactions[i]["blockhash"] != firstblockhash:
+                if get_transactions[i]["txid"] != firstblockhash:
                     new_balance += float(get_transactions[i]["amount"])
                     i -= 1
                     print("New Balance: ",new_balance)
@@ -162,7 +162,7 @@ class Balance:
             print("Error in SQL query: ",str(e))
             return
         #//
-        if result_set["lastblockhash"] == "0":
+        if result_set["lasttxid"] == "0":
             await self.parse_whole_bal(result_set,author)
         else:
             await self.parse_part_bal(result_set,author)
