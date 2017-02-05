@@ -1,4 +1,5 @@
 # Discord-Netcoin-Bot
+[<img src="https://discordapp.com/api/guilds/219586006335225856/widget.png?style=shield">](https://discord.me/netcoin)
 The files included in this repo are intended to be used as "cogs" in the RED Discord Bot.
 These files are intended to function as a multi-functional tipbot for "Netcoin"
 
