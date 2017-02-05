@@ -160,7 +160,7 @@ class withdraw:
 			
 	        self.rpc.withdraw(author_name,address, amount)
                 await self.parse_part_bal(result_set, author_name)
-		await self.bot.say("**Withdrew {} NET! :money_with_wings:**")
+		
 
 			
 		# removes `message` amount from `wallet` and adds `message` amount to `address` provided
