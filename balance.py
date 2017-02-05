@@ -1,5 +1,4 @@
 import discord, json, requests, pymysql.cursors
-from cogs.utils import rpc
 from discord.ext import commands
 
 #result_set = database response with parameters from query
@@ -39,7 +38,6 @@ class Balance:
 		VALUES(%s,%s)"""
 		self.cursor.execute(to_exec, (str(author), '0'))
 		self.connection.commit()
-		return
 
 	def check_for_user(self, author):
 		#//Check if the user exists in the db by querying the db.
@@ -53,13 +51,9 @@ class Balance:
 			result_set = self.cursor.fetchone()
 		except Exception as e:
 			print("Error in SQL query: ",str(e))
-			return
 		if result_set == None:
 			self.make_user(author)
-			return
 		
-		
-
 	def update_db(self, author, db_bal, lastblockhash):
 		#//If user balance has been updated in parse_part... or parse_whole, 
 		#//update the db
@@ -72,7 +66,6 @@ class Balance:
 			self.connection.commit()
 		except Exception as e:
 			print("Error: "+str(e))
-		return
 
 	async def do_embed(self, author, db_bal):
 		#//Simple embed function for displaying username and balance
@@ -85,7 +78,6 @@ class Balance:
 			await self.bot.say(embed=embed)
 		except discord.HTTPException:
 			await self.bot.say("I need the `Embed links` permission to send this")
-		return
 
 	async def parse_part_bal(self,result_set,author):
 		#//If user has a lastblockhash value in the db, then stop parsing
@@ -103,7 +95,6 @@ class Balance:
 		if lastblockhash == result_set["lastblockhash"]:
 			db_bal = result_set["balance"]
 			await self.do_embed(author, db_bal)
-			return
 		else:
 			for tx in get_transactions:
 				new_balance += float(tx["amount"])
