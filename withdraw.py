@@ -72,9 +72,9 @@ class withdraw:
         i = len(get_transactions)-1
 
         new_balance = float(result_set["balance"])
-        lastblockhash = get_transactions[i]["txid"]
-        print("LBH: ",lastblockhash)
-        if lastblockhash == result_set["lasttxid"]:
+        lasttxid = get_transactions[i]["txid"]
+        print("LBH: ",lasttxid)
+        if lasttxid == result_set["lasttxid"]:
             db_bal = result_set["balance"]
             return
         else:
@@ -86,7 +86,7 @@ class withdraw:
                     new_balance += float(get_transactions[i]["amount"])
                     break
             db_bal = new_balance
-            self.update_db(author, db_bal, lastblockhash)
+            self.update_db(author, db_bal, lasttxid)
             return (author, db_bal)
         # Updates balance
         # and return a tuple consisting of the author, and their balance
@@ -104,12 +104,12 @@ class withdraw:
             db_bal = 0
         else:
             new_balance = 0
-            lastblockhash = get_transactions[i]["txid"]
-            firstblockhash = get_transactions[0]["txid"]
-            print("FBH: ",firstblockhash)
-            print("LBH: ",lastblockhash)
+            lasttxid = get_transactions[i]["txid"]
+            firsttxid = get_transactions[0]["txid"]
+            print("FBH: ",firsttxid)
+            print("LBH: ",lasttxid)
             while i <= len(get_transactions)-1:
-                if get_transactions[i]["txid"] != firstblockhash:
+                if get_transactions[i]["txid"] != firsttxid:
                     new_balance += float(get_transactions[i]["amount"])
                     i -= 1
                     print("New Balance: ",new_balance)
@@ -118,7 +118,7 @@ class withdraw:
                     print("New Balance: ",new_balance)
                     break
             db_bal = new_balance
-            self.update_db(author, db_bal, lastblockhash)
+            self.update_db(author, db_bal, lasttxid)
             return (author, db_bal)
             #Now update db with new balance
             # and return a tuple consisting of the author, and their balance
@@ -135,7 +135,7 @@ class withdraw:
         #user_addy = rpcdat('getaddressesbyaccount',[author_name],port)
         #deposite_addr = user_addy[0]
 
-        to_exec = " SELECT balance,lastblockhash FROM db WHERE user LIKE %s "
+        to_exec = " SELECT balance,lasttxid FROM db WHERE user LIKE %s "
         user_bal = 0.0
 
         self.cursor.execute(to_exec,(author_name))
