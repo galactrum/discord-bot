@@ -15,3 +15,5 @@ These files are intended to function as a multi-functional tipbot for "Netcoin"
 * Automatically add users to database
 * Allow users to withdraw coins from the wallet with respect to how many coins they have in the DB
 * Parse through wallet transaction data on a per-user basis to update database information
+
+We ❤️ Pull Requests!
