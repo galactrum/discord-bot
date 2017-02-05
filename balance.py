@@ -96,7 +96,7 @@ class Balance:
             db_bal = result_set["balance"]
             await self.do_embed(author, db_bal)
         else:
-            for tx in get_transactions:
+            for tx in reversed(get_transactions):
                 new_balance += float(tx["amount"])
                 if tx["txid"] == result_set["lasttxid"]:
                     break
