@@ -47,6 +47,19 @@ class withdraw:
         self.connection.commit()
         return
 
+    def update_db(self, author, db_bal, lasttxid):
+        #//If user balance has been updated in parse_part... or parse_whole,
+        #//update the db
+        try:
+            to_exec = """UPDATE db
+            SET balance=%s, lasttxid=%s
+            WHERE user
+            LIKE %s"""
+            self.cursor.execute(to_exec, (db_bal,lasttxid,str(author)))
+            self.connection.commit()
+        except Exception as e:
+            print("Error: "+str(e))
+
     def check_for_user(self, author):
         try:
             to_exec = """
