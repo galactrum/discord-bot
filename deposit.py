@@ -32,7 +32,7 @@ class deposit:
 				await self.bot.say(params.mention+"'s Deposit Address: `"+str(user_addy[0])+"`")
 		except IndexError:
 			user_addy = rpcdat('getaccountaddress',[str(params)],port)
-			await self.bot.say(params.mention+"'s Deposit Address: `"+str(user_addy[0])+"`")
+			await self.bot.say(params.mention+"'s Deposit Address: `"+str(user_addy)+"`")
 
 def setup(bot):
 	bot.add_cog(deposit(bot))
