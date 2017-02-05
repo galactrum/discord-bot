@@ -105,12 +105,9 @@ class Balance:
 			await self.do_embed(author, db_bal)
 			return
 		else:
-			while i <= len(get_transactions):
-				if get_transactions[i]["blockhash"] != result_set["lastblockhash"]:
-					new_balance += float(get_transactions[i]["amount"])
-					i -= 1
-				else:
-					new_balance += float(get_transactions[i]["amount"])
+			for tx in get_transactions:
+				new_balance += float(tx["amount"])
+				if tx["blockhash"] == result_set["lastblockhash"]:
 					break
 			db_bal = new_balance
 			self.update_db(author, db_bal, lastblockhash)
