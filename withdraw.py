@@ -138,7 +138,7 @@ class withdraw:
 
     @commands.command(pass_context=True)
     async def withdraw(self, ctx, address:str , amount:float):
-        """withdraws coins from wallet"""
+        """Withdraw coins from your account to any Netcoin address"""
         port =  "11311"
 
         author_name = str(ctx.message.author)
