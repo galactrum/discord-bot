@@ -49,10 +49,10 @@ class Balance:
             LIKE %s"""
             self.cursor.execute(to_exec, (str(author)))
             result_set = self.cursor.fetchone()
+            if result_set == None:
+                self.make_user(author)
         except Exception as e:
             print("Error in SQL query: ",str(e))
-        if result_set == None:
-            self.make_user(author)
 
     def update_db(self, author, db_bal, lasttxid):
         #//If user balance has been updated in parse_part... or parse_whole,
