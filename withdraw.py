@@ -158,8 +158,9 @@ class withdraw:
 				await self.bot.say("**:warning:Invalid address!:warning:**")
 				return
 			
-	        self.rpc.withdraw(author_name,address, amount)
+	        self.rpc.withdraw(author_name,address, str(amount))
                 await self.parse_part_bal(result_set, author_name)
+		await self.bot.say("**Withdrew {} NET! :money_with_wings:**".format(str(amount)))
 		
 
 			
