@@ -1,7 +1,6 @@
 import json, requests
 
 class Rpc:
-    @staticmethod
     def __init__(self):
         self.port = "11311"
         self.rpc_user = 'srf2UUR0'
