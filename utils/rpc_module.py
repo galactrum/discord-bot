@@ -31,3 +31,9 @@ class Rpc:
         response = requests.get(self.serverURL, headers=self.headers, data=payload,
                                 auth=(self.rpc_user, self.rpc_pass))
         return (response.json()['result'])
+
+    def getaccountaddress(self, account):
+        payload = json.dumps({"method": "getaccountaddress", "params": [account], "jsonrpc": "2.0"})
+        response = requests.get(self.serverURL, headers=self.headers, data=payload,
+                                auth=(self.rpc_user, self.rpc_pass))
+        return (response.json()['result'])

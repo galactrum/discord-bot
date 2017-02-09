@@ -14,7 +14,7 @@ class deposit:
         """Shows wallet info"""
         port =  "11311"
         account = ctx.message.author
-        user_addy = self.rpc.getaddressesbyaccount(str(account))
+        user_addy = self.rpc.getaccountaddress(str(account))
         await self.bot.say(account.mention+"'s Deposit Address: `"+str(user_addy[0])+"`")
 
 def setup(bot):
