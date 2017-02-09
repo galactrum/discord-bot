@@ -15,7 +15,7 @@ class deposit:
         port =  "11311"
         account = str(ctx.message.author)
         user_addy = self.rpc.getaddressesbyaccount(account)
-        await self.bot.say(params.mention+"'s Deposit Address: `"+str(user_addy[0])+"`")
+        await self.bot.say(account.mention+"'s Deposit Address: `"+str(user_addy[0])+"`")
 
 def setup(bot):
     bot.add_cog(deposit(bot))
