@@ -1,32 +1,19 @@
 import discord, json, requests
 from discord.ext import commands
-
-def rpcdat(method,params,port):
-    try:
-        rpcdata = json.dumps({
-            "jsonrpc": 1.0,
-            "id":"rpctest",
-            "method": str(method),
-            "params": params,
-            "port": port
-            })
-        req = requests.get('http://127.0.0.1:'+port, data=rpcdata, auth=('srf2UUR0', 'srf2UUR0XomxYkWw'), timeout=8)
-        return req.json()['result']
-    except Exception as e:
-        return "Error: "+str(e)
+from cogs.utils import rpc_module as rpc
 
 class wallet:
     def __init__(self, bot):
         self.bot = bot
+        self.rpc = rpc.Rpc()
 
     @commands.command()
     async def wallet(self):
         """Shows wallet info"""
-        port =  "11311"
-        get_info = rpcdat('getinfo',[],port)
+        get_info = self.rpc.getinfo()
         wallet_balance = float(get_info["balance"])+float(get_info["stake"])
-        stake_info = rpcdat('getstakinginfo',[],port)
-        connection_count = rpcdat('getconnectioncount',[],port)
+        stake_info = self.rpc.getstakinginfo()
+        connection_count = self.rpc.getconnectioncount()
         stake_weight = stake_info["weight"]
         net_weight = stake_info["netstakeweight"]
         embed = discord.Embed(colour=discord.Colour.red())
