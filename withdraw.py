@@ -13,7 +13,6 @@ class withdraw:
             password='',
             db='netcoin')
         self.cursor = self.connection.cursor(pymysql.cursors.DictCursor)
-        self.rpc = rpc()
 
     def make_user(self, author):
         print(author)
