@@ -23,7 +23,6 @@ class Balance:
 
     def make_user(self, author):
         #//If check_for_user() returns None, then INSERT new user info in db
-        print(author)
         to_exec = """INSERT INTO db(user,balance)
         VALUES(%s,%s)"""
         self.cursor.execute(to_exec, (str(author), '0'))
@@ -76,12 +75,10 @@ class Balance:
         params = author
         count = 1000
         get_transactions = self.rpc.listtransactions(params,count)
-        print(len(get_transactions))
         i = len(get_transactions)-1
 
         new_balance = float(result_set["balance"])
         lasttxid = get_transactions[i]["txid"]
-        print("LBH: ",lasttxid)
         if lasttxid == result_set["lasttxid"]:
             db_bal = result_set["balance"]
             await self.do_embed(author, db_bal)
@@ -102,7 +99,6 @@ class Balance:
         user = params
         count = 1000
         get_transactions = self.rpc.listtransactions(params,count)
-        print(len(get_transactions))
         i = len(get_transactions)-1
 
         if len(get_transactions) == 0:
@@ -113,19 +109,14 @@ class Balance:
             new_balance = 0
             lasttxid = get_transactions[i]["txid"]
             firsttxid = get_transactions[0]["txid"]
-            print("FBH: ",firsttxid)
-            print("LBH: ",lasttxid)
             while i <= len(get_transactions)-1:
                 if get_transactions[i]["txid"] != firsttxid:
                     new_balance += float(get_transactions[i]["amount"])
                     i -= 1
-                    print("New Balance: ",new_balance)
                 else:
                     new_balance += float(get_transactions[i]["amount"])
-                    print("New Balance: ",new_balance)
                     break
             db_bal = new_balance
-            print("db_bal =>"+str(db_bal))
             self.update_db(author, db_bal, lasttxid)
             await self.do_embed(author, db_bal)
             #Now update db with new balance

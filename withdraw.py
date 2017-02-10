@@ -15,7 +15,6 @@ class withdraw:
         self.cursor = self.connection.cursor(pymysql.cursors.DictCursor)
 
     def make_user(self, author):
-        print(author)
         to_exec = """
                 INSERT INTO db(user,balance)
                 VALUES(%s,%s)
@@ -58,12 +57,10 @@ class withdraw:
         params = author
         count = 1000
         get_transactions = self.rpc.listtransactions(params,count)
-        print(len(get_transactions))
         i = len(get_transactions)-1
 
         new_balance = float(result_set["balance"])
         lasttxid = get_transactions[i]["txid"]
-        print("LBH: ",lasttxid)
         if lasttxid == result_set["lasttxid"]:
             db_bal = result_set["balance"]
             return
@@ -86,7 +83,6 @@ class withdraw:
         user = params
         count = 1000
         get_transactions = self.rpc.listtransactions(params,count)
-        print(len(get_transactions))
         i = len(get_transactions)-1
 
         if len(get_transactions) == 0:
@@ -96,16 +92,12 @@ class withdraw:
             new_balance = 0
             lasttxid = get_transactions[i]["txid"]
             firsttxid = get_transactions[0]["txid"]
-            print("FBH: ",firsttxid)
-            print("LBH: ",lasttxid)
             while i <= len(get_transactions)-1:
                 if get_transactions[i]["txid"] != firsttxid:
                     new_balance += float(get_transactions[i]["amount"])
                     i -= 1
-                    print("New Balance: ",new_balance)
                 else:
                     new_balance += float(get_transactions[i]["amount"])
-                    print("New Balance: ",new_balance)
                     break
             db_bal = new_balance
             self.update_db(author, db_bal, lasttxid)
