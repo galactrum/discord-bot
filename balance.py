@@ -1,27 +1,17 @@
 import discord, json, requests, pymysql.cursors
 from discord.ext import commands
+from cogs.utils import rpc_module as rpc
 
 #result_set = database response with parameters from query
 #db_bal = nomenclature for result_set["balance"]
 #author = author from message context, identical to user in database
 #wallet_bal = nomenclature for wallet reponse
-class rpc:
-
-    def listtransactions(params,count):
-        port = "11311"
-        rpc_user = 'srf2UUR0'
-        rpc_pass = 'srf2UUR0XomxYkWw'
-        serverURL = 'http://localhost:'+port
-        headers = {'content-type': 'application/json'}
-
-        payload = json.dumps({"method": "listtransactions", "params": [params,count], "jsonrpc": "2.0"})
-        response = requests.get(serverURL, headers=headers, data=payload, auth=(rpc_user,rpc_pass))
-        return(response.json()['result'])
 
 class Balance:
 
     def __init__(self, bot):
         self.bot = bot
+        self.rpc = rpc.Rpc()
 
         #//Establish connection to db//
         self.connection = pymysql.connect(
@@ -85,7 +75,7 @@ class Balance:
         #//changes to update_db
         params = author
         count = 1000
-        get_transactions = rpc.listtransactions(params,count)
+        get_transactions = self.rpc.listtransactions(params,count)
         print(len(get_transactions))
         i = len(get_transactions)-1
 
@@ -111,7 +101,7 @@ class Balance:
         params = author
         user = params
         count = 1000
-        get_transactions = rpc.listtransactions(params,count)
+        get_transactions = self.rpc.listtransactions(params,count)
         print(len(get_transactions))
         i = len(get_transactions)-1
 
