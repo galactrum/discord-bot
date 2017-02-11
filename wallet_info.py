@@ -23,7 +23,7 @@ class wallet:
         embed.add_field(name="Staking Weight", value=stake_weight)
         embed.add_field(name="Net Stake Weight", value=net_weight)
         embed.add_field(name="Connections", value=connection_count)
-        embed.add_field(name="Block Height", value=connection_count)
+        embed.add_field(name="Block Height", value=block_height)
         embed.set_footer(text="Sponsored by altcointrain.com - Choo!!! Choo!!!")
 
         try:
