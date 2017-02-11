@@ -12,6 +12,7 @@ class wallet:
         """Shows wallet info"""
         get_info = self.rpc.getinfo()
         wallet_balance = float(get_info["balance"])+float(get_info["stake"])
+        block_height = get_info["blocks"]
         stake_info = self.rpc.getstakinginfo()
         connection_count = self.rpc.getconnectioncount()
         stake_weight = stake_info["weight"]
@@ -22,6 +23,7 @@ class wallet:
         embed.add_field(name="Staking Weight", value=stake_weight)
         embed.add_field(name="Net Stake Weight", value=net_weight)
         embed.add_field(name="Connections", value=connection_count)
+        embed.add_field(name="Block Height", value=connection_count)
         embed.set_footer(text="Sponsored by altcointrain.com - Choo!!! Choo!!!")
 
         try:
