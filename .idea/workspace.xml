@@ -2,47 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="42fc397d-fc8d-42e0-aa90-f03ee03e06f3" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/discord/__init__.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/discord/bin/libopus-0.x64.dll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/discord/bin/libopus-0.x86.dll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/discord/calls.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/discord/channel.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/discord/client.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/discord/colour.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/discord/compat.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/discord/embeds.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/discord/emoji.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/discord/enums.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/discord/errors.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/discord/ext/__init__.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/discord/ext/commands/__init__.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/discord/ext/commands/bot.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/discord/ext/commands/context.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/discord/ext/commands/converter.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/discord/ext/commands/cooldowns.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/discord/ext/commands/core.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/discord/ext/commands/errors.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/discord/ext/commands/formatter.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/discord/ext/commands/view.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/discord/game.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/discord/gateway.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/discord/http.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/discord/invite.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/discord/iterators.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/discord/member.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/discord/message.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/discord/mixins.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/discord/object.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/discord/opus.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/discord/permissions.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/discord/reaction.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/discord/role.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/discord/server.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/discord/state.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/discord/user.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/discord/utils.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/discord/voice_client.py" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/J.py" afterPath="$PROJECT_DIR$/J.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/bot.py" afterPath="$PROJECT_DIR$/core/bot.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/test.py" afterPath="$PROJECT_DIR$/modules/test.py" />
     </list>
@@ -71,27 +30,34 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="bot.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="bot.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/core/bot.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="68">
-              <caret line="4" column="7" lean-forward="false" selection-start-line="4" selection-start-column="7" selection-end-line="4" selection-end-column="7" />
-              <folding />
+            <state relative-caret-position="256">
+              <caret line="112" column="39" lean-forward="false" selection-start-line="112" selection-start-column="39" selection-end-line="112" selection-end-column="39" />
+              <folding>
+                <element signature="e#0#33#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="test.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="test.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/modules/test.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="0">
-              <caret line="0" column="7" lean-forward="false" selection-start-line="0" selection-start-column="7" selection-end-line="0" selection-end-column="7" />
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
     </leaf>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>imp</find>
+    </findStrings>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -100,8 +66,8 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/J.py" />
-        <option value="$PROJECT_DIR$/core/bot.py" />
         <option value="$PROJECT_DIR$/modules/test.py" />
+        <option value="$PROJECT_DIR$/core/bot.py" />
       </list>
     </option>
   </component>
@@ -234,19 +200,21 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/bot.py">
+    <entry file="file://$PROJECT_DIR$/modules/test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="4" column="7" lean-forward="false" selection-start-line="4" selection-start-column="7" selection-end-line="4" selection-end-column="7" />
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/modules/test.py">
+    <entry file="file://$PROJECT_DIR$/core/bot.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="7" lean-forward="false" selection-start-line="0" selection-start-column="7" selection-end-line="0" selection-end-column="7" />
-          <folding />
+        <state relative-caret-position="256">
+          <caret line="112" column="39" lean-forward="false" selection-start-line="112" selection-start-column="39" selection-end-line="112" selection-end-column="39" />
+          <folding>
+            <element signature="e#0#33#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
