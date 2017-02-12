@@ -1,5 +1,5 @@
 import imp
-import os, sys, time, json
+import os, sys, time, json, asyncio
 from utils.parsing import parse_json
 from utils import output
 from lib import discord
@@ -101,7 +101,9 @@ class J():
 				str(len(tmp_modules)), ', '.join(core_modules))
 		else:
 			output.warning('Couldn\'t find any modules')
-		self.connect()
+		connect_loop = asyncio.get_event_loop()  
+		connect_loop.run_until_complete(self.connect())
+		connect_loop.close()
 
 	def setup_module(self, name, filename, is_startup=True):
 		try:
@@ -130,7 +132,7 @@ class J():
 		except:
 			return False
 
-	def connect(self):
+	async def connect(self):
 		description = """Core module/initial Discord connection
 Connecting using the token found in config.json"""
 
@@ -138,6 +140,6 @@ Connecting using the token found in config.json"""
 		async def on_ready():
 			output.info('Logged in as '+bot.user.name)
 		try:
-			bot.run(self.raw_config["data"][0]["token"])
+			await bot.start(self.raw_config["data"][0]["token"])
 		except KeyboardInterrupt:
 			output.success('KeyboardInterrupt: Shutting down bot...')
