@@ -1,0 +1,36 @@
+C:\Users\Aareons-Asus\Desktop\Raspberry Pi\NetJ>py -3 J.py
+[SUCCESS] Initializing the bot, this could take a minute
+[ERROR]   Failed to load test.py: 'J' object has no attribute 'register'
+[WARNING] Couldn't find any modules
+Task exception was never retrieved
+future: <Task finished coro=<main() done, defined at J.py:13> exception=RuntimeError('Cannot close a running event loop',)>
+Traceback (most recent call last):
+  File "C:\Users\Aareons-Asus\Desktop\Raspberry Pi\NetJ\lib\discord\client.py", line 519, in run
+    self.loop.run_until_complete(self.start(*args, **kwargs))
+  File "C:\Program Files\Python35\lib\asyncio\base_events.py", line 325, in run_until_complete
+    self.run_forever()
+  File "C:\Program Files\Python35\lib\asyncio\base_events.py", line 290, in run_forever
+    raise RuntimeError('Event loop is running.')
+RuntimeError: Event loop is running.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Program Files\Python35\lib\asyncio\tasks.py", line 239, in _step
+    result = coro.send(None)
+  File "J.py", line 35, in main
+    await connect(config)
+  File "J.py", line 60, in connect
+    bot.J(config)
+  File "C:\Users\Aareons-Asus\Desktop\Raspberry Pi\NetJ\core\bot.py", line 28, in __init__
+    self.setup()
+  File "C:\Users\Aareons-Asus\Desktop\Raspberry Pi\NetJ\core\bot.py", line 104, in setup
+    self.connect()
+  File "C:\Users\Aareons-Asus\Desktop\Raspberry Pi\NetJ\core\bot.py", line 141, in connect
+    bot.run(self.raw_config["data"][0]["token"])
+  File "C:\Users\Aareons-Asus\Desktop\Raspberry Pi\NetJ\lib\discord\client.py", line 534, in run
+    self.loop.close()
+  File "C:\Program Files\Python35\lib\asyncio\selector_events.py", line 94, in close
+    raise RuntimeError("Cannot close a running event loop")
+RuntimeError: Cannot close a running event loop
+[INFO]    Logged in as NetJ
