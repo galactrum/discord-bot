@@ -1,0 +1,11 @@
+*.json
+*.pyc
+*.log
+docs/_build
+*.buildinfo
+*.mp3
+*.m4a
+*.wav
+*.png
+*.jpg
+*.flac
