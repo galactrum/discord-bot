@@ -1,9 +1,9 @@
 import discord, json, requests
 from discord.ext import commands
-from cogs.utils import rpc_module as rpc
+from utils import rpc_module as rpc
 
 
-class deposit:
+class Deposit:
     def __init__(self, bot):
         self.bot = bot
         self.rpc = rpc.Rpc()
@@ -17,4 +17,4 @@ class deposit:
 
 
 def setup(bot):
-    bot.add_cog(deposit(bot))
+    bot.add_cog(Deposit(bot))

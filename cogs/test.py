@@ -1,6 +1,14 @@
-from core.bot import bot
+import discord
+from discord.ext import commands
 
-@bot.event
-async def on_message(message):
-    if message.content.startswith('!test'):
-        await bot.send_message(message.channel,'Test!')
+
+class Test:
+    def __init__(self, bot):
+        self.bot = bot
+
+    @commands.command()
+    async def test(self):
+        await self.bot.say("Test!")
+
+def setup(bot):
+    bot.add_cog(Test(bot))
