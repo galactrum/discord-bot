@@ -24,13 +24,13 @@ async def main():
     if not os.path.isfile(bot_config):
         output.error(
             'Configuration file "%s" does not exist. Please copy '
-            'the example.json to config.json then run J again' % bot_config)
+            'the example.json to config.json then run J.py again' % bot_config)
         sys.exit(1)
 
     try:
         config = parsing.parse_json(bot_config)
     except Exception as e:
-        output.error('The config file has syntax errors. Please fix them and run J again!\n' + str(e))
+        output.error('The config file has syntax errors. Please fix them and run J.py again!\n' + str(e))
         sys.exit(1)
     await connect(config)
 
@@ -48,7 +48,7 @@ async def main():
                     # If the new configuration file isn't the same as the last
                     # one that we saved, attempt to re-import it
                     config_new = parsing.parse_json(bot_config)
-                    output.sucess('Configuration file %s has changed! Use the restart command to take affect!' % bot_config)
+                    output.sucess('''Configuration file %s has changed! Use the restart command to reload the config!'''% bot_config)
                     config = config_new
                 except Exception as e:
                     # Only spit out errors once per file modification

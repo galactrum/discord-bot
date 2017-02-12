@@ -2,7 +2,7 @@ import imp
 import os, sys, time, json, asyncio
 from utils.parsing import parse_json
 from utils import output
-from lib import discord
+import discord
 
 sys.path += ['lib']
 
