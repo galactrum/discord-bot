@@ -56,8 +56,8 @@ async def main():
     except KeyboardInterrupt:
         output.success('KeyboardInterrupt: Shutting down bot...')
 
-def connect(config):
-    bot.J(config)
+async def connect(config):
+    await bot.J(config)
 
 if __name__ == '__main__':
     try:
