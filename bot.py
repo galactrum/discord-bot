@@ -39,7 +39,7 @@ async def load(module:str, ctx):
     try:
         bot.load_extension("cogs."+module)
         output.info(author + " loaded module: " + module)
-        output.info(author+("Successfully loaded {}.py".format(module))
+        await bot.say("Successfully loaded {}.py".format(module))
     except Exception as e:
         exc = '{}: {}'.format(type(e).__name__, e)
         await bot.say('Failed to load extension {}\n\t->{}'.format(module, exc))
