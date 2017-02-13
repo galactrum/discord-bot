@@ -32,23 +32,27 @@ async def on_ready():
 def is_owner(ctx):
     return ctx.message.author.id in config["owners"]
             
-@bot.command()
+@bot.command(pass_context=True)
 @commands.check(is_owner)
-async def load(module:str):
+async def load(module:str, ctx):
+    author = str(ctx.message.author)
     try:
-        bot.load_extension(module)
-        await bot.say("Successfully loaded {} ".format(module))
+        bot.load_extension("cogs."+module)
+        output.info(author + " loaded module: " + module)
+        output.info(author+("Successfully loaded {}.py".format(module))
     except Exception as e:
         exc = '{}: {}'.format(type(e).__name__, e)
         await bot.say('Failed to load extension {}\n\t->{}'.format(module, exc))
 
     
-@bot.command()
+@bot.command(pass_context=True)
 @commands.check(is_owner)
-async def unload(module:str):
+async def unload(module:str, ctx):
+    author = str(ctx.message.author)
     try:
-        bot.unload_extension(module)
-        await bot.say("Successfully unloaded {} ".format(module))
+        bot.unload_extension("cogs."+module)
+        output.info(author+" unloaded module: "+module)
+        await bot.say("Successfully unloaded {}.py".format(module))
     except Exception as e:
         exc = '{}: {}'.format(type(e).__name__, e)
         await bot.say('Failed to load extension {}\n\t->{}'.format(module, exc))
