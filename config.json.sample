@@ -1,7 +1,6 @@
 {
     "token": "discord bot token",
     "db_host": "hostname",
-    "db_port": "3306",
     "db_user": "user",
     "db_pass": "password",
     "db": "netcoin",

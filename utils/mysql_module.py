@@ -8,7 +8,10 @@ class Mysql:
         config = parsing.parse_json('config.json')
 
         self.host = config["db_host"]
-        self.port = int(config["db_port"])
+        try:
+            self.port = int(config["db_port"])
+        except KeyError:
+            self.port = 3306
         self.db_user = config["db_user"]
         self.db_pass = config["db_pass"]
         self.db = config["db"]
