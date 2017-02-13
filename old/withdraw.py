@@ -2,7 +2,8 @@ import discord, json, requests, pymysql.cursors
 from discord.ext import commands
 from utils import rpc_module as rpc
 
-class withdraw:
+
+class Withdraw:
     def __init__(self, bot):
         self.bot = bot
         self.rpc = rpc.Rpc()
@@ -15,10 +16,7 @@ class withdraw:
         self.cursor = self.connection.cursor(pymysql.cursors.DictCursor)
 
     def make_user(self, author):
-        to_exec = """
-                INSERT INTO db(user,balance)
-                VALUES(%s,%s)
-                """
+        to_exec = "INSERT INTO person(user,balance) VALUES(%s,%s)"
         self.cursor.execute(to_exec, str(author), '0')
         self.connection.commit()
         return
@@ -143,10 +141,7 @@ class withdraw:
             await self.parse_part_bal(result_set, author_name)
             await self.bot.say("**Withdrew {} NET! :money_with_wings:**".format(str(amount)))
 
-
-
         # removes `message` amount from `wallet` and adds `message` amount to `address` provided
-                    
                     
 """		
         try:
@@ -157,5 +152,6 @@ class withdraw:
         except IndexError:
             await self.bot.say("You don't have an account.")
 """
+
 def setup(bot):
-    bot.add_cog(withdraw(bot))
+    bot.add_cog(Withdraw(bot))

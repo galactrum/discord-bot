@@ -6,8 +6,8 @@ import os, json
 description = '''Netcoin tip bot'''
 bot = commands.Bot(command_prefix='!', description=description)
 
-with open("config.json",'r') as f:
-    config = json.loads(f.read())            
+with open("config.json", 'r') as f:
+    config = json.loads(f.read())
 
 
 startup_extensions = os.listdir("./cogs")
@@ -29,12 +29,14 @@ async def on_ready():
             output.error('Failed to load extension {}\n\t->{}'.format(extension, exc))
     output.success("Successfully loaded the following extension(s); "+str(loaded_extensions))
 
+
 def is_owner(ctx):
     return ctx.message.author.id in config["owners"]
-            
+
+
 @bot.command()
 @commands.check(is_owner)
-async def load(module:str):
+async def load(module: str):
     try:
         bot.load_extension(module)
         await bot.say("Successfully loaded {} ".format(module))
@@ -45,7 +47,7 @@ async def load(module:str):
     
 @bot.command()
 @commands.check(is_owner)
-async def unload(module:str):
+async def unload(module: str):
     try:
         bot.unload_extension(module)
         await bot.say("Successfully unloaded {} ".format(module))

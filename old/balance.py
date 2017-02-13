@@ -7,13 +7,14 @@ from utils import rpc_module as rpc
 #author = author from message context, identical to user in database
 #wallet_bal = nomenclature for wallet reponse
 
+
 class Balance:
 
     def __init__(self, bot):
         self.bot = bot
         self.rpc = rpc.Rpc()
 
-        #//Establish connection to db//
+        # Establish connection to db
         self.connection = pymysql.connect(
             host='localhost',
             user='root',
@@ -22,15 +23,15 @@ class Balance:
         self.cursor = self.connection.cursor(pymysql.cursors.DictCursor)
 
     def make_user(self, author):
-        #//If check_for_user() returns None, then INSERT new user info in db
+        # If check_for_user() returns None, then INSERT new user info in db
         to_exec = """INSERT INTO db(user,balance)
         VALUES(%s,%s)"""
         self.cursor.execute(to_exec, (str(author), '0'))
         self.connection.commit()
 
     def check_for_user(self, author):
-        #//Check if the user exists in the db by querying the db.
-        #//If the db returns None, then the row does not exist
+        # Check if the user exists in the db by querying the db.
+        # If the db returns None, then the row does not exist
         try:
             to_exec = """SELECT user
             FROM db
@@ -44,8 +45,8 @@ class Balance:
             print("Error in SQL query: ",str(e))
 
     def update_db(self, author, db_bal, lasttxid):
-        #//If user balance has been updated in parse_part... or parse_whole,
-        #//update the db
+        # If user balance has been updated in parse_part... or parse_whole,
+        # update the db
         try:
             to_exec = """UPDATE db
             SET balance=%s, lasttxid=%s
@@ -57,7 +58,7 @@ class Balance:
             print("Error: "+str(e))
 
     async def do_embed(self, author, db_bal):
-        #//Simple embed function for displaying username and balance
+        # Simple embed function for displaying username and balance
         embed = discord.Embed(colour=discord.Colour.red())
         embed.add_field(name="User", value=author)
         embed.add_field(name="Balance (NET)", value="%.8f" % round(float(db_bal),8))
@@ -69,9 +70,9 @@ class Balance:
             await self.bot.say("I need the `Embed links` permission to send this")
 
     async def parse_part_bal(self,result_set,author):
-        #//If user has a lasttxid value in the db, then stop parsing
-        #//trans-list at a specific ["txid"] and submit
-        #//changes to update_db
+        # If user has a lasttxid value in the db, then stop parsing
+        # trans-list at a specific ["txid"] and submit
+        # changes to update_db
         params = author
         count = 1000
         get_transactions = self.rpc.listtransactions(params,count)
@@ -92,9 +93,9 @@ class Balance:
             await self.do_embed(author, db_bal)
 
     async def parse_whole_bal(self,result_set,author):
-        #//If a user does not have a lasttxid in the db, the parse
-        #//the entire trans-list for that user. Submit changes to
-        #//update_db
+        # If a user does not have a lasttxid in the db, the parse
+        # the entire trans-list for that user. Submit changes to
+        # update_db
         params = author
         user = params
         count = 1000
@@ -123,14 +124,14 @@ class Balance:
 
     @commands.command(pass_context=True)
     async def balance(self, ctx):
-        #//Set important variables//
+        # Set important variables
         author = str(ctx.message.author)
 
-        #//Check if user exists in db
+        # Check if user exists in db
         self.check_for_user(author)
 
 
-        #//Execute and return SQL Query
+        # Execute and return SQL Query
         try:
             to_exec = """
             SELECT balance, user, lasttxid, tipped
@@ -142,11 +143,12 @@ class Balance:
         except Exception as e:
             print("Error in SQL query: ",str(e))
             return
-        #//
+        #
         if result_set["lasttxid"] == "0":
             await self.parse_whole_bal(result_set,author)
         else:
             await self.parse_part_bal(result_set,author)
+
 
 def setup(bot):
     bot.add_cog(Balance(bot))
