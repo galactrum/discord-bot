@@ -7,7 +7,7 @@ class Pull:
 
     @commands.command(pass_context=True)
     async def pull(self, ctx):
-        print("Pulling...")
+        await self.bot.say("Pulling...")
         os.system("git pull")
 
 def setup(bot):
