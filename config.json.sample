@@ -1,12 +1,18 @@
 {
-    "token": "discord bot token",
-    "db_host": "hostname",
-    "db_port": "3306",
-    "db_user": "user",
-    "db_pass": "password",
-    "db": "netcoin",
-    "owners": ["bot owner discord id"],
-    "rpc_port": "11311",
-    "prc_user": "rpc user",
-    "rpc_pass": "rpc pass"
+    "discord": {
+        "token": "discord bot token"
+    },
+    "mysql": {
+        "db_host": "hostname",
+        "db_user": "user",
+        "db_pass": "password",
+        "db": "netcoin"
+    },
+    "rpc": {
+        "rpc_host": "localhost",
+        "rpc_port": "11311",
+        "rpc_user": "rpc user",
+        "rpc_pass": "rpc pass"
+    },
+    "owners": ["bot owner discord id"]
 }
