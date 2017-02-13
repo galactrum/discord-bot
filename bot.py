@@ -34,7 +34,7 @@ def is_owner(ctx):
             
 @bot.command(pass_context=True)
 @commands.check(is_owner)
-async def load(module:str, ctx):
+async def load(ctx, module:str):
     author = str(ctx.message.author)
     try:
         bot.load_extension("cogs."+module)
@@ -47,7 +47,7 @@ async def load(module:str, ctx):
     
 @bot.command(pass_context=True)
 @commands.check(is_owner)
-async def unload(module:str, ctx):
+async def unload(ctx, module:str):
     author = str(ctx.message.author)
     try:
         bot.unload_extension("cogs."+module)
