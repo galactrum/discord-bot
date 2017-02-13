@@ -1,13 +1,12 @@
 import discord
 from discord.ext import commands
-from utils import output
-import os, json
+from utils import output, parsing
+import os
 
 description = '''Netcoin tip bot'''
 bot = commands.Bot(command_prefix='!', description=description)
 
-with open("config.json",'r') as f:
-    config = json.loads(f.read())            
+config = parsing.parse_json('config.json')
 
 
 startup_extensions = os.listdir("./cogs")
@@ -73,5 +72,6 @@ async def unload(ctx, module:str):
         exc = '{}: {}'.format(type(e).__name__, e)
         await bot.say('Failed to load extension {}\n\t->{}'.format(module, exc))
 
+print(config)
 bot.run(config["token"])
 bot.loop.close()
