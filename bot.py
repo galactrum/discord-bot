@@ -54,7 +54,7 @@ async def shutdown(ctx):
 
 @bot.command(pass_context=True)
 @commands.check(is_owner)
-async def load(ctx, module:str):
+async def load(ctx, module: str):
     author = str(ctx.message.author)
 
     try:
@@ -71,7 +71,7 @@ async def load(ctx, module:str):
     
 @bot.command(pass_context=True)
 @commands.check(is_owner)
-async def unload(ctx, module:str):
+async def unload(ctx, module: str):
     author = str(ctx.message.author)
 
     try:
@@ -82,6 +82,24 @@ async def unload(ctx, module:str):
     except Exception as e:
         exc = '{}: {}'.format(type(e).__name__, e)
         await bot.say('Failed to load extension {}\n\t->{}'.format(module, exc))
+
+
+@commands.check(is_owner)
+async def restart(ctx, module: str):
+    author = str(ctx.message.author)
+
+    try:
+        await bot.say("Shutting down...")
+        await bot.logout()
+        bot.loop.stop()
+        output.info('{} has shut down the bot...'.format(author))
+        os.execl('restart.sh', '')
+
+    except Exception as e:
+        exc = '{}: {}'.format(type(e).__name__, e)
+        output.error('{} has attempted to shut down the bot, but the follwing '
+                     'exception occured;\n\t->{}'.format(author, exc))
+
 
 
 bot.run(config["discord"]["token"])
