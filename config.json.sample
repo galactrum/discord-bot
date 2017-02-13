@@ -1,0 +1,8 @@
+{
+    "token": "discord bot token",
+    "db_host": "hostname",
+    "db_user": "user",
+    "db_pass": "password",
+    "db": "netcoin",
+    "owners": ["bot owner discord id"]
+}
