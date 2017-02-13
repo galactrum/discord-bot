@@ -42,6 +42,8 @@ async def load(ctx, module:str):
         await bot.say("Successfully loaded {}.py".format(module))
     except Exception as e:
         exc = '{}: {}'.format(type(e).__name__, e)
+        output.error('{} attempted to load module \'{}\' but the following '
+                     'exception occured;\n\t->{}'.format(author, module, exc))
         await bot.say('Failed to load extension {}\n\t->{}'.format(module, exc))
 
     
