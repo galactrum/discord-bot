@@ -2,7 +2,7 @@ import discord, os
 from discord.ext import commands
 
 class Pull:
-    def init(self, bot):
+    def __init__(self, bot):
         self.bot = bot
 
     @commands.command(pass_context=True)
