@@ -1,6 +1,4 @@
 import re, json
-
-
 def parse_json(filename):
     """ remove //-- and /* -- */ style comments from JSON """
     comment_re = re.compile('(^)?[^\S\n]*/(?:\*(.*?)\*/[^\S\n]*|/[^\n]*)($)?', re.DOTALL | re.MULTILINE)
@@ -17,4 +15,4 @@ def parse_json(filename):
         # Backwards compatible with old config.json files
         contents = [{'data': [contents]}]
 
-    return contents[0]["data"][0]
+    return contents["data"][0]

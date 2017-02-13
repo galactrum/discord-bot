@@ -47,7 +47,7 @@ async def shutdown(ctx):
 
     except Exception as e:
         exc = '{}: {}'.format(type(e).__name__, e)
-        output.error('{} has attempted to shut down the bot, but the following '
+        output.error('{} has attempted to shut down the bot, but the follwing '
                      'exception occured;\n\t->{}'.format(author, exc))
 
 
