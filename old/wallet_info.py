@@ -1,6 +1,6 @@
 import discord, json, requests
 from discord.ext import commands
-from cogs.utils import rpc_module as rpc
+from utils import rpc_module as rpc
 
 class wallet:
     def __init__(self, bot):

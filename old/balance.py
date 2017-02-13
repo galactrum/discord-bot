@@ -1,73 +1,63 @@
 import discord, json, requests, pymysql.cursors
-from itertools import takewhile
 from discord.ext import commands
+from utils import rpc_module as rpc
 
-def rpcdat(method,params,port):
-    try:
-        rpcdata = json.dumps({
-            "jsonrpc": 1.0,
-            "id":"rpctest",
-            "method": str(method),
-            "params": params,
-            "port": port
-            })
-        req = requests.get('http://127.0.0.1:'+port, data=rpcdata, auth=('srf2UUR0', 'srf2UUR0XomxYkWw'), timeout=8)
-        return req.json()['result']
-    except Exception as e:
-        return "Error: "+str(e)
+#result_set = database response with parameters from query
+#db_bal = nomenclature for result_set["balance"]
+#author = author from message context, identical to user in database
+#wallet_bal = nomenclature for wallet reponse
 
 class Balance:
 
     def __init__(self, bot):
         self.bot = bot
+        self.rpc = rpc.Rpc()
 
-    ###############################################################
-    ##UPDATE BALANCE IN DB BASED ON TRANSACTIONS AFTER BLOCKINDEX##
-        def update_balance(result_set, db_bal, author):
+        #//Establish connection to db//
+        self.connection = pymysql.connect(
+            host='localhost',
+            user='root',
+            password='',
+            db='netcoin')
+        self.cursor = self.connection.cursor(pymysql.cursors.DictCursor)
 
-            connection = pymysql.connect(host='localhost',
-                                     user='root',
-                                     password='',
-                                     db='netcoin')
-            cursor = connection.cursor(pymysql.cursors.DictCursor)
+    def make_user(self, author):
+        #//If check_for_user() returns None, then INSERT new user info in db
+        to_exec = """INSERT INTO db(user,balance)
+        VALUES(%s,%s)"""
+        self.cursor.execute(to_exec, (str(author), '0'))
+        self.connection.commit()
 
-            port =  "11311"
-            params = str(author)
-            user_wallet_bal = rpcdat('getbalance',[params],port)
-            if float(db_bal) > float(user_wallet_bal) or float(db_bal) < float(user_wallet_bal):
-                params = str(author)
-                get_transactions = rpcdat('listtransactions',[params],port)
-                new_balance = 0
+    def check_for_user(self, author):
+        #//Check if the user exists in the db by querying the db.
+        #//If the db returns None, then the row does not exist
+        try:
+            to_exec = """SELECT user
+            FROM db
+            WHERE user
+            LIKE %s"""
+            self.cursor.execute(to_exec, (str(author)))
+            result_set = self.cursor.fetchone()
+            if result_set == None:
+                self.make_user(author)
+        except Exception as e:
+            print("Error in SQL query: ",str(e))
 
-                i = len(get_transactions)-1
-                if len(get_transactions) == 0:
-                    print("0 transactions found for %s, balance must be 0", author)
-                    return
-                lastblockhash = get_transactions[i]["blockhash"]
-                while i <= len(get_transactions)-1:
-                    if get_transactions[i]["blockhash"] != result_set["lastblockhash"]:
-                        self.new_balance += float(get_transactions[i]["amount"])
-                        i -= 1
-                    else:
-                        self.new_balance += float(get_transactions[i]["amount"])
-                        break
-                try:
-                    cursor.execute("""
-                        UPDATE db
-                        SET balance=%s, lastblockhash=%s
-                        WHERE user
-                        LIKE %s
-                        """, (new_balance, lastblockhash, str(author)))
-                    connection.commit()
-                except Exception as e:
-                    print("48 Error: "+str(e))
-                return
-            self.new_balance = new_balance
-        self.update_balance = update_balance
+    def update_db(self, author, db_bal, lasttxid):
+        #//If user balance has been updated in parse_part... or parse_whole,
+        #//update the db
+        try:
+            to_exec = """UPDATE db
+            SET balance=%s, lasttxid=%s
+            WHERE user
+            LIKE %s"""
+            self.cursor.execute(to_exec, (db_bal,lasttxid,str(author)))
+            self.connection.commit()
+        except Exception as e:
+            print("Error: "+str(e))
 
-    ###############################################################
-    ###############EMBED BALANCE FOR DISPLAY IN CHAT###############
-    async def embed_bal(self, author, db_bal):
+    async def do_embed(self, author, db_bal):
+        #//Simple embed function for displaying username and balance
         embed = discord.Embed(colour=discord.Colour.red())
         embed.add_field(name="User", value=author)
         embed.add_field(name="Balance (NET)", value="%.8f" % round(float(db_bal),8))
@@ -77,79 +67,86 @@ class Balance:
             await self.bot.say(embed=embed)
         except discord.HTTPException:
             await self.bot.say("I need the `Embed links` permission to send this")
-        return
 
-    ###############################################################
-    ###################MAKE A NEW USER IN THE DB###################
-    async def make_new_user(self, author):
-        connection = pymysql.connect(host='localhost',
-                                     user='root',
-                                     password='',
-                                     db='netcoin')
-        cursor = connection.cursor(pymysql.cursors.DictCursor)
+    async def parse_part_bal(self,result_set,author):
+        #//If user has a lasttxid value in the db, then stop parsing
+        #//trans-list at a specific ["txid"] and submit
+        #//changes to update_db
+        params = author
+        count = 1000
+        get_transactions = self.rpc.listtransactions(params,count)
+        i = len(get_transactions)-1
 
-        cursor.execute("""INSERT INTO db(user,balance) VALUES(%s,%s)""", (str(author), '0'))
-        connection.commit()
+        new_balance = float(result_set["balance"])
+        lasttxid = get_transactions[i]["txid"]
+        if lasttxid == result_set["lasttxid"]:
+            db_bal = result_set["balance"]
+            await self.do_embed(author, db_bal)
+        else:
+            for tx in reversed(get_transactions):
+                new_balance += float(tx["amount"])
+                if tx["txid"] == result_set["lasttxid"]:
+                    break
+            db_bal = new_balance
+            self.update_db(author, db_bal, lasttxid)
+            await self.do_embed(author, db_bal)
 
-        cursor.execute("""SELECT balance, user
-                        FROM db
-                        WHERE user
-                        LIKE %s
-                        """, str(author))
-        result_set = cursor.fetchone()
-        db_bal = result_set["balance"]
+    async def parse_whole_bal(self,result_set,author):
+        #//If a user does not have a lasttxid in the db, the parse
+        #//the entire trans-list for that user. Submit changes to
+        #//update_db
+        params = author
+        user = params
+        count = 1000
+        get_transactions = self.rpc.listtransactions(params,count)
+        i = len(get_transactions)-1
 
-        embed = discord.Embed(colour=discord.Colour.red())
-        embed.add_field(name="User", value=author)
-        embed.add_field(name="Balance (NET)", value="%.8f" % round(float(db_bal),8))
-        embed.set_footer(text="Sponsored by altcointrain.com")
+        if len(get_transactions) == 0:
+            print("0 transactions found for "+author+", balance must be 0")
+            db_bal = 0
+            await self.do_embed(author, db_bal)
+        else:
+            new_balance = 0
+            lasttxid = get_transactions[i]["txid"]
+            firsttxid = get_transactions[0]["txid"]
+            while i <= len(get_transactions)-1:
+                if get_transactions[i]["txid"] != firsttxid:
+                    new_balance += float(get_transactions[i]["amount"])
+                    i -= 1
+                else:
+                    new_balance += float(get_transactions[i]["amount"])
+                    break
+            db_bal = new_balance
+            self.update_db(author, db_bal, lasttxid)
+            await self.do_embed(author, db_bal)
+            #Now update db with new balance
 
-        try:
-            await self.bot.say(embed=embed)
-        except discord.HTTPException:
-            await self.bot.say("I need the `Embed links` permission to send this")
-
-    ###############################################################
-    ########################BALANCE COMMAND########################
     @commands.command(pass_context=True)
     async def balance(self, ctx):
-        port =  "11311"
-        author = ctx.message.author
-        params = str(author)
-        user_wallet_bal = rpcdat('getbalance',[params],port)
+        #//Set important variables//
+        author = str(ctx.message.author)
 
-        connection = pymysql.connect(host='localhost',
-                                     user='root',
-                                     password='',
-                                     db='netcoin')
-        cursor = connection.cursor(pymysql.cursors.DictCursor)
+        #//Check if user exists in db
+        self.check_for_user(author)
+
+
+        #//Execute and return SQL Query
         try:
-            cursor.execute("""SELECT balance, user, lastblockhash, tipped
-                            FROM db
-                            WHERE user
-                            LIKE %s
-                            """, str(author))
-            result_set = cursor.fetchone()
-            db_bal = result_set['balance']
-            user = result_set['user']
-            if str(float(db_bal)) == str(user_wallet_bal):
-                await self.embed_bal(author, db_bal)
-            else:
-                self.update_balance(result_set, db_bal, author)
-                embed = discord.Embed(colour=discord.Colour.red())
-                embed.add_field(name="User", value=author)
-                embed.add_field(name="Balance (NET)", value="%.8f" % round(float(self.new_balance),8))
-                embed.set_footer(text="Sponsored by altcointrain.com")
-                try:
-                    await self.bot.say(embed=embed)
-                except discord.HTTPException:
-                    await self.bot.say("I need the `Embed links` permission to send this")
+            to_exec = """
+            SELECT balance, user, lasttxid, tipped
+            FROM db
+            WHERE user
+            LIKE %s"""
+            self.cursor.execute(to_exec, (str(author)))
+            result_set = self.cursor.fetchone()
         except Exception as e:
-            try:
-                print("127: "+str(e))
-                await self.make_new_user(author)
-            except Exception as ex:
-                print("130: "+str(ex))
+            print("Error in SQL query: ",str(e))
+            return
+        #//
+        if result_set["lasttxid"] == "0":
+            await self.parse_whole_bal(result_set,author)
+        else:
+            await self.parse_part_bal(result_set,author)
 
 def setup(bot):
     bot.add_cog(Balance(bot))

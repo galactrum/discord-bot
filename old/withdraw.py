@@ -1,6 +1,6 @@
 import discord, json, requests, pymysql.cursors
 from discord.ext import commands
-from cogs.utils import rpc_module as rpc
+from utils import rpc_module as rpc
 
 class withdraw:
     def __init__(self, bot):
