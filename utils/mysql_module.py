@@ -8,7 +8,7 @@ class Mysql:
             config = json.loads(f.read())
 
         self.host = config["db_host"]
-        self.port = config["db_port"]
+        self.port = int(config["db_port"])
         self.db_user = config["db_user"]
         self.db_pass = config["db_pass"]
         self.db = config["db"]
