@@ -30,9 +30,11 @@ async def on_ready():
 
     output.success('Successfully loaded the following extension(s); {}'.format(loaded_extensions))
 
+
 def is_owner(ctx):
     return ctx.message.author.id in config["owners"]
-         
+
+
 @bot.command(pass_context=True)
 @commands.check(is_owner)
 async def shutdown(ctx):
@@ -48,6 +50,7 @@ async def shutdown(ctx):
         exc = '{}: {}'.format(type(e).__name__, e)
         output.error('{} has attempted to shut down the bot, but the follwing '
                      'exception occured;\n\t->{}'.format(author, exc))
+
 
 @bot.command(pass_context=True)
 @commands.check(is_owner)
