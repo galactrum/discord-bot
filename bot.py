@@ -29,7 +29,7 @@ async def on_ready():
             output.error('Failed to load extension {}\n\t->{}'.format(extension, exc))
     output.success("Successfully loaded the following extension(s); "+str(loaded_extensions))
 
- def is_owner(ctx):
+def is_owner(ctx):
     return ctx.message.author.id in config["owners"]
             
 @bot.command()
