@@ -48,8 +48,8 @@ async def shutdown(ctx):
 
     except Exception as e:
         exc = '{}: {}'.format(type(e).__name__, e)
-        output.error('{} has attempted to shut down the bot, but the follwing '
-                     'exception occured;\n\t->{}'.format(author, exc))
+        output.error('{} has attempted to shut down the bot, but the following '
+                     'exception occurred;\n\t->{}'.format(author, exc))
 
 
 @bot.command(pass_context=True)
@@ -84,23 +84,22 @@ async def unload(ctx, module: str):
         await bot.say('Failed to load extension {}\n\t->{}'.format(module, exc))
 
 
+@bot.command(pass_context=True)
 @commands.check(is_owner)
-async def restart(ctx, module: str):
+async def restart(ctx):
     author = str(ctx.message.author)
 
     try:
-        await bot.say("Shutting down...")
+        await bot.say("Restarting...")
         await bot.logout()
         bot.loop.stop()
-        output.info('{} has shut down the bot...'.format(author))
+        output.info('{} has restarted the bot...'.format(author))
         os.execl('restart.sh', '')
 
     except Exception as e:
         exc = '{}: {}'.format(type(e).__name__, e)
-        output.error('{} has attempted to shut down the bot, but the follwing '
-                     'exception occured;\n\t->{}'.format(author, exc))
-
-
+        output.error('{} has attempted to restart the bot, but the following '
+                     'exception occurred;\n\t->{}'.format(author, exc))
 
 bot.run(config["discord"]["token"])
 bot.loop.close()
