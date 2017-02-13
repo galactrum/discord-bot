@@ -31,7 +31,14 @@ async def on_ready():
 
 def is_owner(ctx):
     return ctx.message.author.id in config["owners"]
-            
+         
+@bot.command()
+@commands.check(is_owner)
+async def shutdown():
+    await bot.say("Shutting down...")
+    await bot.logout()  
+    bot.loop.stop()
+
 @bot.command(pass_context=True)
 @commands.check(is_owner)
 async def load(ctx, module:str):
@@ -58,5 +65,6 @@ async def unload(ctx, module:str):
     except Exception as e:
         exc = '{}: {}'.format(type(e).__name__, e)
         await bot.say('Failed to load extension {}\n\t->{}'.format(module, exc))
-    
+
 bot.run(config["token"])
+bot.loop.close()
