@@ -8,6 +8,7 @@ bot = commands.Bot(command_prefix='!', description=description)
 
 config = parsing.parse_json('config.json')
 
+
 startup_extensions = os.listdir("./cogs")
 if "__pycache__" in startup_extensions:
     startup_extensions.remove("__pycache__")
@@ -20,7 +21,7 @@ async def on_ready():
 
     for extension in startup_extensions:
         try:
-            bot.load_extension("cogs.{}".format(extension.replace(".py", "")))
+            bot.load_extension("cogs.{}".format(extension.replace(".py","")))
             loaded_extensions.append(extension)
 
         except Exception as e:
@@ -29,11 +30,9 @@ async def on_ready():
 
     output.success('Successfully loaded the following extension(s); {}'.format(loaded_extensions))
 
-
 def is_owner(ctx):
     return ctx.message.author.id in config["owners"]
-
-
+         
 @bot.command(pass_context=True)
 @commands.check(is_owner)
 async def shutdown(ctx):
@@ -50,10 +49,9 @@ async def shutdown(ctx):
         output.error('{} has attempted to shut down the bot, but the follwing '
                      'exception occured;\n\t->{}'.format(author, exc))
 
-
 @bot.command(pass_context=True)
 @commands.check(is_owner)
-async def load(ctx, module: str):
+async def load(ctx, module:str):
     author = str(ctx.message.author)
 
     try:
@@ -67,10 +65,10 @@ async def load(ctx, module: str):
                      'exception occured;\n\t->{}'.format(author, module, exc))
         await bot.say('Failed to load extension {}\n\t->{}'.format(module, exc))
 
-
+    
 @bot.command(pass_context=True)
 @commands.check(is_owner)
-async def unload(ctx, module: str):
+async def unload(ctx, module:str):
     author = str(ctx.message.author)
 
     try:
