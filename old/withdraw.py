@@ -1,38 +1,33 @@
 import discord, json, requests, pymysql.cursors
 from discord.ext import commands
-from utils import rpc_module as rpc
+from utils import rpc_module, mysql_module
 
-class withdraw:
+rpc = rpc_module.Rpc()
+connector = mysql_module.Mysql()
+connection = connector.connect()
+cursor = connector.cursor()
+
+
+class Withdraw:
     def __init__(self, bot):
         self.bot = bot
-        self.rpc = rpc.Rpc()
-
-        self.connection = pymysql.connect(
-            host='localhost',
-            user='root',
-            password='',
-            db='netcoin')
-        self.cursor = self.connection.cursor(pymysql.cursors.DictCursor)
 
     def make_user(self, author):
-        to_exec = """
-                INSERT INTO db(user,balance)
-                VALUES(%s,%s)
-                """
-        self.cursor.execute(to_exec, str(author), '0')
-        self.connection.commit()
+        to_exec = "INSERT INTO person(user,balance) VALUES(%s,%s)"
+        cursor.execute(to_exec, str(author), '0')
+        connection.commit()
         return
 
     def update_db(self, author, db_bal, lasttxid):
-        #//If user balance has been updated in parse_part... or parse_whole,
-        #//update the db
+        # If user balance has been updated in parse_part... or parse_whole,
+        # update the db
         try:
             to_exec = """UPDATE db
             SET balance=%s, lasttxid=%s
             WHERE user
             LIKE %s"""
-            self.cursor.execute(to_exec, (db_bal,lasttxid,str(author)))
-            self.connection.commit()
+            cursor.execute(to_exec, (db_bal,lasttxid,str(author)))
+            connection.commit()
         except Exception as e:
             print("Error: "+str(e))
 
@@ -44,8 +39,8 @@ class withdraw:
                     WHERE user
                     LIKE %s
                     """
-            self.cursor.execute(to_exec, str(author))
-            result_set = self.cursor.fetchone()
+            cursor.execute(to_exec, str(author))
+            result_set = cursor.fetchone()
         except Exception as e:
             print("Error in SQL query: ",str(e))
             return
@@ -56,7 +51,7 @@ class withdraw:
     async def parse_part_bal(self,result_set,author):
         params = author
         count = 1000
-        get_transactions = self.rpc.listtransactions(params,count)
+        get_transactions = rpc.listtransactions(params,count)
         i = len(get_transactions)-1
 
         new_balance = float(result_set["balance"])
@@ -82,7 +77,7 @@ class withdraw:
         params = author
         user = params
         count = 1000
-        get_transactions = self.rpc.listtransactions(params,count)
+        get_transactions = rpc.listtransactions(params,count)
         i = len(get_transactions)-1
 
         if len(get_transactions) == 0:
@@ -120,33 +115,30 @@ class withdraw:
         to_exec = " SELECT balance,lasttxid FROM db WHERE user LIKE %s "
         user_bal = 0.0
 
-        self.cursor.execute(to_exec,(author_name))
-        result_set = self.cursor.fetchone()
+        cursor.execute(to_exec,(author_name))
+        result_set = cursor.fetchone()
 
         if result_set["lasttxid"] == "0":
             user_bal = await self.parse_whole_bal(result_set,author_name)
         else:
             user_bal = await self.parse_part_bal(result_set,author_name)
 
-        self.cursor.execute(to_exec,(author_name))
-        result_set = self.cursor.fetchone()
+        cursor.execute(to_exec,(author_name))
+        result_set = cursor.fetchone()
 
         if float(result_set["balance"]) < amount:
             await self.bot.say("**:warning:You cannot withdraw more money than you have!:warning:**")
         else:
-            conf = self.rpc.validateaddress(address)
+            conf = rpc.validateaddress(address)
             if not conf["isvalid"]:
                 await self.bot.say("**:warning:Invalid address!:warning:**")
                 return
 
-            self.rpc.withdraw(author_name, address, amount)
+            rpc.withdraw(author_name, address, amount)
             await self.parse_part_bal(result_set, author_name)
             await self.bot.say("**Withdrew {} NET! :money_with_wings:**".format(str(amount)))
 
-
-
         # removes `message` amount from `wallet` and adds `message` amount to `address` provided
-                    
                     
 """		
         try:
@@ -157,5 +149,7 @@ class withdraw:
         except IndexError:
             await self.bot.say("You don't have an account.")
 """
+
+
 def setup(bot):
-    bot.add_cog(withdraw(bot))
+    bot.add_cog(Withdraw(bot))

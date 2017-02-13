@@ -1,8 +1,12 @@
 {
     "token": "discord bot token",
     "db_host": "hostname",
+    "db_port": "3306",
     "db_user": "user",
     "db_pass": "password",
     "db": "netcoin",
-    "owners": ["bot owner discord id"]
+    "owners": ["bot owner discord id"],
+    "rpc_port": "11311",
+    "prc_user": "rpc user",
+    "rpc_pass": "rpc pass"
 }

@@ -22,11 +22,17 @@ conn.commit()
 
 cursor.execute("USE {};".format(database))
 
+cursor.execute("""CREATE TABLE IF NOT EXISTS person (
+    userid_pk VARCHAR(17) NOT NULL,
+    username VARCHAR(37) NOT NULL,
+    balance FLOAT NOT NULL,
+    PRIMARY KEY (user)
+    ) ENGINE=InnoDB;""")
+
 cursor.execute("""CREATE TABLE IF NOT EXISTS db (
     user VARCHAR(17) NOT NULL,
     balance FLOAT NOT NULL,
     lasttxid TEXT,
-    tipped TEXT
     snowflake VARCHAR(17),
     PRIMARY KEY (user)
     ) ENGINE=InnoDB;""")

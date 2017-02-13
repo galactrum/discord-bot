@@ -2,7 +2,8 @@ import discord, json, requests
 from discord.ext import commands
 from utils import rpc_module as rpc
 
-class wallet:
+
+class Wallet:
     def __init__(self, bot):
         self.bot = bot
         self.rpc = rpc.Rpc()
@@ -11,7 +12,7 @@ class wallet:
     async def wallet(self):
         """Shows wallet info"""
         get_info = self.rpc.getinfo()
-        wallet_balance = float(get_info["balance"])+float(get_info["stake"])
+        wallet_balance = str(float(get_info["balance"])+float(get_info["stake"]))
         block_height = get_info["blocks"]
         stake_info = self.rpc.getstakinginfo()
         connection_count = self.rpc.getconnectioncount()
@@ -29,8 +30,9 @@ class wallet:
         try:
             await self.bot.say(embed=embed)
         except discord.HTTPException:
-            await self.bot.say("I need the `Embed links` permission "
-                               "to send this")
+            await self.bot.say("I need the `Embed links` permission to send this")
+
 
 def setup(bot):
-    bot.add_cog(wallet(bot))
+    bot.add_cog(Wallet(bot))
+
