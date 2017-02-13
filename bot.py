@@ -72,6 +72,6 @@ async def unload(ctx, module:str):
         exc = '{}: {}'.format(type(e).__name__, e)
         await bot.say('Failed to load extension {}\n\t->{}'.format(module, exc))
 
-print(config)
+
 bot.run(config["token"])
 bot.loop.close()
