@@ -26,7 +26,8 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS db (
     user VARCHAR(17) NOT NULL,
     balance FLOAT NOT NULL,
     lasttxid TEXT,
-    tipped TEXT,
+    tipped TEXT
+    snowflake VARCHAR(17),
     PRIMARY KEY (user)
     ) ENGINE=InnoDB;""")
 
