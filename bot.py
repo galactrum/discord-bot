@@ -37,22 +37,20 @@ def is_owner(ctx):
 async def load(module:str):
     try:
         bot.load_extension(module)
-
+        await bot.say("Successfully loaded {} ".format(module))
     except Exception as e:
         exc = '{}: {}'.format(type(e).__name__, e)
         await bot.say('Failed to load extension {}\n\t->{}'.format(module, exc))
-        
-    await bot.say("Successfully loaded {} ".format(module))
+
     
 @bot.command()
 @commands.check(is_owner)
 async def unload(module:str):
     try:
         bot.unload_extension(module)
+        await bot.say("Successfully unloaded {} ".format(module))
     except Exception as e:
         exc = '{}: {}'.format(type(e).__name__, e)
         await bot.say('Failed to load extension {}\n\t->{}'.format(module, exc))
-
-    await bot.say("Successfully loaded {} ".format(module))
     
 bot.run(config["token"])
