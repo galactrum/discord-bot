@@ -84,5 +84,5 @@ async def unload(ctx, module:str):
         await bot.say('Failed to load extension {}\n\t->{}'.format(module, exc))
 
 
-bot.run(config["token"])
+bot.run(config["discord"]["token"])
 bot.loop.close()

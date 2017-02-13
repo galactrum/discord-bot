@@ -5,7 +5,7 @@ from utils import parsing, output
 class Mysql:
 
     def __init__(self):
-        config = parsing.parse_json('config.json')
+        config = parsing.parse_json('config.json')["mysql"]
 
         self.host = config["db_host"]
         try:

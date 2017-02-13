@@ -4,12 +4,13 @@ from utils import parsing
 
 class Rpc:
     def __init__(self):
-        config = parsing.parse_json('config.json')
+        config = parsing.parse_json('config.json')["rpc"]
 
-        self.port = config["rpc_port"]
+        self.rpc_host = config["rpc_host"]
+        self.rpc_port = config["rpc_port"]
         self.rpc_user = config["rpc_user"]
         self.rpc_pass = config["rpc_pass"]
-        self.serverURL = 'http://localhost:' + self.port
+        self.serverURL = 'http://' + self.rpc_host + ':' + self.rpc_port
         self.headers = {'content-type': 'application/json'}
 
     def listtransactions(self, params, count):
