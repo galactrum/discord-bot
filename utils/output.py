@@ -8,18 +8,17 @@ form = ['\033[1;37;40m{0}', '\033[1;32;40m[SUCCESS] ', '\033[1;31;40m[ERROR]   '
         '\033[1;33;40m[WARNING] ']
 
 
-class PrOut:
-    def doSyn(self, string, var):
-        print(form[var]+form[0].format(string))
+def do_syn(string, var):
+    print(form[var]+form[0].format(string))
 
-    def success(self, string):
-        self.doSyn(string, 1)
+def success(string):
+    do_syn(string, 1)
 
-    def error(self, string):
-        self.doSyn(string, 2)
+def error(string):
+    do_syn(string, 2)
 
-    def info(self, string):
-        self.doSyn(string, 3)
+def info(string):
+    do_syn(string, 3)
 
-    def warning(self, string):
-        self.doSyn(string, 4)
+def warning(string):
+    do_syn(string, 4)

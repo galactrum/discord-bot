@@ -7,7 +7,6 @@ description = '''Netcoin tip bot'''
 bot = commands.Bot(command_prefix='!', description=description)
 
 startup_extensions = os.listdir("./cogs")
-output = output.PrOut()
 
 output.info("Loading {} extensions...".format(len(startup_extensions)))
 
