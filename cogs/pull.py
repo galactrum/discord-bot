@@ -9,7 +9,7 @@ class Pull:
     async def pull(self, ctx):
         await self.bot.say("Pulling...")
         returned = os.system("git pull")
-        await self.bot.say(":+1:Returned code "+ returned)
+        await self.bot.say(":+1:Returned code "+ str(returned))
 
 def setup(bot):
     bot.add_cog(Pull(bot))
