@@ -15,4 +15,4 @@ def parse_json(filename):
         # Backwards compatible with old config.json files
         contents = [{'data': [contents]}]
 
-    return contents[0]["data"][0]
+    return contents["data"][0]
