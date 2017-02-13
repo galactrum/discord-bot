@@ -1,11 +1,16 @@
 import discord, json, requests, pymysql.cursors
 from discord.ext import commands
-from utils import rpc_module as rpc
+from utils import rpc_module, mysql_module
 
 #result_set = database response with parameters from query
 #db_bal = nomenclature for result_set["balance"]
 #author = author from message context, identical to user in database
 #wallet_bal = nomenclature for wallet reponse
+
+rpc = rpc_module.Rpc()
+connector = mysql_module.Mysql()
+connection = connector.connect()
+cursor = connector.cursor()
 
 
 class Balance:

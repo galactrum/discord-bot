@@ -3,9 +3,12 @@ import json, requests
 
 class Rpc:
     def __init__(self):
-        self.port = "11311"
-        self.rpc_user = 'srf2UUR0'
-        self.rpc_pass = 'srf2UUR0XomxYkWw'
+        with open("config.json", 'r') as f:
+            config = json.loads(f.read())
+
+        self.port = config["rpc_port"]
+        self.rpc_user = config["rpc_user"]
+        self.rpc_pass = config["rpc_pass"]
         self.serverURL = 'http://localhost:' + self.port
         self.headers = {'content-type': 'application/json'}
 
