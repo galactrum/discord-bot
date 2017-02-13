@@ -1,11 +1,11 @@
 import pymysql.cursors, json
+from utils import parsing, output
 
 
 class Mysql:
 
     def __init__(self):
-        with open("config.json", 'r') as f:
-            config = json.loads(f.read())
+        config = parsing.parse_json('../config.json')
 
         self.host = config["db_host"]
         self.port = int(config["db_port"])

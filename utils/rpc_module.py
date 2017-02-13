@@ -1,10 +1,10 @@
 import json, requests
+from utils import parsing
 
 
 class Rpc:
     def __init__(self):
-        with open("config.json", 'r') as f:
-            config = json.loads(f.read())
+        config = parsing.parse_json('../config.json')
 
         self.port = config["rpc_port"]
         self.rpc_user = config["rpc_user"]
