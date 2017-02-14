@@ -19,7 +19,7 @@ class Mysql:
             user=self.db_user,
             password=self.db_pass,
             db=self.db)
-        self.connection.cursor(pymysql.cursors.DictCursor)
+        self.cursor = self.connection.cursor(pymysql.cursors.DictCursor)
 
     def make_user(self, author):
         to_exec = "INSERT INTO person(user,balance) VALUES(%s,%s)"
