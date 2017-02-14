@@ -17,7 +17,6 @@ class Balance:
 
     def __init__(self, bot):
         self.bot = bot
-        self.rpc = rpc.Rpc()
 
         # Establish connection to db
         self.connection = pymysql.connect(
@@ -80,7 +79,7 @@ class Balance:
         # changes to update_db
         params = author
         count = 1000
-        get_transactions = self.rpc.listtransactions(params,count)
+        get_transactions = rpc.listtransactions(params,count)
         i = len(get_transactions)-1
 
         new_balance = float(result_set["balance"])
@@ -104,7 +103,7 @@ class Balance:
         params = author
         user = params
         count = 1000
-        get_transactions = self.rpc.listtransactions(params,count)
+        get_transactions = rpc.listtransactions(params,count)
         i = len(get_transactions)-1
 
         if len(get_transactions) == 0:

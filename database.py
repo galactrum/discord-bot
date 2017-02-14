@@ -22,19 +22,36 @@ conn.commit()
 
 cursor.execute("USE {};".format(database))
 
+
 cursor.execute("""CREATE TABLE IF NOT EXISTS person (
     userid_pk VARCHAR(17) NOT NULL,
     username VARCHAR(37) NOT NULL,
     balance FLOAT NOT NULL,
-    PRIMARY KEY (user)
+    PRIMARY KEY (username)
     ) ENGINE=InnoDB;""")
 
-cursor.execute("""CREATE TABLE IF NOT EXISTS db (
-    user VARCHAR(17) NOT NULL,
-    balance FLOAT NOT NULL,
-    lasttxid TEXT,
-    snowflake VARCHAR(17),
-    PRIMARY KEY (user)
+cursor.execute("""CREATE TABLE IF NOT EXISTS deposit (
+    userid_fk VARCHAR(17) NOT NULL,
+    address_from VARCHAR(34) NOT NULL,
+    address_to VARCHAR(34) NOT NULL,
+    amount FLOAT NOT NULL,
+    FOREIGN KEY (userid_fk) REFERENCES person(userid_pk),
+    ) ENGINE=InnoDB;""")
+
+cursor.execute("""CREATE TABLE IF NOT EXISTS withdrawal (
+    userid_fk VARCHAR(17) NOT NULL,
+    address_from VARCHAR(34) NOT NULL,
+    address_to VARCHAR(34) NOT NULL,
+    amount FLOAT NOT NULL,
+    FOREIGN KEY (userid_fk) REFERENCES person(userid_pk),
+    ) ENGINE=InnoDB;""")
+
+cursor.execute("""CREATE TABLE IF NOT EXISTS tip (
+    userid_from_fk VARCHAR(17) NOT NULL,
+    userid_to_fk VARCHAR(17) NOT NULL,
+    ammount FLOAT NOT NULL,
+    FOREIGN KEY (userid_from_fk) REFERENCES person(userid_pk),
+    FOREIGN KEY (userid_to_fk) REFERENCES person(userid_pk),
     ) ENGINE=InnoDB;""")
 
 cursor.execute("CREATE INDEX userindex ON db(user) using BTREE;")
