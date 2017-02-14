@@ -1,4 +1,4 @@
-import parsing
+from utils import parsing
 
 config = parsing.parse_json('config.json')
 
