@@ -15,10 +15,7 @@ class Mysql:
         self.db_user = config["db_user"]
         self.db_pass = config["db_pass"]
         self.db = config["db"]
-
         self.connection = None
-        self.cursor = None
-        print("ok")
 
     def connect(self):
         self.connection = pymysql.connect(
@@ -27,11 +24,10 @@ class Mysql:
             user=self.db_user,
             password=self.db_pass,
             db=self.db)
-        print("ok2")
         return self.connection
 
     def cursor(self):
-        self.cursor = self.connection.cursor(pymysql.cursors.DictCursor)
-        return self.cursor
+        cursor = self.connection.cursor(pymysql.cursors.DictCursor)
+        return cursor
 
 
