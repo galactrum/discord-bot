@@ -81,7 +81,7 @@ async def unload(ctx, module: str):
 
 
 @bot.command(pass_context=True)
-@commands.check(chekcs.is_owner)
+@commands.check(checks.is_owner)
 async def restart(ctx):
     author = str(ctx.message.author)
 
