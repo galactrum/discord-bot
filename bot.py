@@ -94,7 +94,7 @@ async def restart(ctx):
         await bot.logout()
         bot.loop.stop()
         output.info('{} has restarted the bot...'.format(author))
-        os.execl('sudo sh restart.sh', '')
+        os.exec('sudo sh restart.sh', '')
 
     except Exception as e:
         exc = '{}: {}'.format(type(e).__name__, e)
