@@ -4,8 +4,7 @@ from utils import rpc_module, mysql_module, parsing
 
 rpc = rpc_module.Rpc()
 connector = mysql_module.Mysql()
-connection = connector.connect()
-cursor = connector.cursor()
+cursor = connector.cursor
 
 
 class Withdraw:

@@ -8,23 +8,15 @@ from utils import rpc_module, mysql_module
 #wallet_bal = nomenclature for wallet reponse
 
 rpc = rpc_module.Rpc()
-connector = mysql_module.Mysql()
-connection = connector.connect()
-cursor = connector.cursor()
+Mysql = mysql_module.Mysql()
+cursor = Mysql.cursor
 
 
 class Balance:
 
     def __init__(self, bot):
         self.bot = bot
-
-        # Establish connection to db
-        self.connection = pymysql.connect(
-            host='localhost',
-            user='root',
-            password='',
-            db='netcoin')
-        self.cursor = self.connection.cursor(pymysql.cursors.DictCursor)
+        self.cursor = cursor
 
     def make_user(self, author):
         # If check_for_user() returns None, then INSERT new user info in db
