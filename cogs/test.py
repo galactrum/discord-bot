@@ -8,7 +8,7 @@ class Test:
 
     @commands.command(pass_context=True)
     async def test(self, ctx):
-        await self.bot.say(str(ctx.message.Message))
+        await self.bot.say(str(ctx.message))
 
 
 def setup(bot):
