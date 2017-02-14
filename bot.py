@@ -101,5 +101,5 @@ async def restart(ctx):
         output.error('{} has attempted to restart the bot, but the following '
                      'exception occurred;\n\t->{}'.format(author, exc))
 
-bot.run(config["token"])
+bot.run(config["discord"]["token"])
 bot.loop.close()
