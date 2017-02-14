@@ -15,6 +15,6 @@ def parse_json(filename):
 
     if 'data' in contents:
         # Backwards compatible with old config.json files
-        contents = contents['data']
+        contents = contents['data'][0]
 
-    return contents[0]
+    return contents
