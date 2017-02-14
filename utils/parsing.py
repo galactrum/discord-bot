@@ -13,8 +13,8 @@ def parse_json(filename):
 
         contents = json.loads(content)
 
-    if 'data' not in content:
+    if 'data' in contents:
         # Backwards compatible with old config.json files
-        contents = [{'data': [contents]}]
+        contents = contents['data']
 
-    return contents["data"][0]
+    return contents[0]
