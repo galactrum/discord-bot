@@ -2,8 +2,8 @@ import discord, json, requests
 from discord.ext import commands
 from utils import rpc_module, parsing
 
-print(parsing.parse_json('config.json'))
 rpc = rpc_module.Rpc()
+
 
 class Deposit:
     def __init__(self, bot):

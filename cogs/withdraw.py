@@ -1,6 +1,6 @@
 import discord, json, requests, pymysql.cursors
 from discord.ext import commands
-from utils import rpc_module, mysql_module
+from utils import rpc_module, mysql_module, parsing
 
 rpc = rpc_module.Rpc()
 connector = mysql_module.Mysql()
