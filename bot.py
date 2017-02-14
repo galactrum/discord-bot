@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from utils import output, parsing
+from utils import output, parsing, checks
 import os
 
 description = '''Netcoin tip bot'''
@@ -31,12 +31,8 @@ async def on_ready():
     output.success('Successfully loaded the following extension(s); {}'.format(loaded_extensions))
 
 
-def is_owner(ctx):
-    return ctx.message.author.id in config["owners"]
-
-
 @bot.command(pass_context=True)
-@commands.check(is_owner)
+@commands.check(checks.is_owner)
 async def shutdown(ctx):
     author = str(ctx.message.author)
 
@@ -53,7 +49,7 @@ async def shutdown(ctx):
 
 
 @bot.command(pass_context=True)
-@commands.check(is_owner)
+@commands.check(checks.is_owner)
 async def load(ctx, module: str):
     author = str(ctx.message.author)
 
@@ -70,7 +66,7 @@ async def load(ctx, module: str):
 
     
 @bot.command(pass_context=True)
-@commands.check(is_owner)
+@commands.check(checks.is_owner)
 async def unload(ctx, module: str):
     author = str(ctx.message.author)
 
@@ -85,7 +81,7 @@ async def unload(ctx, module: str):
 
 
 @bot.command(pass_context=True)
-@commands.check(is_owner)
+@commands.check(chekcs.is_owner)
 async def restart(ctx):
     author = str(ctx.message.author)
 

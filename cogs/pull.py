@@ -1,12 +1,13 @@
 import discord, os
 from discord.ext import commands
+from utils import checks
 
 class Pull:
     def __init__(self, bot):
         self.bot = bot
 
     @commands.command(pass_context=True)
-    @commands.check(is_owner)
+    @commands.check(checks.is_owner)
     async def pull(self, ctx):
         await self.bot.say("Pulling...")
         try:
