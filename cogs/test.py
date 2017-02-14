@@ -2,8 +2,8 @@ import discord
 from discord.ext import commands
 
 class Test:
-    @bot.command(pass_context=True)
-    async def test(ctx):
+    @commands.command(pass_context=True)
+    async def test(self, ctx):
         await self.bot.say(str(ctx.message.Message))
 
 
