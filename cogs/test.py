@@ -3,7 +3,7 @@ from discord.ext import commands
 
 class Test:
     @commands.command(pass_context=True)
-    async def test(self, ctx):
+    async def test(ctx):
         await self.bot.say(str(ctx.message.Message))
 
 
