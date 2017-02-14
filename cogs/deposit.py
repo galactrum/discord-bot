@@ -1,6 +1,7 @@
 import discord, json, requests
 from discord.ext import commands
-from utils import rpc_module
+from utils import rpc_module, parsing
+
 print(parsing.parse_json('config.json'))
 rpc = rpc_module.Rpc()
 
