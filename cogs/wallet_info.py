@@ -8,6 +8,7 @@ class Wallet:
         self.bot = bot
         self.rpc = rpc.Rpc()
 
+    @commands.check(checks.is_owner)
     @commands.command()
     async def wallet(self):
         """Shows wallet info"""
