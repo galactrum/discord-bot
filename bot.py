@@ -3,7 +3,7 @@ from discord.ext import commands
 from utils import output, parsing, checks
 import os
 
-description = '''Netcoin tip bot'''
+description = '''Netcoin Tipbot'''
 bot = commands.Bot(command_prefix='!', description=description)
 
 config = parsing.parse_json('config.json')
@@ -34,6 +34,7 @@ async def on_ready():
 @bot.command(pass_context=True)
 @commands.check(checks.is_owner)
 async def shutdown(ctx):
+    """Shut down the bot"""
     author = str(ctx.message.author)
 
     try:
@@ -51,6 +52,7 @@ async def shutdown(ctx):
 @bot.command(pass_context=True)
 @commands.check(checks.is_owner)
 async def load(ctx, module: str):
+    """Load a cog located in /cogs"""
     author = str(ctx.message.author)
 
     try:
@@ -68,6 +70,7 @@ async def load(ctx, module: str):
 @bot.command(pass_context=True)
 @commands.check(checks.is_owner)
 async def unload(ctx, module: str):
+    """Unload any loaded cog"""
     author = str(ctx.message.author)
 
     try:
@@ -83,6 +86,7 @@ async def unload(ctx, module: str):
 @bot.command(pass_context=True)
 @commands.check(checks.is_owner)
 async def restart(ctx):
+    """Restart the bot"""
     author = str(ctx.message.author)
 
     try:
