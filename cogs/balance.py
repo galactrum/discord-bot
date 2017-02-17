@@ -32,12 +32,10 @@ class Balance:
         # If user has a lasttxid value in the db, then stop parsing
         # trans-list at a specific ["txid"] and submit
         # changes to update_db
+        params = author
         count = 1000
-        print('rpc.listtransactions({},{})'.format(author,count))
-        get_transactions = rpc.listtransactions(author,count)
-        print(get_transactions)
+        get_transactions = rpc.listtransactions(params,count)
         i = len(get_transactions)-1
-        print(i)
 
         new_balance = float(result_set["balance"])
         lasttxid = get_transactions[i]["txid"]
