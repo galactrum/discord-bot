@@ -66,7 +66,7 @@ class Soak:
         
         online_users = [x for x in ctx.message.server.members if x.status == discord.Status.online]
         online_users.remove(name)
-        online_users.remove(ctx.server.me)
+        online_users.remove(ctx.message.server.me)
         Mysql.check_for_user(name, snowflake)
         result_set = Mysql.get_bal_lasttxid(snowflake)
 
