@@ -13,7 +13,7 @@ class Deposit:
     async def deposit(self, ctx):
         """Shows wallet info"""
         user = ctx.message.author
-        user_addy = rpc.getaccountaddress(ctx.message.author.id)
+        user_addy = rpc.getaccountaddress(user.id)
         await self.bot.say(user.mention + "'s Deposit Address: `" + str(user_addy) + "`")
 
 
