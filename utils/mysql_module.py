@@ -40,7 +40,7 @@ class Mysql:
 
     def get_bal_lasttxid(self, author):
         to_exec = " SELECT balance,lasttxid FROM db WHERE user LIKE %s "
-        cursor.execute(to_exec, (author))
+        self.cursor.execute(to_exec, (author))
         result_set = cursor.fetchone()
         return result_set
 
