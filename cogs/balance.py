@@ -75,7 +75,7 @@ class Balance:
                     new_balance += float(get_transactions[i]["amount"])
                     break
             db_bal = new_balance
-            self.update_db(snowflake, db_bal, lasttxid)
+            Mysql.update_db(snowflake, db_bal, lasttxid)
             await self.do_embed(name, db_bal)
             #Now update db with new balance
 
