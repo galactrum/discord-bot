@@ -6,7 +6,7 @@ rpc = rpc_module.Rpc()
 Mysql = mysql_module.Mysql()
 
 
-class Withdraw:
+class Tip:
     def __init__(self, bot):
         self.bot = bot
 
