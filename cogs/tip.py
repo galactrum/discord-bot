@@ -73,7 +73,7 @@ class Tip:
         if result_set["lasttxid"] == "0":
             user_bal = await self.parse_whole_bal(snowflake)
         else:
-            user_bal = await self.parse_part_bal(result_set,snowflake)
+            user_bal = await self.parse_part_bal(result_set,snowflake,name)
 
         if float(result_set["balance"]) < amount:
             await self.bot.say("{} **:warning:You cannot tip more money than you have!:warning:**".format(name.mention))
