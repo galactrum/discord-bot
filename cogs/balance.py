@@ -34,6 +34,7 @@ class Balance:
         # changes to update_db
         count = 1000
         get_transactions = rpc.listtransactions(author,count)
+        print(get_transactions)
         i = len(get_transactions)-1
         print(i)
 
