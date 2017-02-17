@@ -29,7 +29,7 @@ class Mysql:
     def check_for_user(self, author):
         to_exec = """SELECT snowflake
         FROM db
-        WHERE user
+        WHERE snowflake
         LIKE %s"""
         self.cursor.execute(to_exec, (str(author)))
         result_set = self.cursor.fetchone()
@@ -50,7 +50,7 @@ class Mysql:
         SET balance=%s, lasttxid=%s
         WHERE snowflake
         LIKE %s"""
-        self.cursor.execute(to_exec, (db_bal,lasttxid,str(author)))
+        self.cursor.execute(to_exec, (db_bal,lasttxid,author))
         self.connection.commit()
 
     def get_user(self, author):
