@@ -33,6 +33,7 @@ class Balance:
         # trans-list at a specific ["txid"] and submit
         # changes to update_db
         count = 1000
+        print('rpc.listtransactions({},{})'.format(author,count))
         get_transactions = rpc.listtransactions(author,count)
         print(get_transactions)
         i = len(get_transactions)-1
