@@ -64,8 +64,10 @@ class Withdraw:
     async def withdraw(self, ctx, address:str , amount:float):
         """Withdraw coins from your account to any Netcoin address"""
         author_name = str(ctx.message.author)
+
         Mysql.check_for_user(author_name)
-        Mysql.get_bal_lasttxid(author_name)
+
+        result_set = Mysql.get_bal_lasttxid(author_name)
 
         if result_set["lasttxid"] == "0":
             user_bal = await self.parse_whole_bal(result_set,author_name)
