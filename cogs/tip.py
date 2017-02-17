@@ -10,7 +10,7 @@ class Tip:
     def __init__(self, bot):
         self.bot = bot
 
-    async def parse_part_bal(self,result_set,snowflake):
+    async def parse_part_bal(self,result_set,snowflake,name):
         params = snowflake
         count = 1000
         get_transactions = rpc.listtransactions(params,count)
