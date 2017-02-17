@@ -10,8 +10,8 @@ class Withdraw:
     def __init__(self, bot):
         self.bot = bot
 
-    async def parse_part_bal(self,result_set,author):
-        params = author
+    async def parse_part_bal(self,result_set,snowflake):
+        params = snowflake
         count = 1000
         get_transactions = rpc.listtransactions(params,count)
         i = len(get_transactions)-1
@@ -30,20 +30,18 @@ class Withdraw:
                     new_balance += float(get_transactions[i]["amount"])
                     break
             db_bal = new_balance
-            Mysql.update_db(user, db_bal, lasttxid)
-            return author, db_bal
+            Mysql.update_db(name, db_bal, lasttxid)
+            return snowflake, db_bal
         # Updates balance
-        # and return a tuple consisting of the author, and their balance
+        # and return a tuple consisting of the snowflake, and their balance
 
-    async def parse_whole_bal(self,author):
-        params = author
-        user = params
+    async def parse_whole_bal(self,snowflake):
         count = 1000
-        get_transactions = rpc.listtransactions(params,count)
+        get_transactions = rpc.listtransactions(snowflake,count)
         i = len(get_transactions)-1
 
         if len(get_transactions) == 0:
-            print("0 transactions found for "+author+", balance must be 0")
+            print("0 transactions found for "+snowflake+", balance must be 0")
             db_bal = 0
         else:
             new_balance = 0
@@ -57,35 +55,35 @@ class Withdraw:
                     new_balance += float(get_transactions[i]["amount"])
                     break
             db_bal = new_balance
-            Mysql.update_db(author, db_bal, lasttxid)
-            return (author, db_bal)
+            Mysql.update_db(snowflake, db_bal, lasttxid)
+            return (snowflake, db_bal)
 
     @commands.command(pass_context=True)
     async def withdraw(self, ctx, address:str , amount:float):
         """Withdraw coins from your account to any Netcoin address"""
-        author = ctx.message.author.id
-        user = ctx.message.author
+        snowflake = ctx.message.author.id
+        name = str(ctx.message.author)
 
-        Mysql.check_for_user(author)
+        Mysql.check_for_user(snowflake)
 
-        result_set = Mysql.get_bal_lasttxid(author)
+        result_set = Mysql.get_bal_lasttxid(snowflake)
 
         if result_set["lasttxid"] == "0":
-            user_bal = await self.parse_whole_bal(author)
+            user_bal = await self.parse_whole_bal(snowflake)
         else:
-            user_bal = await self.parse_part_bal(result_set,author)
+            user_bal = await self.parse_part_bal(result_set,snowflake)
 
         if float(result_set["balance"]) < amount:
-            await self.bot.say("{} **:warning:You cannot withdraw more money than you have!:warning:**".format(user.mention))
+            await self.bot.say("{} **:warning:You cannot withdraw more money than you have!:warning:**".format(name.mention))
         else:
             conf = rpc.validateaddress(address)
             if not conf["isvalid"]:
-                await self.bot.say("{} **:warning:Invalid address!:warning:**".format(user.mention))
+                await self.bot.say("{} **:warning:Invalid address!:warning:**".format(name.mention))
                 return
 
-            rpc.withdraw(author, address, amount)
-            await self.parse_part_bal(result_set, author)
-            await self.bot.say("{} **withdrew {} NET! :money_with_wings:**".format(user.mention, str(amount)))
+            rpc.withdraw(snowflake, address, amount)
+            await self.parse_part_bal(result_set, snowflake)
+            await self.bot.say("{} **withdrew {} NET! :money_with_wings:**".format(name.mention, str(amount)))
 
 def setup(bot):
     bot.add_cog(Withdraw(bot))
