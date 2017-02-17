@@ -88,4 +88,4 @@ class Soak:
 name.mention,str(int(amount)/ len(online_users)), ', '.join([x.mention for x in online_users]), str(amount)))
 
 def setup(bot):
-bot.add_cog(Soak(bot))
+    bot.add_cog(Soak(bot))
