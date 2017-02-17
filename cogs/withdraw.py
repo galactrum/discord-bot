@@ -59,34 +59,18 @@ class Withdraw:
             db_bal = new_balance
             Mysql.update_db(author, db_bal, lasttxid)
             return (author, db_bal)
-            #Now update db with new balance
-            # and return a tuple consisting of the author, and their balance
 
     @commands.command(pass_context=True)
     async def withdraw(self, ctx, address:str , amount:float):
         """Withdraw coins from your account to any Netcoin address"""
-        port =  "11311"
-
         author_name = str(ctx.message.author)
-
         Mysql.check_for_user(author_name)
-
-        #user_addy = rpcdat('getaddressesbyaccount',[author_name],port)
-        #deposite_addr = user_addy[0]
-
-        to_exec = " SELECT balance,lasttxid FROM db WHERE user LIKE %s "
-        user_bal = 0.0
-
-        cursor.execute(to_exec,(author_name))
-        result_set = cursor.fetchone()
+        Mysql.get_bal_lasttxid(author_name)
 
         if result_set["lasttxid"] == "0":
             user_bal = await self.parse_whole_bal(result_set,author_name)
         else:
             user_bal = await self.parse_part_bal(result_set,author_name)
-
-        cursor.execute(to_exec,(author_name))
-        result_set = cursor.fetchone()
 
         if float(result_set["balance"]) < amount:
             await self.bot.say("**:warning:You cannot withdraw more money than you have!:warning:**")
@@ -99,19 +83,6 @@ class Withdraw:
             rpc.withdraw(author_name, address, amount)
             await self.parse_part_bal(result_set, author_name)
             await self.bot.say("**Withdrew {} NET! :money_with_wings:**".format(str(amount)))
-
-        # removes `message` amount from `wallet` and adds `message` amount to `address` provided
-                    
-"""		
-        try:
-            if user_addy[0] == "":
-                new_user_addy = rpcdat('',)
-            else:
-
-        except IndexError:
-            await self.bot.say("You don't have an account.")
-"""
-
 
 def setup(bot):
     bot.add_cog(Withdraw(bot))
