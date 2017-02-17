@@ -22,6 +22,37 @@ class Mysql:
         self.cursor = self.connection.cursor(pymysql.cursors.DictCursor)
 
     def make_user(self, author):
-        to_exec = "INSERT INTO person(user,balance) VALUES(%s,%s)"
-        cursor.execute(to_exec, str(author), '0')
-        connection.commit()
+        to_exec = "INSERT INTO db(user,balance) VALUES(%s,%s)"
+        self.cursor.execute(to_exec, str(author), '0')
+        self.connection.commit()
+
+    def check_for_user(self, author):
+        to_exec = """SELECT user
+        FROM db
+        WHERE user
+        LIKE %s"""
+        self.cursor.execute(to_exec, (str(author)))
+        result_set = self.cursor.fetchone()
+        if result_set == None:
+            self.make_user(author)
+
+        return result_set
+
+    def update_db(self, author, db_bal, lasttxid):
+        to_exec = """UPDATE db
+        SET balance=%s, lasttxid=%s
+        WHERE user
+        LIKE %s"""
+        self.cursor.execute(to_exec, (db_bal,lasttxid,str(author)))
+        self.connection.commit()
+
+    def get_user(self, author):
+        to_exec = """
+        SELECT balance, user, lasttxid, tipped
+        FROM db
+        WHERE user
+        LIKE %s"""
+        self.cursor.execute(to_exec, (str(author)))
+        result_set = self.cursor.fetchone()
+
+        return result_set
