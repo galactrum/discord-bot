@@ -64,7 +64,7 @@ class Withdraw:
         snowflake = ctx.message.author.id
         name = str(ctx.message.author)
 
-        Mysql.check_for_user(snowflake)
+        Mysql.check_for_user(name, snowflake)
 
         result_set = Mysql.get_bal_lasttxid(snowflake)
 
