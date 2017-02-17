@@ -55,7 +55,7 @@ class Mysql:
 
     def get_user(self, author):
         to_exec = """
-        SELECT balance, snowflake, lasttxid, tipped
+        SELECT balance, snowflake, lasttxid
         FROM db
         WHERE snowflake
         LIKE %s"""
