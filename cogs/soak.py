@@ -64,7 +64,7 @@ class Soak:
         snowflake = ctx.message.author.id
         name = ctx.message.author
         
-        online_users = [x for x in server.members if x.status == discord.Status.online]
+        online_users = [x for x in ctx.message.server.members if x.status == discord.Status.online]
         Mysql.check_for_user(name, snowflake)
         result_set = Mysql.get_bal_lasttxid(snowflake)
 
