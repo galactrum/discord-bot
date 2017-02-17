@@ -56,7 +56,6 @@ class Balance:
         # the entire trans-list for that user. Submit changes to
         # update_db
         params = author
-        user = params
         count = 1000
         get_transactions = rpc.listtransactions(params,count)
         i = len(get_transactions)-1
