@@ -21,12 +21,12 @@ class Mysql:
             db=self.db)
         self.cursor = self.connection.cursor(pymysql.cursors.DictCursor)
 
-    def make_user(self, author):
-        to_exec = "INSERT INTO db(snowflake,balance) VALUES(%s,%s)"
-        self.cursor.execute(to_exec, (author, '0'))
+    def make_user(self, user, author):
+        to_exec = "INSERT INTO db(user, snowflake,balance) VALUES(%s,%s)"
+        self.cursor.execute(to_exec, (user, author, '0'))
         self.connection.commit()
 
-    def check_for_user(self, author):
+    def check_for_user(self, user, author):
         to_exec = """SELECT snowflake
         FROM db
         WHERE snowflake
@@ -34,7 +34,7 @@ class Mysql:
         self.cursor.execute(to_exec, (str(author)))
         result_set = self.cursor.fetchone()
         if result_set == None:
-            self.make_user(author)
+            self.make_user(user, author)
 
         return result_set
 
