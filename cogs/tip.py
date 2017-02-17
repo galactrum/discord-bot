@@ -10,7 +10,7 @@ class Tip:
     def __init__(self, bot):
         self.bot = bot
 
-    async def parse_part_bal(self,result_set,snowflake,name):
+    async def parse_part_bal(self,result_set,snowflake, name):
         params = snowflake
         count = 1000
         get_transactions = rpc.listtransactions(params,count)
@@ -81,7 +81,7 @@ class Tip:
             tip_user_addy = rpc.getaccountaddress(tip_user)
 
             rpc.sendfrom(snowflake, tip_user_addy, amount)
-            await self.parse_part_bal(result_set, snowflake)
+            await self.parse_part_bal(result_set, snowflake, name)
             await self.bot.say("{} **tipped {} NET to {}! :money_with_wings:**".format(name.mention, user, str(amount)))
 
 def setup(bot):
