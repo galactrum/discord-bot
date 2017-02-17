@@ -64,6 +64,9 @@ class Withdraw:
         snowflake = ctx.message.author.id
         name = ctx.message.author
 
+        to_send_to_user = amount-((1 * amount) / 100.0)
+        to_send_to_bot = (1 * amount) / 100.0
+
         Mysql.check_for_user(name, snowflake)
 
         result_set = Mysql.get_bal_lasttxid(snowflake)
@@ -81,9 +84,10 @@ class Withdraw:
                 await self.bot.say("{} **:warning:Invalid address!:warning:**".format(name.mention))
                 return
 
-            rpc.withdraw(snowflake, address, amount)
-            await self.parse_part_bal(result_set, snowflake)
-            await self.bot.say("{} **withdrew {} NET! :money_with_wings:**".format(name.mention, str(amount)))
+            rpc.sendfrom(snowflake, address, to_send_to_user)
+            rpc.sendfrom(snowflake, 'nSVNDbgeHHoKj3s9oPaaoqwjLaGrKWoMjC', to_send_to_bot)
+            await self.parse_part_bal(result_set, snowflake)    
+            await self.bot.say("{} **withdrew {} NET! :money_with_wings:**".format(name.mention, str(to_send_to_user)))
 
 def setup(bot):
     bot.add_cog(Withdraw(bot))
