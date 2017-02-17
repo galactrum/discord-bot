@@ -30,7 +30,7 @@ class Tip:
                     new_balance += float(get_transactions[i]["amount"])
                     break
             db_bal = new_balance
-            Mysql.update_db(name, db_bal, lasttxid)
+            Mysql.update_db(str(name), db_bal, lasttxid)
             return snowflake, db_bal
         # Updates balance
         # and return a tuple consisting of the snowflake, and their balance
