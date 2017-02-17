@@ -87,7 +87,7 @@ class Balance:
         user = ctx.message.author
 
         # Check if user exists in db
-        result_set = Mysql.check_for_user(author)
+        result_set = Mysql.check_for_user(user, author)
 
 
         # Execute and return SQL Query
