@@ -22,12 +22,12 @@ class Mysql:
         self.cursor = self.connection.cursor(pymysql.cursors.DictCursor)
 
     def make_user(self, author):
-        to_exec = "INSERT INTO db(user,balance) VALUES(%s,%s)"
+        to_exec = "INSERT INTO db(snowflake,balance) VALUES(%s,%s)"
         self.cursor.execute(to_exec, str(author), '0')
         self.connection.commit()
 
     def check_for_user(self, author):
-        to_exec = """SELECT user
+        to_exec = """SELECT snowflake
         FROM db
         WHERE user
         LIKE %s"""
@@ -39,24 +39,25 @@ class Mysql:
         return result_set
 
     def get_bal_lasttxid(self, author):
-        to_exec = " SELECT balance,lasttxid FROM db WHERE user LIKE %s "
+        to_exec = " SELECT balance,lasttxid FROM db WHERE snowflake LIKE %s "
         self.cursor.execute(to_exec, (author))
         result_set = self.cursor.fetchone()
+
         return result_set
 
     def update_db(self, author, db_bal, lasttxid):
         to_exec = """UPDATE db
         SET balance=%s, lasttxid=%s
-        WHERE user
+        WHERE snowflake
         LIKE %s"""
         self.cursor.execute(to_exec, (db_bal,lasttxid,str(author)))
         self.connection.commit()
 
     def get_user(self, author):
         to_exec = """
-        SELECT balance, user, lasttxid, tipped
+        SELECT balance, snowflake, lasttxid, tipped
         FROM db
-        WHERE user
+        WHERE snowflake
         LIKE %s"""
         self.cursor.execute(to_exec, (str(author)))
         result_set = self.cursor.fetchone()
