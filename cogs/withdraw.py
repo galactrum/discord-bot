@@ -3,49 +3,13 @@ from discord.ext import commands
 from utils import rpc_module, mysql_module, parsing
 
 rpc = rpc_module.Rpc()
-connector = mysql_module.Mysql()
+Mysql = mysql_module.Mysql()
 cursor = connector.cursor
 
 
 class Withdraw:
     def __init__(self, bot):
         self.bot = bot
-
-    def make_user(self, author):
-        to_exec = "INSERT INTO person(user,balance) VALUES(%s,%s)"
-        cursor.execute(to_exec, str(author), '0')
-        connection.commit()
-        return
-
-    def update_db(self, author, db_bal, lasttxid):
-        # If user balance has been updated in parse_part... or parse_whole,
-        # update the db
-        try:
-            to_exec = """UPDATE db
-            SET balance=%s, lasttxid=%s
-            WHERE user
-            LIKE %s"""
-            cursor.execute(to_exec, (db_bal,lasttxid,str(author)))
-            connection.commit()
-        except Exception as e:
-            print("Error: "+str(e))
-
-    def check_for_user(self, author):
-        try:
-            to_exec = """
-                    SELECT user
-                    FROM db
-                    WHERE user
-                    LIKE %s
-                    """
-            cursor.execute(to_exec, str(author))
-            result_set = cursor.fetchone()
-        except Exception as e:
-            print("Error in SQL query: ",str(e))
-            return
-        if result_set == None:
-            self.make_user(author)
-            return
 
     async def parse_part_bal(self,result_set,author):
         params = author
@@ -67,8 +31,8 @@ class Withdraw:
                     new_balance += float(get_transactions[i]["amount"])
                     break
             db_bal = new_balance
-            self.update_db(author, db_bal, lasttxid)
-            return (author, db_bal)
+            Mysql.update_db(author, db_bal, lasttxid)
+            return author, db_bal
         # Updates balance
         # and return a tuple consisting of the author, and their balance
 
@@ -94,7 +58,7 @@ class Withdraw:
                     new_balance += float(get_transactions[i]["amount"])
                     break
             db_bal = new_balance
-            self.update_db(author, db_bal, lasttxid)
+            Mysql.update_db(author, db_bal, lasttxid)
             return (author, db_bal)
             #Now update db with new balance
             # and return a tuple consisting of the author, and their balance
@@ -106,7 +70,7 @@ class Withdraw:
 
         author_name = str(ctx.message.author)
 
-        self.check_for_user(author_name)
+        Mysql.check_for_user(author_name)
 
         #user_addy = rpcdat('getaddressesbyaccount',[author_name],port)
         #deposite_addr = user_addy[0]

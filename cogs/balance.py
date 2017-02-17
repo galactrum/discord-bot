@@ -9,49 +9,12 @@ from utils import rpc_module, mysql_module
 
 rpc = rpc_module.Rpc()
 Mysql = mysql_module.Mysql()
-cursor = Mysql.cursor
 
 
 class Balance:
 
     def __init__(self, bot):
         self.bot = bot
-        self.cursor = cursor
-
-    def make_user(self, author):
-        # If check_for_user() returns None, then INSERT new user info in db
-        to_exec = """INSERT INTO db(user,balance)
-        VALUES(%s,%s)"""
-        self.cursor.execute(to_exec, (str(author), '0'))
-        self.connection.commit()
-
-    def check_for_user(self, author):
-        # Check if the user exists in the db by querying the db.
-        # If the db returns None, then the row does not exist
-        try:
-            to_exec = """SELECT user
-            FROM db
-            WHERE user
-            LIKE %s"""
-            self.cursor.execute(to_exec, (str(author)))
-            result_set = self.cursor.fetchone()
-            if result_set == None:
-                self.make_user(author)
-        except Exception as e:
-            print("Error in SQL query: ",str(e))
-
-    def update_db(self, author, db_bal, lasttxid):
-        # If user balance has been updated in parse_part... or parse_whole,
-        # update the db
-        try:
-            to_exec = """UPDATE db
-            SET balance=%s, lasttxid=%s
-            WHERE user
-            LIKE %s"""
-            self.cursor.execute(to_exec, (db_bal,lasttxid,str(author)))
-            self.connection.commit()
-        except Exception as e:
-            print("Error: "+str(e))
 
     async def do_embed(self, author, db_bal):
         # Simple embed function for displaying username and balance
@@ -85,7 +48,7 @@ class Balance:
                 if tx["txid"] == result_set["lasttxid"]:
                     break
             db_bal = new_balance
-            self.update_db(author, db_bal, lasttxid)
+            Mysql.update_db(author, db_bal, lasttxid)
             await self.do_embed(author, db_bal)
 
     async def parse_whole_bal(self,result_set,author):
@@ -124,22 +87,12 @@ class Balance:
         author = str(ctx.message.author)
 
         # Check if user exists in db
-        self.check_for_user(author)
+        result_set = Mysql.check_for_user(author)
 
 
         # Execute and return SQL Query
-        try:
-            to_exec = """
-            SELECT balance, user, lasttxid, tipped
-            FROM db
-            WHERE user
-            LIKE %s"""
-            self.cursor.execute(to_exec, (str(author)))
-            result_set = self.cursor.fetchone()
-        except Exception as e:
-            print("Error in SQL query: ",str(e))
-            return
-        #
+        result_set = Mysql.get_user(author)
+
         if result_set["lasttxid"] == "0":
             await self.parse_whole_bal(result_set,author)
         else:
