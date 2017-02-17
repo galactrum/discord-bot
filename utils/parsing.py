@@ -1,6 +1,5 @@
 import re, json
 
-
 def parse_json(filename):
     """ remove //-- and /* -- */ style comments from JSON """
     comment_re = re.compile('(^)?[^\S\n]*/(?:\*(.*?)\*/[^\S\n]*|/[^\n]*)($)?', re.DOTALL | re.MULTILINE)

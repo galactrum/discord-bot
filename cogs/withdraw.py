@@ -86,7 +86,7 @@ class Withdraw:
 
             rpc.sendfrom(snowflake, address, to_send_to_user)
             rpc.sendfrom(snowflake, 'nSVNDbgeHHoKj3s9oPaaoqwjLaGrKWoMjC', to_send_to_bot)
-            await self.parse_part_bal(result_set, snowflake)    
+            await self.parse_part_bal(result_set, snowflake)
             await self.bot.say("{} **withdrew {} NET! :money_with_wings:**".format(name.mention, str(to_send_to_user)))
 
 def setup(bot):
