@@ -62,7 +62,7 @@ class Withdraw:
     async def withdraw(self, ctx, address:str , amount:float):
         """Withdraw coins from your account to any Netcoin address"""
         snowflake = ctx.message.author.id
-        name = str(ctx.message.author)
+        name = ctx.message.author
 
         Mysql.check_for_user(name, snowflake)
 
