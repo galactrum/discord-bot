@@ -41,7 +41,7 @@ class Mysql:
     def get_bal_lasttxid(self, author):
         to_exec = " SELECT balance,lasttxid FROM db WHERE user LIKE %s "
         self.cursor.execute(to_exec, (author))
-        result_set = cursor.fetchone()
+        result_set = self.cursor.fetchone()
         return result_set
 
     def update_db(self, author, db_bal, lasttxid):
