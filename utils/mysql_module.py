@@ -22,8 +22,8 @@ class Mysql:
         self.cursor = self.connection.cursor(pymysql.cursors.DictCursor)
 
     def make_user(self, author):
-        to_exec = "INSERT INTO db(snowflake,balance) VALUES(%s,%s)".format(author, '0')
-        self.cursor.execute(to_exec)
+        to_exec = "INSERT INTO db(snowflake,balance) VALUES(%s,%s)"
+        self.cursor.execute(to_exec, (author, '0'))
         self.connection.commit()
 
     def check_for_user(self, author):
