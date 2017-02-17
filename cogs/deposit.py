@@ -12,9 +12,9 @@ class Deposit:
     @commands.command(pass_context=True)
     async def deposit(self, ctx):
         """Shows wallet info"""
-        account = ctx.message.author
-        user_addy = rpc.getaccountaddress(str(account))
-        await self.bot.say(account.mention + "'s Deposit Address: `" + str(user_addy) + "`")
+        user = ctx.message.author
+        user_addy = rpc.getaccountaddress(ctx.message.author.id)
+        await self.bot.say(user.mention + "'s Deposit Address: `" + str(user_addy) + "`")
 
 
 def setup(bot):

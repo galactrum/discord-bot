@@ -30,12 +30,12 @@ class Withdraw:
                     new_balance += float(get_transactions[i]["amount"])
                     break
             db_bal = new_balance
-            Mysql.update_db(author, db_bal, lasttxid)
+            Mysql.update_db(user, db_bal, lasttxid)
             return author, db_bal
         # Updates balance
         # and return a tuple consisting of the author, and their balance
 
-    async def parse_whole_bal(self,result_set,author):
+    async def parse_whole_bal(self,author):
         params = author
         user = params
         count = 1000
@@ -63,28 +63,29 @@ class Withdraw:
     @commands.command(pass_context=True)
     async def withdraw(self, ctx, address:str , amount:float):
         """Withdraw coins from your account to any Netcoin address"""
-        author_name = str(ctx.message.author)
+        author = ctx.message.author.id
+        user = ctx.message.author
 
-        Mysql.check_for_user(author_name)
+        Mysql.check_for_user(author)
 
-        result_set = Mysql.get_bal_lasttxid(author_name)
+        result_set = Mysql.get_bal_lasttxid(author)
 
         if result_set["lasttxid"] == "0":
-            user_bal = await self.parse_whole_bal(result_set,author_name)
+            user_bal = await self.parse_whole_bal(author)
         else:
-            user_bal = await self.parse_part_bal(result_set,author_name)
+            user_bal = await self.parse_part_bal(result_set,author)
 
         if float(result_set["balance"]) < amount:
-            await self.bot.say("**:warning:You cannot withdraw more money than you have!:warning:**")
+            await self.bot.say("{} **:warning:You cannot withdraw more money than you have!:warning:**".format(user.mention))
         else:
             conf = rpc.validateaddress(address)
             if not conf["isvalid"]:
-                await self.bot.say("**:warning:Invalid address!:warning:**")
+                await self.bot.say("{} **:warning:Invalid address!:warning:**".format(user.mention))
                 return
 
-            rpc.withdraw(author_name, address, amount)
-            await self.parse_part_bal(result_set, author_name)
-            await self.bot.say("**Withdrew {} NET! :money_with_wings:**".format(str(amount)))
+            rpc.withdraw(author, address, amount)
+            await self.parse_part_bal(result_set, author)
+            await self.bot.say("{} **withdrew {} NET! :money_with_wings:**".format(user.mention, str(amount)))
 
 def setup(bot):
     bot.add_cog(Withdraw(bot))
