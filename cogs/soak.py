@@ -84,8 +84,7 @@ class Soak:
             rpc.sendfrom(snowflake, tip_user_addy, amount)
         
         await self.parse_part_bal(result_set, snowflake, name)
-        await self.bot.say("{} **Soaked {} NET on {} [{}] :money_with_wings:**".format(
-        name.mention,str(amount/len(online_users)),', '.join[x.mention for x in online_users],str(amount)))
+        await self.bot.say("{} **Soaked {} NET on {} [{}] :money_with_wings:**".format(name.mention,str(amount/len(online_users)),', '.join[x.mention for x in online_users],str(amount))
 
 def setup(bot):
 bot.add_cog(Soak(bot))
