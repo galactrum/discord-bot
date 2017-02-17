@@ -82,7 +82,7 @@ class Tip:
 
             rpc.sendfrom(snowflake, tip_user_addy, amount)
             await self.parse_part_bal(result_set, snowflake, name)
-            await self.bot.say("{} **tipped {} NET to {}! :money_with_wings:**".format(name.mention, user, str(amount)))
+            await self.bot.say("{} **tipped {} NET to {}! :money_with_wings:**".format(name.mention, user.mention, str(amount)))
 
 def setup(bot):
     bot.add_cog(Tip(bot))
