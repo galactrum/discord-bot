@@ -23,7 +23,7 @@ class Mysql:
 
     def make_user(self, author):
         to_exec = "INSERT INTO db(snowflake,balance) VALUES(%s,%s)"
-        self.cursor.execute(to_exec, str(author), '0')
+        self.cursor.execute(to_exec, (str(author), '0'))
         self.connection.commit()
 
     def check_for_user(self, author):
