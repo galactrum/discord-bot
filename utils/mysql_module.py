@@ -22,7 +22,7 @@ class Mysql:
         self.cursor = self.connection.cursor(pymysql.cursors.DictCursor)
 
     def make_user(self, name, snowflake):
-        to_exec = "INSERT INTO db(user, snowflake, balance) VALUES(%s,%s)"
+        to_exec = "INSERT INTO db(user, snowflake, balance) VALUES(%s,%s,%s)"
         self.cursor.execute(to_exec, (str(name), snowflake, '0'))
         self.connection.commit()
 
