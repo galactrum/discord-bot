@@ -8,7 +8,7 @@ class Test:
 
     @commands.command(pass_context=True)
     async def test(self, ctx):
-        await self.bot.say(":tada:{}:tada:".format(ctx.message.user))
+        await self.bot.say(":tada:{}:tada:".format(ctx.user.id))
 
 
 def setup(bot):
