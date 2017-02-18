@@ -30,6 +30,17 @@ async def on_ready():
 
     output.success('Successfully loaded the following extension(s); {}'.format(loaded_extensions))
 
+async def send_cmd_help(ctx):
+    if ctx.invoked_subcommand:
+        pages = bot.formatter.format_help_for(ctx, ctx.invoked_subcommand)
+        for page in pages:
+            em = discord.Embed(title="Missing args :x:", description=page.strip("```").replace('<', '[').replace('>', ']'), color=discord.Color.red())
+            await bot.send_message(ctx.message.channel, embed=em)
+    else:
+        pages = bot.formatter.format_help_for(ctx, ctx.command)
+        for page in pages:
+            em = discord.Embed(title="Missing args :x:", description=page.strip("```").replace('<', '[').replace('>', ']'), color=discord.Color.red())
+            await bot.send_message(ctx.message.channel, embed=em)
 
 @bot.command(pass_context=True)
 @commands.check(checks.is_owner)
@@ -100,6 +111,18 @@ async def restart(ctx):
         exc = '{}: {}'.format(type(e).__name__, e)
         output.error('{} has attempted to restart the bot, but the following '
                      'exception occurred;\n\t->{}'.format(author, exc))
+
+@bot.event
+async def on_command_error(error, ctx):
+    channel = ctx.message.channel
+    if isinstance(error, commands.MissingRequiredArgument):
+        await bot.say("{}")
+    elif isinstance(error, commands.BadArgument):
+        await send_cmd_help(ctx)
+    elif isinstance(error, commands.CommandInvokeError):
+        output.error("Exception in command '{}', {}".format(ctx.command.qualified_name, error.original))
+        oneliner = "Error in command '{}' - {}: {}\nIf this issue persists, Please report it in the support server.".format(ctx.command.qualified_name, type(error.original).__name__,str(error.original))
+        await ctx.bot.send_message(channel, oneliner)
 
 bot.run(config["discord"]["token"])
 bot.loop.close()
