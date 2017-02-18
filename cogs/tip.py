@@ -65,6 +65,9 @@ class Tip:
         name = ctx.message.author
 
         tip_user = user.id
+        if snowflake == tip_user:
+            await self.bot.say("{} **:warning:You cannot tip yourself!:warning:**".format(name.mention))
+            return
 
         Mysql.check_for_user(name, snowflake)
 
