@@ -64,7 +64,9 @@ class Soak:
         snowflake = ctx.message.author.id
         name = ctx.message.author
         
-        online_users = [x for x in server.members if x.status == discord.Status.online]
+        online_users = [x for x in ctx.message.server.members if x.status == discord.Status.online]
+        online_users.remove(name)
+        online_users.remove(ctx.message.server.me)
         Mysql.check_for_user(name, snowflake)
         result_set = Mysql.get_bal_lasttxid(snowflake)
 
@@ -85,7 +87,7 @@ class Soak:
         
         await self.parse_part_bal(result_set, snowflake, name)
         await self.bot.say("{} **Soaked {} NET on {} [{}] :money_with_wings:**".format(
-            name.mention,str(int(amount)/ len(online_users)), ', '.join[x.mention for x in online_users], str(amount))
+name.mention,str(int(amount)/ len(online_users)), ', '.join([x.mention for x in online_users]), str(amount)))
 
 def setup(bot):
-bot.add_cog(Soak(bot))
+    bot.add_cog(Soak(bot))
