@@ -116,7 +116,7 @@ async def restart(ctx):
 async def on_command_error(error, ctx):
     channel = ctx.message.channel
     if isinstance(error, commands.MissingRequiredArgument):
-        await bot.say("{}")
+        await send_cmd_help(ctx)
     elif isinstance(error, commands.BadArgument):
         await send_cmd_help(ctx)
     elif isinstance(error, commands.CommandInvokeError):
