@@ -61,8 +61,9 @@ class Tip:
     @commands.command(pass_context=True)
     async def tip(self, ctx, user:discord.Member, amount:float):
         """Tip a user coins"""
-        if '-' in str(amount):
-            str(amount).strip('-')
+        if amount < 0.0:
+            await self.bot.say("{} **:warning:You cannot tip less than 0!:warning:**".format(name.mention))
+            return
         snowflake = ctx.message.author.id
         name = ctx.message.author
 
