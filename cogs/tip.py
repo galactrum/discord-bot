@@ -61,6 +61,8 @@ class Tip:
     @commands.command(pass_context=True)
     async def tip(self, ctx, user:discord.Member, amount:float):
         """Tip a user coins"""
+        if '-' in str(amount):
+            str(amount).strip('-')
         snowflake = ctx.message.author.id
         name = ctx.message.author
 
