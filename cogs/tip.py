@@ -69,8 +69,8 @@ class Tip:
             await self.bot.say("{} **:warning:You cannot tip yourself!:warning:**".format(name.mention))
             return
 
-        if amount < 0.0:
-            await self.bot.say("{} **:warning:You cannot tip less than 0!:warning:**".format(name.mention))
+        if amount <= 0.0:
+            await self.bot.say("{} **:warning:You cannot tip <= 0!:warning:**".format(name.mention))
             return
 
         Mysql.check_for_user(name, snowflake)
