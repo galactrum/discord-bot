@@ -19,7 +19,7 @@ class Balance:
     async def do_embed(self, name, db_bal):
         # Simple embed function for displaying username and balance
         embed = discord.Embed(colour=discord.Colour.red())
-        embed.add_field(name="User", value=name)
+        embed.add_field(name="User", value=name.mention)
         embed.add_field(name="Balance (NET)", value="%.8f" % round(float(db_bal),8))
         embed.set_footer(text="Sponsored by altcointrain.com - Choo!!! Choo!!!")
 
@@ -41,7 +41,7 @@ class Balance:
         lasttxid = get_transactions[i]["txid"]
         if lasttxid == result_set["lasttxid"]:
             db_bal = result_set["balance"]
-            await self.do_embed(name.mention, db_bal)
+            await self.do_embed(name, db_bal)
         else:
             for tx in reversed(get_transactions):
                 new_balance += float(tx["amount"])
@@ -49,7 +49,7 @@ class Balance:
                     break
             db_bal = new_balance
             Mysql.update_db(snowflake, db_bal, lasttxid)
-            await self.do_embed(name.mention, db_bal)
+            await self.do_embed(name, db_bal)
 
     async def parse_whole_bal(self,snowflake,name):
         # If a user does not have a lasttxid in the db, the parse
@@ -60,7 +60,7 @@ class Balance:
         i = len(get_transactions)-1
 
         if len(get_transactions) == 0:
-            print("0 transactions found for "+name+", balance must be 0")
+            print("0 transactions found for "+str(name)+", balance must be 0")
             db_bal = 0
             await self.do_embed(name, db_bal)
         else:
@@ -83,10 +83,10 @@ class Balance:
     async def balance(self, ctx):
         # Set important variables
         snowflake = ctx.message.author.id
-        name = str(ctx.message.author)
+        name = ctx.message.author
 
         # Check if user exists in db
-        result_set = Mysql.check_for_user(name, snowflake)
+        result_set = Mysql.check_for_user(str(name), snowflake)
 
 
         # Execute and return SQL Query
