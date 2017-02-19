@@ -17,10 +17,10 @@ class Log:
         length = len(text)
         if num_lines > length:
             num_lines = length
-        send = ""
+        send = "```"
         for line in itertools.islice(text, length - num_lines, length):
             send += line
-
+        send += "```"
         await self.bot.say(send)
 
 
