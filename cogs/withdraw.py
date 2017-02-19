@@ -88,7 +88,7 @@ class Withdraw:
             bot_addy = rpc.getaccountaddress(self.bot.user.id)
             rpc.sendfrom(snowflake, bot_addy, to_send_to_bot)
             await self.parse_part_bal(result_set, snowflake)
-            await self.bot.say("{} **withdrew {} NET! :money_with_wings:**".format(name.mention, str(to_send_to_user)))
+            await self.bot.say("{} **withdrew {} NET! :money_with_wings:**\n Fee: 1%, {} NET".format(name.mention, str(to_send_to_user),str(to_send_to_bot)))
 
 def setup(bot):
     bot.add_cog(Withdraw(bot))
