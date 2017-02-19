@@ -83,7 +83,8 @@ class Soak:
             tip_user = user.id
             tip_user_addy = rpc.getaccountaddress(tip_user)
 
-            rpc.sendfrom(snowflake, tip_user_addy, amount)
+            amount_split = int(amount)/len(online_users)
+            rpc.sendfrom(snowflake, tip_user_addy, amount_split)
         
         await self.parse_part_bal(result_set, snowflake, name)
         await self.bot.say("{} **Soaked {} NET on {} [{}] :money_with_wings:**".format(
