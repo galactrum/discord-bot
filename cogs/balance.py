@@ -86,7 +86,7 @@ class Balance:
         name = ctx.message.author
 
         # Check if user exists in db
-        result_set = Mysql.check_for_user(str(name), snowflake)
+        result_set = Mysql.check_for_user(name, snowflake)
 
 
         # Execute and return SQL Query
