@@ -49,7 +49,7 @@ class Balance:
                     break
             db_bal = new_balance
             Mysql.update_db(snowflake, db_bal, lasttxid)
-            await self.do_embed(name, db_bal)
+            await self.do_embed(name.mention, db_bal)
 
     async def parse_whole_bal(self,snowflake,name):
         # If a user does not have a lasttxid in the db, the parse
