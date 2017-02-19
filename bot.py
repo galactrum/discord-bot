@@ -6,6 +6,11 @@ import os
 description = '''Netcoin Tipbot'''
 bot = commands.Bot(command_prefix='!', description=description)
 
+try:
+    os.remove("log.txt")
+except FileNotFoundError:
+    pass
+
 config = parsing.parse_json('config.json')
 
 
@@ -27,7 +32,6 @@ async def on_ready():
         except Exception as e:
             exc = '{}: {}'.format(type(e).__name__, e)
             output.error('Failed to load extension {}\n\t->{}'.format(extension, exc))
-
     output.success('Successfully loaded the following extension(s); {}'.format(loaded_extensions))
 
 async def send_cmd_help(ctx):
@@ -41,6 +45,7 @@ async def send_cmd_help(ctx):
         for page in pages:
             em = discord.Embed(title="Missing args :x:", description=page.strip("```").replace('<', '[').replace('>', ']'), color=discord.Color.red())
             await bot.send_message(ctx.message.channel, embed=em)
+
 
 @bot.command(pass_context=True)
 @commands.check(checks.is_owner)

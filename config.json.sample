@@ -15,6 +15,11 @@
             "rpc_user": "user",
             "rpc_pass": "pass"
         },
+        "logging": {
+            "print_level": 3,
+            "file": "log.txt",
+            "file_level": 3
+        },
         "owners": ["owners discord id"]
     }
 ]}
