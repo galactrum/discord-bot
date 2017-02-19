@@ -15,6 +15,8 @@ class Log:
         with open(config["file"], "r") as f:
             text = f.readlines()
         length = len(text)
+        if num_lines > length:
+            num_lines = length
         send = ""
         for line in itertools.islice(text, length - num_lines, length):
             send += line
