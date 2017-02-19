@@ -16,7 +16,7 @@ class Log:
             text = f.readlines()
         length = len(text)
         send = ""
-        for line in itertools.islice(text, length - num_lines, length + 1):
+        for line in itertools.islice(text, length - num_lines, length):
             send += line
 
         await self.bot.say(send)
