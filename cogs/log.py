@@ -16,8 +16,8 @@ class Log:
             text = f.readlines()
         length = len(text)
         if num_lines < 1:
-            num_lines = 10
-        elif num_lines > length:
+            num_lines = 5
+        if num_lines > length:
             num_lines = length
         send = "```"
         for line in itertools.islice(text, length - num_lines, length):
