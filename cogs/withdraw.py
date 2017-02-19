@@ -30,7 +30,7 @@ class Withdraw:
                     new_balance += float(get_transactions[i]["amount"])
                     break
             db_bal = new_balance
-            Mysql.update_db(name, db_bal, lasttxid)
+            Mysql.update_db(snowflake, db_bal, lasttxid)
             return snowflake, db_bal
         # Updates balance
         # and return a tuple consisting of the snowflake, and their balance
@@ -81,7 +81,7 @@ class Withdraw:
         else:
             conf = rpc.validateaddress(address)
             if not conf["isvalid"]:
-                await self.bot.say("{} **:warning:Invalid address!:warning:**".format(name.mention))
+                await self.bot.say("{} **:warning:Invalid address!:warning:**".format(ctx.message.author.mention))
                 return
 
             rpc.sendfrom(snowflake, address, to_send_to_user)
