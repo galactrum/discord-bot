@@ -1,6 +1,7 @@
 import discord, json, requests, pymysql.cursors
 from discord.ext import commands
 from utils import rpc_module, mysql_module, parsing
+import decimal
 
 rpc = rpc_module.Rpc()
 Mysql = mysql_module.Mysql()
@@ -63,9 +64,13 @@ class Withdraw:
         """Withdraw coins from your account to any Netcoin address"""
         snowflake = ctx.message.author.id
         name = ctx.message.author
-
-        to_send_to_user = amount-((1 * amount) / 100.0)
-        to_send_to_bot = (1 * amount) / 100.0
+        amount = abs(amount)
+        
+        if abs(decimal.Decimal(str(amount)).as_tuple().exponent) > 8:
+            await self.bot.say(":warning:**Invalid amount!**:warning:")
+            return
+        to_send_to_user = amount- (amount / 100.0)
+        to_send_to_bot = amount / 100.0
 
         Mysql.check_for_user(name, snowflake)
 
@@ -88,7 +93,7 @@ class Withdraw:
             bot_addy = rpc.getaccountaddress(self.bot.user.id)
             rpc.sendfrom(snowflake, bot_addy, to_send_to_bot)
             await self.parse_part_bal(result_set, snowflake)
-            await self.bot.say("{} **withdrew {} NET! :money_with_wings:**".format(name.mention, str(to_send_to_user)))
+            await self.bot.say("{} **withdrew {} NET! :money_with_wings:**\n Fee: 1%, {} NET".format(name.mention, str(to_send_to_user),str(to_send_to_bot)))
 
 def setup(bot):
     bot.add_cog(Withdraw(bot))
