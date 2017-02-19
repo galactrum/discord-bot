@@ -17,16 +17,17 @@ config = parsing.parse_json('config.json')
 startup_extensions = os.listdir("./cogs")
 if "__pycache__" in startup_extensions:
     startup_extensions.remove("__pycache__")
+startup_extensions = [ext.replace('.py', '') for ext in startup_extensions]
+loaded_extensions = []
 
 
 @bot.event
 async def on_ready():
     output.info("Loading {} extension(s)...".format(len(startup_extensions)))
-    loaded_extensions = []
 
     for extension in startup_extensions:
         try:
-            bot.load_extension("cogs.{}".format(extension.replace(".py","")))
+            bot.load_extension("cogs.{}".format(extension.replace(".py", "")))
             loaded_extensions.append(extension)
 
         except Exception as e:
@@ -74,6 +75,7 @@ async def load(ctx, module: str):
     try:
         bot.load_extension("cogs.{}".format(module))
         output.info('{} loaded module: {}'.format(author, module))
+        loaded_extensions.append(module)
         await bot.say("Successfully loaded {}.py".format(module))
 
     except Exception as e:
@@ -92,11 +94,23 @@ async def unload(ctx, module: str):
     try:
         bot.unload_extension("cogs.{}".format(module))
         output.info('{} unloaded module: {}'.format(author, module))
+        startup_extensions.remove(module)
         await bot.say("Successfully unloaded {}.py".format(module))
 
     except Exception as e:
         exc = '{}: {}'.format(type(e).__name__, e)
         await bot.say('Failed to load extension {}\n\t->{}'.format(module, exc))
+
+
+@bot.command(pass_context=True)
+@commands.check(checks.is_owner)
+async def loaded(ctx):
+    """List loaded cogs"""
+    string = ""
+    for cog in loaded_extensions:
+        string += cog + "\n"
+
+    await bot.say('Currently loaded extensions:\n```{}```'.format(string))
 
 
 @bot.command(pass_context=True)
@@ -116,6 +130,7 @@ async def restart(ctx):
         exc = '{}: {}'.format(type(e).__name__, e)
         output.error('{} has attempted to restart the bot, but the following '
                      'exception occurred;\n\t->{}'.format(author, exc))
+
 
 @bot.event
 async def on_command_error(error, ctx):

@@ -13,7 +13,6 @@ message = ['[ERROR]   ', '[WARNING] ', '[SUCCESS] ', '[INFO]    ']
 
 
 def do_syn(string, var):
-    print(var, config["print_level"], config["file_level"])
     if var <= config["print_level"]:
         print(color[var]+message[var]+'\033[1;37;40m{0}'.format(string))
 
