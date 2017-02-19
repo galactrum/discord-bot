@@ -71,6 +71,7 @@ async def shutdown(ctx):
 async def load(ctx, module: str):
     """Load a cog located in /cogs"""
     author = str(ctx.message.author)
+    module = module.strip()
 
     try:
         bot.load_extension("cogs.{}".format(module))
@@ -90,6 +91,7 @@ async def load(ctx, module: str):
 async def unload(ctx, module: str):
     """Unload any loaded cog"""
     author = str(ctx.message.author)
+    module = module.strip()
 
     try:
         bot.unload_extension("cogs.{}".format(module))
