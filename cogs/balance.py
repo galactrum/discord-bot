@@ -41,7 +41,7 @@ class Balance:
         lasttxid = get_transactions[i]["txid"]
         if lasttxid == result_set["lasttxid"]:
             db_bal = result_set["balance"]
-            await self.do_embed(name, db_bal)
+            await self.do_embed(name.mention, db_bal)
         else:
             for tx in reversed(get_transactions):
                 new_balance += float(tx["amount"])
