@@ -36,7 +36,6 @@ class Balance:
         get_transactions = rpc.listtransactions(snowflake,count)
         i = len(get_transactions)-1
 
-        print("result_set balance: "+str(result_set["balance"]))
         new_balance = float(result_set["balance"])#set base balance; i.e. already processed transactions
         lasttxid = get_transactions[i]["txid"]    #set the very last txid to a var for storage for future checks
         if lasttxid == result_set["lasttxid"]:    #check if the last txid is equal to what we've already checked
@@ -61,7 +60,6 @@ class Balance:
         i = len(get_transactions)-1
 
         if len(get_transactions) == 0:
-            print("0 transactions found for "+str(name)+", balance must be 0")
             db_bal = 0
             await self.do_embed(name, db_bal)
         else:
