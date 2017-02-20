@@ -95,7 +95,7 @@ class Soak:
         for user in online_users:
             address = rpc.getaccountaddress(user.id)
             payments[address] = str(amount_split)
-        payments = ''.join(json.loads(payments))
+        payments = ''.join(json.loads(str(payments)))
         call = rpc.sendmany(snowflake, payments)
         print(call)
         
