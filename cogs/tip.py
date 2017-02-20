@@ -23,7 +23,6 @@ class Tip:
         lasttxid = get_transactions[i]["txid"]
         if lasttxid == result_set["lasttxid"]:
             db_bal = result_set["balance"]
-            await self.do_embed(name, db_bal)
         else:
             for tx in reversed(get_transactions):
                 if tx["txid"] == result_set["lasttxid"]:
@@ -32,7 +31,6 @@ class Tip:
                     new_balance += float(tx["amount"])
             db_bal = new_balance
             Mysql.update_db(snowflake, db_bal, lasttxid)
-            await self.do_embed(name, db_bal)
 
     async def parse_whole_bal(self,snowflake,name):
         # If a user does not have a lasttxid in the db, the parse
@@ -44,7 +42,6 @@ class Tip:
 
         if len(get_transactions) == 0:
             db_bal = 0
-            await self.do_embed(name, db_bal)
         else:
             new_balance = 0
             lasttxid = get_transactions[i]["txid"]
@@ -58,7 +55,6 @@ class Tip:
                     break
             db_bal = new_balance
             Mysql.update_db(snowflake, db_bal, lasttxid)
-            await self.do_embed(name, db_bal)
             #Now update db with new balance
 
     @commands.command(pass_context=True)
