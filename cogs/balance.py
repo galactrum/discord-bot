@@ -1,4 +1,4 @@
-import discord, json, requests, pymysql.cursors
+import discord
 from discord.ext import commands
 from utils import rpc_module, mysql_module
 
@@ -44,9 +44,10 @@ class Balance:
             await self.do_embed(name, db_bal)
         else:
             for tx in reversed(get_transactions):
-                new_balance += float(tx["amount"])
                 if tx["txid"] == result_set["lasttxid"]:
                     break
+                else:
+                    new_balance += float(tx["amount"])
             db_bal = new_balance
             Mysql.update_db(snowflake, db_bal, lasttxid)
             await self.do_embed(name, db_bal)

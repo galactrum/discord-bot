@@ -10,7 +10,10 @@ class Soak:
     def __init__(self, bot):
         self.bot = bot
 
-    async def parse_part_bal(self, result_set, snowflake, name):
+    async def parse_part_bal(self,result_set,snowflake,name):
+        # If user has a lasttxid value in the db, then stop parsing
+        # trans-list at a specific ["txid"] and submit
+        # changes to update_db
         params = snowflake
         count = 1000
         get_transactions = rpc.listtransactions(params,count)
@@ -20,20 +23,16 @@ class Soak:
         lasttxid = get_transactions[i]["txid"]
         if lasttxid == result_set["lasttxid"]:
             db_bal = result_set["balance"]
-            return
+            await self.do_embed(name, db_bal)
         else:
-            while i <= len(get_transactions):
-                if get_transactions[i]["txid"] != result_set["lasttxid"]:
-                    new_balance += float(get_transactions[i]["amount"])
-                    i -= 1
-                else:
-                    new_balance += float(get_transactions[i]["amount"])
+            for tx in reversed(get_transactions):
+                if tx["txid"] == result_set["lasttxid"]:
                     break
+                else:
+                    new_balance += float(tx["amount"])
             db_bal = new_balance
-            Mysql.update_db(str(name), db_bal, lasttxid)
-            return snowflake, db_bal
-        # Updates balance
-        # and return a tuple consisting of the snowflake, and their balance
+            Mysql.update_db(snowflake, db_bal, lasttxid)
+            await self.do_embed(name, db_bal)
 
     async def parse_whole_bal(self, snowflake):
         count = 1000
