@@ -93,10 +93,10 @@ class Balance:
         # Execute and return SQL Query
         result_set = Mysql.get_user(snowflake)
 
-        if result_set["lasttxid"] == "0":
-            await self.parse_whole_bal(snowflake,name)
+        if result_set["lasttxid"] in ("0"," "):
+            await self.parse_whole_bal(snowflake, name)
         else:
-            await self.parse_part_bal(result_set,snowflake,name)
+            await self.parse_part_bal(result_set, snowflake,name)
 
 
 def setup(bot):
