@@ -95,7 +95,6 @@ class Soak:
         for user in online_users:
             address = rpc.getaccountaddress(user.id)
             payments[address] = amount_split
-        payments = "'" + str(payments).replace("'", '"') + "'"
         print(payments)
         print('netcoind sendmany "{}" {}'.format(snowflake, payments))
         call = rpc.sendmany(snowflake, payments)
