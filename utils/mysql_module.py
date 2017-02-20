@@ -45,17 +45,17 @@ class Mysql:
 
         return result_set
 
-    def update_db(self, snowflake, db_bal, lasttxid):
+    def update_db(self, snowflake, db_bal, db_staked, lasttxid):
         to_exec = """UPDATE db
-        SET balance=%s, lasttxid=%s
+        SET balance=%s, staked=%s, lasttxid=%s
         WHERE snowflake
         LIKE %s"""
-        self.cursor.execute(to_exec, (db_bal,lasttxid,snowflake))
+        self.cursor.execute(to_exec, (db_bal,db_staked,lasttxid,snowflake))
         self.connection.commit()
 
     def get_user(self, snowflake):
         to_exec = """
-        SELECT balance, snowflake, lasttxid
+        SELECT snowflake, balance, staked, lasttxid
         FROM db
         WHERE snowflake
         LIKE %s"""

@@ -14,23 +14,27 @@ class Tip:
         # If user has a lasttxid value in the db, then stop parsing
         # trans-list at a specific ["txid"] and submit
         # changes to update_db
-        params = snowflake
         count = 1000
-        get_transactions = rpc.listtransactions(params,count)
+        get_transactions = rpc.listtransactions(snowflake,count)
         i = len(get_transactions)-1
 
         new_balance = float(result_set["balance"])
+        new_staked = float(result_set["staked"])
         lasttxid = get_transactions[i]["txid"]
         if lasttxid == result_set["lasttxid"]:
-            db_bal = result_set["balance"]
+            db_bal = float(result_set["balance"])
+            db_staked = float(result_set["staked"])
         else:
             for tx in reversed(get_transactions):
                 if tx["txid"] == result_set["lasttxid"]:
                     break
                 else:
                     new_balance += float(tx["amount"])
+                    if tx["category"] == "generate":
+                        new_staked += float(tx["amount"])
             db_bal = new_balance
-            Mysql.update_db(snowflake, db_bal, lasttxid)
+            db_staked = new_staked
+            Mysql.update_db(snowflake, db_bal, db_staked, lasttxid)
 
     async def parse_whole_bal(self,snowflake,name):
         # If a user does not have a lasttxid in the db, the parse
@@ -42,19 +46,26 @@ class Tip:
 
         if len(get_transactions) == 0:
             db_bal = 0
+            db_staked = 0
         else:
             new_balance = 0
+            new_staked = 0
             lasttxid = get_transactions[i]["txid"]
             firsttxid = get_transactions[0]["txid"]
             while i <= len(get_transactions)-1:
                 if get_transactions[i]["txid"] != firsttxid:
                     new_balance += float(get_transactions[i]["amount"])
+                    if get_transactions[i]["category"] == "generate":
+                        new_staked += float(get_transactions[i]["amount"])
                     i -= 1
                 else:
                     new_balance += float(get_transactions[i]["amount"])
+                    if get_transactions[i]["category"] == "generate":
+                        new_staked += float(get_transactions[i]["amount"])
                     break
             db_bal = new_balance
-            Mysql.update_db(snowflake, db_bal, lasttxid)
+            db_staked = new_staked
+            Mysql.update_db(snowflake, db_bal, db_staked, lasttxid)
             #Now update db with new balance
 
     @commands.command(pass_context=True)
@@ -76,7 +87,7 @@ class Tip:
 
         result_set = Mysql.get_bal_lasttxid(snowflake)
 
-        if result_set["lasttxid"] in ["0",""]:
+        if result_set["lasttxid"] in ["0",""] or result_set["staked"] in ["0",""]:
             await self.parse_whole_bal(snowflake, name)
         else:
             await self.parse_part_bal(result_set, snowflake, name)
