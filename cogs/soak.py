@@ -95,8 +95,9 @@ class Soak:
         for user in online_users:
             address = rpc.getaccountaddress(user.id)
             payments[address] = str(amount_split)
-        print(str(payments))
-        call = rpc.sendmany(snowflake, str(payments))
+        payments = ''.join(json.loads(payments))
+        call = rpc.sendmany(snowflake, payments)
+        print(call)
         
         await self.parse_part_bal(result_set, snowflake, name)
         await self.bot.say("{} **Soaked {} NET on {} [{}] :money_with_wings:**".format(
