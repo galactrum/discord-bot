@@ -91,12 +91,11 @@ class Soak:
 
         amount_split = int(amount) / len(online_users)
 
-        payments = {}
         for user in online_users:
             address = rpc.getaccountaddress(user.id)
-            payments[address] = str(amount_split)
-        payments = ''.join(json.loads(str(payments)))
-        call = rpc.sendmany(snowflake, payments)
+            json_payments = {str(address): float(amount_split)}
+        print(json_payments)
+        call = rpc.sendmany(snowflake, json_payments)
         print(call)
         
         await self.parse_part_bal(result_set, snowflake, name)
