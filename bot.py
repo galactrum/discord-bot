@@ -141,11 +141,6 @@ async def on_command_error(error, ctx):
         await send_cmd_help(ctx)
     elif isinstance(error, commands.BadArgument):
         await send_cmd_help(ctx)
-    elif isinstance(error, commands.CommandInvokeError):
-        output.error("Exception in command '{}', {}".format(ctx.command.qualified_name, error.original))
-        traceback.print_tb(error.__traceback__)
-        oneliner = "Error in command '{}' - {}: {}\nIf this issue persists, Please report it in the support server.".format(ctx.command.qualified_name, type(error.original).__name__,str(error.original))
-        await ctx.bot.send_message(channel, oneliner)
 
 bot.run(config["discord"]["token"])
 bot.loop.close()
