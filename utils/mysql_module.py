@@ -39,7 +39,7 @@ class Mysql:
         return result_set
 
     def get_bal_lasttxid(self, snowflake):
-        to_exec = " SELECT balance,lasttxid FROM db WHERE snowflake LIKE %s "
+        to_exec = " SELECT balance, staked, lasttxid FROM db WHERE snowflake LIKE %s "
         self.cursor.execute(to_exec, (str(snowflake)))
         result_set = self.cursor.fetchone()
 
