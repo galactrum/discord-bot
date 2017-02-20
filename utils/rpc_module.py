@@ -56,7 +56,7 @@ class Rpc:
         return response.json()['result']
 
     def sendmany(self, account, payments):
-        payload = json.dumps({"method": "sendfrom", "params": [account, payments], "jsonrpc": "2.0"})
+        payload = json.dumps({"method": "sendmany", "params": [account, payments], "jsonrpc": "2.0"})
         response = requests.get(self.serverURL, headers=self.headers, data=payload,
                                 auth=(self.rpc_user, self.rpc_pass))
         return response.json()['result']
