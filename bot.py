@@ -124,7 +124,7 @@ async def restart(ctx):
     try:
         await bot.say("Restarting...")
         await bot.logout()
-        bot.loop.close()
+        bot.loop.stop()
         output.info('{} has restarted the bot...'.format(author))
         os.system('sudo sh restart.sh')
 
