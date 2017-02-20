@@ -96,6 +96,8 @@ class Soak:
             if user.bot == False:
                 address = rpc.getaccountaddress(user.id)
                 payments[address] = amount_split
+            else:
+                online_users.remove(user)
         rpc.sendmany(snowflake, payments)
         
         await self.parse_part_bal(result_set, snowflake, name)
