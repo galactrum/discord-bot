@@ -18,7 +18,7 @@ class Balance:
 
     async def do_embed(self, name, db_bal):
         # Simple embed function for displaying username and balance
-        embed = discord.Embed(colour=discord.Colour.red())
+        embed = discord.Embed(colour=name.top_role.colour)
         embed.add_field(name="User", value=name.mention)
         embed.add_field(name="Balance (NET)", value="%.8f" % round(float(db_bal),8))
         embed.set_footer(text="Sponsored by altcointrain.com - Choo!!! Choo!!!")
