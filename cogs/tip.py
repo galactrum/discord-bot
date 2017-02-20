@@ -34,14 +34,17 @@ class Tip:
             Mysql.update_db(snowflake, db_bal, lasttxid)
             await self.do_embed(name, db_bal)
 
-    async def parse_whole_bal(self,snowflake):
+    async def parse_whole_bal(self,snowflake,name):
+        # If a user does not have a lasttxid in the db, the parse
+        # the entire trans-list for that user. Submit changes to
+        # update_db
         count = 1000
         get_transactions = rpc.listtransactions(snowflake,count)
         i = len(get_transactions)-1
 
         if len(get_transactions) == 0:
-            print("0 transactions found for "+snowflake+", balance must be 0")
             db_bal = 0
+            await self.do_embed(name, db_bal)
         else:
             new_balance = 0
             lasttxid = get_transactions[i]["txid"]
@@ -55,7 +58,8 @@ class Tip:
                     break
             db_bal = new_balance
             Mysql.update_db(snowflake, db_bal, lasttxid)
-            return (snowflake, db_bal)
+            await self.do_embed(name, db_bal)
+            #Now update db with new balance
 
     @commands.command(pass_context=True)
     async def tip(self, ctx, user:discord.Member, amount:float):
@@ -76,10 +80,10 @@ class Tip:
 
         result_set = Mysql.get_bal_lasttxid(snowflake)
 
-        if result_set["lasttxid"] == "0":
-            user_bal = await self.parse_whole_bal(snowflake)
+        if result_set["lasttxid"] in ["0",""]:
+            await self.parse_whole_bal(snowflake, name)
         else:
-            user_bal = await self.parse_part_bal(result_set,snowflake,name)
+            await self.parse_part_bal(result_set, snowflake, name)
 
         if float(result_set["balance"]) < amount:
             await self.bot.say("{} **:warning:You cannot tip more money than you have!:warning:**".format(name.mention))
