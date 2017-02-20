@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 from utils import output, parsing, checks
-import os
+import os, sys
 
 description = '''Netcoin Tipbot'''
 bot = commands.Bot(command_prefix='!', description=description)
@@ -127,6 +127,7 @@ async def restart(ctx):
         bot.loop.stop()
         output.info('{} has restarted the bot...'.format(author))
         os.system('sudo sh restart.sh')
+        sys.exit(0)
 
     except Exception as e:
         exc = '{}: {}'.format(type(e).__name__, e)
