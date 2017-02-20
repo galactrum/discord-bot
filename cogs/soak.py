@@ -91,10 +91,12 @@ class Soak:
 
         amount_split = int(amount) / len(online_users)
 
+        payments = {}
         for user in online_users:
-            Mysql.check_for_user(user, user.id)
             address = rpc.getaccountaddress(user.id)
-            rpc.sendfrom(snowflake, address, amount_split)
+            payments[address] = str(amount_split)
+        print(payments)
+        rpc.sendmany(snowflake, payments)
         
         await self.parse_part_bal(result_set, snowflake, name)
         await self.bot.say("{} **Soaked {} NET on {} [{}] :money_with_wings:**".format(
