@@ -134,13 +134,5 @@ async def restart(ctx):
                      'exception occurred;\n\t->{}'.format(author, exc))
 
 
-@bot.event
-async def on_command_error(error, ctx):
-    channel = ctx.message.channel
-    if isinstance(error, commands.MissingRequiredArgument):
-        await send_cmd_help(ctx)
-    elif isinstance(error, commands.BadArgument):
-        await send_cmd_help(ctx)
-
 bot.run(config["discord"]["token"])
 bot.loop.close()
