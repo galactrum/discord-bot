@@ -97,6 +97,7 @@ class Soak:
             payments[address] = amount_split
         payments = "'" + str(payments).replace("'", '"') + "'"
         print(payments)
+        print('netcoind sendmany "{}" {}'.format(snowflake, payments))
         call = rpc.sendmany(snowflake, payments)
         print(call)
         
