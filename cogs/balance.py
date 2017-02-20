@@ -32,25 +32,24 @@ class Balance:
         # If user has a lasttxid value in the db, then stop parsing
         # trans-list at a specific ["txid"] and submit
         # changes to update_db
-        params = snowflake
         count = 1000
-        get_transactions = rpc.listtransactions(params,count)
+        get_transactions = rpc.listtransactions(snowflake,count)
         i = len(get_transactions)-1
 
-        new_balance = float(result_set["balance"])
-        lasttxid = get_transactions[i]["txid"]
-        if lasttxid == result_set["lasttxid"]:
-            db_bal = result_set["balance"]
-            await self.do_embed(name, db_bal)
-        else:
-            for tx in reversed(get_transactions):
-                if tx["txid"] == result_set["lasttxid"]:
-                    break
-                else:
-                    new_balance += float(tx["amount"])
-            db_bal = new_balance
-            Mysql.update_db(snowflake, db_bal, lasttxid)
-            await self.do_embed(name, db_bal)
+        new_balance = float(result_set["balance"])#set base balance; i.e. already processed transactions
+        lasttxid = get_transactions[i]["txid"]    #set the very last txid to a var for storage for future checks
+        if lasttxid == result_set["lasttxid"]:    #check if the last txid is equal to what we've already checked
+            db_bal = float(result_set["balance"]) #in-case of True to 'if', our balance is correct
+            await self.do_embed(name, db_bal)     #output our balance
+        else:                                     #in-case of False, our balance is incorrect, process new transactions
+            for tx in reversed(get_transactions): #reverse the list so we can start from the beginning; i.e. end of transactions
+                if tx["txid"] == result_set["lasttxid"]: #redundancy check for last txid
+                    break                         #exit for statement if redundancy check is True
+                else:                             #in-case of False (most cases), process new transactions
+                    new_balance += float(tx["amount"]) #add new transactions to the new balance and loop again until 'if' is True
+            db_bal = new_balance                  #make our balance equal our new balance for readability's sake
+            Mysql.update_db(snowflake, db_bal, lasttxid) #update the database with the new info
+            await self.do_embed(name, db_bal)     #output our new balance
 
     async def parse_whole_bal(self,snowflake,name):
         # If a user does not have a lasttxid in the db, the parse
