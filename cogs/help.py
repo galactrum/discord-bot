@@ -25,9 +25,12 @@ class Help:
                     desc += "`!{}`\n".format(command.name)
                     desc += "\n"
                         
-                embed = discord.Embed(description=desc)
-                
-                embed.set_author(icon_url=self.bot.user.avatar_url, name="NetJ commands!")
+            embed = discord.Embed(description=desc)
+            embed.set_author(icon_url=self.bot.user.avatar_url, name="NetJ commands!")
+            try:
+                await self.bot.say(embed=embed)
+            except discord.HTTPException:
+                await self.bot.say("I need the `Embed links` permission to send this")
 
 
 def setup(bot):
