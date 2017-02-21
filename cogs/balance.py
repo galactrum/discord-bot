@@ -50,7 +50,7 @@ class Balance:
                     break
                 else:
                     new_balance += float(tx["amount"])
-                    if tx["category"] == "generate":
+                    if tx["generated"] == "true":
                         new_staked += float(tx["amount"])
             db_bal = new_balance
             db_staked = new_staked
@@ -77,12 +77,12 @@ class Balance:
             while i <= len(get_transactions)-1:
                 if get_transactions[i]["txid"] != firsttxid:
                     new_balance += float(get_transactions[i]["amount"])
-                    if get_transactions[i]["category"] == "generate":
+                    if get_transactions[i]["generated"] == "true":
                         new_staked += float(get_transactions[i]["amount"])
                     i -= 1
                 else:
                     new_balance += float(get_transactions[i]["amount"])
-                    if get_transactions[i]["category"] == "generate":
+                    if get_transactions[i]["generated"] == "true":
                         new_staked += float(get_transactions[i]["amount"])
                     break
             db_bal = new_balance
