@@ -132,6 +132,18 @@ async def restart(ctx):
         exc = '{}: {}'.format(type(e).__name__, e)
         output.error('{} has attempted to restart the bot, but the following '
                      'exception occurred;\n\t->{}'.format(author, exc))
+        
+@bot.event
+async def on_command_error(error, ctx):
+    channel = ctx.message.channel
+    if isinstance(error, commands.MissingRequiredArgument):
+        await send_cmd_help(ctx)
+    elif isinstance(error, commands.BadArgument):
+        await send_cmd_help(ctx)
+    elif isinstance(error, commands.CommandInvokeError):
+        output.error("Exception in command '{}', {}".format(ctx.command.qualified_name, error.original))
+        oneliner = "Error in command '{}' - {}: {}\nIf this issue persists, Please report it in the support server.".format(ctx.command.qualified_name, type(error.original).__name__,str(error.original))
+        await ctx.bot.send_message(channel, oneliner)
 
 
 bot.run(config["discord"]["token"])
