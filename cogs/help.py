@@ -9,6 +9,7 @@ class Help:
 
     @commands.command(pass_context=True)
     async def help(self, ctx):
+        desc = ""
         for key in self.bot.commands.keys():
             command = self.bot.get_command(key)
             if command.aliases and not command.hidden:
