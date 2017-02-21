@@ -93,6 +93,7 @@ class Balance:
 
     @commands.command(pass_context=True)
     async def balance(self, ctx):
+        """Display your balance"""
         # Set important variables
         snowflake = ctx.message.author.id
         name = ctx.message.author
