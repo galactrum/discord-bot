@@ -80,7 +80,6 @@ class Soak:
             if user.bot:
                 online_users.remove(user)
         Mysql.check_for_user(name, snowflake)
-        Mysql.check_for_user(name, snowflake)
         result_set = Mysql.get_bal_lasttxid(snowflake)
 
         if result_set["lasttxid"] in ["0",""] or result_set["staked"] in ["0",""]:
