@@ -18,7 +18,7 @@ class Help:
                 desc += "\n"
                 
             elif command.short_doc and not command.hidden:
-                desc += "`!{}`".format(command_name)+" - {}\n".format(command.short_doc)
+                desc += "`!{}`".format(command.name)+" - {}\n".format(command.short_doc)
                 desc += "\n"
 
             else:
