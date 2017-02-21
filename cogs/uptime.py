@@ -13,7 +13,7 @@ class Uptime:
         current_time = time.time()
         difference = current_time - start_time
         text = str(datetime.timedelta(seconds=difference))
-        await self.bot.say("Current uptime:", text)
+        await self.bot.say("Current uptime: " + text)
 
 
 def setup(bot):
