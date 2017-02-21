@@ -30,7 +30,7 @@ class Tip:
                     break
                 else:
                     new_balance += float(tx["amount"])
-                    if tx["generated"] == "true":
+                    if "generated" in tx:
                         new_staked += float(tx["amount"])
             db_bal = new_balance
             db_staked = new_staked
@@ -55,12 +55,12 @@ class Tip:
             while i <= len(get_transactions)-1:
                 if get_transactions[i]["txid"] != firsttxid:
                     new_balance += float(get_transactions[i]["amount"])
-                    if get_transactions[i]["generated"] == "true":
+                    if "generated" in get_transactions[i]:
                         new_staked += float(get_transactions[i]["amount"])
                     i -= 1
                 else:
                     new_balance += float(get_transactions[i]["amount"])
-                    if get_transactions[i]["generated"] == "true":
+                    if "generated" in get_transactions[i]:
                         new_staked += float(get_transactions[i]["amount"])
                     break
             db_bal = new_balance

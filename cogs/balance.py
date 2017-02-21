@@ -50,8 +50,10 @@ class Balance:
                     break
                 else:
                     new_balance += float(tx["amount"])
-                    if tx["generated"] == "true":
+                    if "generated" in tx:
                         new_staked += float(tx["amount"])
+                    else:
+                        continue
             db_bal = new_balance
             db_staked = new_staked
             Mysql.update_db(snowflake, db_bal, db_staked, lasttxid)
@@ -77,12 +79,12 @@ class Balance:
             while i <= len(get_transactions)-1:
                 if get_transactions[i]["txid"] != firsttxid:
                     new_balance += float(get_transactions[i]["amount"])
-                    if get_transactions[i]["generated"] == "true":
+                    if "generated" in get_transactions[i]:
                         new_staked += float(get_transactions[i]["amount"])
                     i -= 1
                 else:
                     new_balance += float(get_transactions[i]["amount"])
-                    if get_transactions[i]["generated"] == "true":
+                    if "generated" in get_transactions[i]:
                         new_staked += float(get_transactions[i]["amount"])
                     break
             db_bal = new_balance
