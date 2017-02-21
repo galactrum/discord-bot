@@ -15,14 +15,14 @@ class Help:
                 ",".join(command.aliases))
                 desc += "\n"
                 
-                elif command.short_doc and not command.hidden:
-                    desc += "`!{}`".format(command_name)+" - {}\n".format(command.short_doc)
+            elif command.short_doc and not command.hidden:
+                desc += "`!{}`".format(command_name)+" - {}\n".format(command.short_doc)
+                desc += "\n"
+
+            else:
+                if not command.hidden:
+                    desc += "`!{}`\n".format(command.name)
                     desc += "\n"
-                    
-                else:
-                    if not command.hidden:
-                        desc += "`!{}`\n".format(command.name)
-                        desc += "\n"
                         
                 embed = discord.Embed(description=desc)
                 
