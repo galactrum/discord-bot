@@ -29,7 +29,7 @@ class Help:
         embed = discord.Embed(description=desc)
         embed.set_author(icon_url=self.bot.user.avatar_url, name="NetJ commands!")
         try:
-            await self.bot.send_message(message.author,embed=embed)
+            await self.bot.send_message(ctx.message.author,embed=embed)
         except discord.HTTPException:
             await self.bot.say("I need the `Embed links` permission to send this")
 
