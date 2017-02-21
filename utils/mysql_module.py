@@ -64,49 +64,6 @@ class Mysql:
 
         return result_set
 
-
-    def make_user(self, name, snowflake):
-        to_exec = "INSERT INTO db(user, snowflake, balance) VALUES(%s,%s,%s)"
-        self.cursor.execute(to_exec, (str(name).encode('ascii', 'ignore'), snowflake, '0'))
-        self.connection.commit()
-
-    def check_for_user(self, name, snowflake):
-        to_exec = """SELECT snowflake
-        FROM db
-        WHERE snowflake
-        LIKE %s"""
-        self.cursor.execute(to_exec, (str(snowflake)))
-        result_set = self.cursor.fetchone()
-        if result_set == None:
-            self.make_user(name, snowflake)
-
-        return result_set
-
-    def get_bal_lasttxid(self, snowflake):
-        to_exec = " SELECT balance,lasttxid FROM db WHERE snowflake LIKE %s "
-        self.cursor.execute(to_exec, (str(snowflake)))
-        result_set = self.cursor.fetchone()
-
-        return result_set
-
-    def update_db(self, snowflake, db_bal, lasttxid):
-        to_exec = """UPDATE db
-        SET balance=%s, lasttxid=%s
-        WHERE snowflake
-        LIKE %s"""
-        self.cursor.execute(to_exec, (db_bal,lasttxid,snowflake))
-        self.connection.commit()
-
-    def get_user(self, snowflake):
-        to_exec = """
-        SELECT balance, snowflake, lasttxid
-        FROM db
-        WHERE snowflake
-        LIKE %s"""
-        self.cursor.execute(to_exec, (str(snowflake)))
-        result_set = self.cursor.fetchone()
-        return result_set
-
     def add_server(self, server):
         to_exec = "INSERT INTO server(serverid) VALUES(%s)"
         self.cursor.execute(to_exec, (str(server.id),))
