@@ -76,6 +76,10 @@ class Soak:
         
         online_users = [x for x in ctx.message.server.members if x.status == discord.Status.online]
         online_users.remove(name)
+        for user in online_users:
+            if user.bot:
+                online_users.remove(user)
+        Mysql.check_for_user(name, snowflake)
         Mysql.check_for_user(name, snowflake)
         result_set = Mysql.get_bal_lasttxid(snowflake)
 
@@ -92,11 +96,8 @@ class Soak:
 
         payments = {}
         for user in online_users:
-            if user.bot == False:
-                address = rpc.getaccountaddress(user.id)
-                payments[address] = amount_split
-            else:
-                online_users.remove(user)
+            address = rpc.getaccountaddress(user.id)
+            payments[address] = amount_split
         rpc.sendmany(snowflake, payments)
         
         await self.parse_part_bal(result_set, snowflake, name)
