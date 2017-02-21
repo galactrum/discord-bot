@@ -5,6 +5,7 @@ from discord.ext import commands
 class Help:
     def __init__(self, bot):
         self.bot = bot
+        bot.remove_command("help")
 
     @commands.command(pass_context=True)
     async def help(self, ctx):
