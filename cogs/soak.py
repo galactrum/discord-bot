@@ -91,7 +91,7 @@ class Soak:
             await self.bot.say("{} **:warning:You cannot tip more money than you have!:warning:**".format(name.mention))
             return
 
-        amount_split = round(float(int(amount) / len(online_users)), 8)
+        amount_split = round(float(amount) / len(online_users), 8)
 
         payments = {}
         for user in online_users:
