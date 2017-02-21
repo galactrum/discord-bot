@@ -11,52 +11,67 @@ class Withdraw:
     def __init__(self, bot):
         self.bot = bot
 
-    async def parse_part_bal(self,result_set,snowflake):
-        params = snowflake
+    async def parse_part_bal(self,result_set,snowflake,name):
+        # If user has a lasttxid value in the db, then stop parsing
+        # trans-list at a specific ["txid"] and submit
+        # changes to update_db
         count = 1000
-        get_transactions = rpc.listtransactions(params,count)
+        get_transactions = rpc.listtransactions(snowflake,count)
         i = len(get_transactions)-1
 
         new_balance = float(result_set["balance"])
+        new_staked = float(result_set["staked"])
         lasttxid = get_transactions[i]["txid"]
         if lasttxid == result_set["lasttxid"]:
-            db_bal = result_set["balance"]
-            return
+            db_bal = float(result_set["balance"])
+            db_staked = float(result_set["staked"])
         else:
-            while i <= len(get_transactions):
-                if get_transactions[i]["txid"] != result_set["lasttxid"]:
-                    new_balance += float(get_transactions[i]["amount"])
-                    i -= 1
-                else:
-                    new_balance += float(get_transactions[i]["amount"])
+            for tx in reversed(get_transactions):
+                if tx["txid"] == result_set["lasttxid"]:
                     break
+                else:
+                    new_balance += float(tx["amount"])
+                    if "generated" in tx:
+                        new_staked += float(tx["amount"])
+                    else:
+                        continue
             db_bal = new_balance
-            Mysql.update_db(snowflake, db_bal, lasttxid)
-            return snowflake, db_bal
+            db_staked = new_staked
+            Mysql.update_db(snowflake, db_bal, db_staked, lasttxid)
+            return snowflake, db_staked, db_bal
         # Updates balance
         # and return a tuple consisting of the snowflake, and their balance
 
-    async def parse_whole_bal(self,snowflake):
+    async def parse_whole_bal(self,snowflake,name):
+        # If a user does not have a lasttxid in the db, the parse
+        # the entire trans-list for that user. Submit changes to
+        # update_db
         count = 1000
         get_transactions = rpc.listtransactions(snowflake,count)
         i = len(get_transactions)-1
 
         if len(get_transactions) == 0:
-            print("0 transactions found for "+snowflake+", balance must be 0")
             db_bal = 0
+            db_staked = 0
         else:
             new_balance = 0
+            new_staked = 0
             lasttxid = get_transactions[i]["txid"]
             firsttxid = get_transactions[0]["txid"]
             while i <= len(get_transactions)-1:
                 if get_transactions[i]["txid"] != firsttxid:
                     new_balance += float(get_transactions[i]["amount"])
+                    if "generated" in get_transactions[i]:
+                        new_staked += float(get_transactions[i]["amount"])
                     i -= 1
                 else:
                     new_balance += float(get_transactions[i]["amount"])
+                    if "generated" in get_transactions[i]:
+                        new_staked += float(get_transactions[i]["amount"])
                     break
             db_bal = new_balance
-            Mysql.update_db(snowflake, db_bal, lasttxid)
+            db_staked = new_staked
+            Mysql.update_db(snowflake, db_bal, db_staked, lasttxid)
             return (snowflake, db_bal)
 
     @commands.command(pass_context=True)
@@ -81,13 +96,15 @@ class Withdraw:
         else:
             user_bal = await self.parse_part_bal(result_set,snowflake)
 
-        if float(result_set["balance"]) < amount:
-            await self.bot.say("{} **:warning:You cannot withdraw more money than you have!:warning:**".format(name.mention))
+        conf = rpc.validateaddress(address)
+        if not conf["isvalid"]:
+            await self.bot.say("{} **:warning:Invalid address!:warning:**".format(ctx.message.author.mention))
+            return
+
+        if result_set["lasttxid"] in ["0",""] or result_set["staked"] in ["0",""]:
+            await self.parse_whole_bal(snowflake, name)
         else:
-            conf = rpc.validateaddress(address)
-            if not conf["isvalid"]:
-                await self.bot.say("{} **:warning:Invalid address!:warning:**".format(ctx.message.author.mention))
-                return
+            await self.parse_part_bal(result_set, snowflake, name)
 
             rpc.sendfrom(snowflake, address, to_send_to_user)
             bot_addy = rpc.getaccountaddress(self.bot.user.id)
