@@ -12,7 +12,7 @@ class Server:
     @commands.command(pass_context=True)
     @commands.check(checks.is_server_owner)
     async def allow_soak(self, ctx, enable: bool):
-        Mysql.set_soak(ctx.message.server.id, int(enable))
+        Mysql.set_soak(ctx.message.server, int(enable))
         await self.bot.say("Ok!")
 
 

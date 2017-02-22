@@ -142,7 +142,8 @@ async def restart(ctx):
 @bot.event
 async def on_server_join(server):
     output.info("Added to {0}".format(server.name))
-    await bot.say("Hey {0}, {1} seems nice. To set me up run {2}configure otherwise I will work in all channels".format(
+    await bot.say(server.default_channel,
+                  "Hey {0}, {1} seems nice. To set me up run {2}configure otherwise I will work in all channels".format(
                       server.owner.mention, server.name, config["prefix"]))
     Mysql.add_server(server)
     for channel in server.channels:
