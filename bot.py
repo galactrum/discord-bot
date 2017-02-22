@@ -142,30 +142,30 @@ async def restart(ctx):
 @bot.event
 async def on_server_join(server):
     output.info("Added to {0}".format(server.name))
-    await bot.say(server.default_channel,
-                  "Hey {0}, {1} seems nice. To set me up run {2}configure otherwise I will work in all channels".format(
-                      server.owner.mention, server.name, config["prefix"]))
     Mysql.add_server(server)
     for channel in server.channels:
         Mysql.add_channel(channel)
+    await bot.say(server.default_channel,
+                  "Hey {0}, {1} seems nice. To set me up run {2}configure otherwise I will work in all channels".format(
+                      server.owner.mention, server.name, config["prefix"]))
 
 
 @bot.event
 async def on_server_leave(server):
-    output.info("Removed from {0}".format(server.name))
     Mysql.remove_server(server)
+    output.info("Removed from {0}".format(server.name))
 
 
 @bot.event
 async def on_channel_create(channel):
-    output.info("Channel {0} added to {1}".format(channel.name, channel.server.name))
     Mysql.add_channel(channel)
+    output.info("Channel {0} added to {1}".format(channel.name, channel.server.name))
 
 
 @bot.event
 async def on_channel_delete(channel):
-    output.info("Channel {0} deleted from {1}".format(channel.name, channel.server.name))
     Mysql.remove_channel(channel)
+    output.info("Channel {0} deleted from {1}".format(channel.name, channel.server.name))
 
 
 @bot.event
