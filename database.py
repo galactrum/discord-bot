@@ -31,7 +31,7 @@ def run():
         username VARCHAR(37) NOT NULL,
         balance FLOAT NOT NULL,
         PRIMARY KEY (username)
-        ) ENGINE=InnoDB;""")
+        )""")
 
     cursor.execute("""CREATE TABLE IF NOT EXISTS deposit (
         userid_fk VARCHAR(17) NOT NULL,
@@ -39,7 +39,7 @@ def run():
         address_to VARCHAR(34) NOT NULL,
         amount FLOAT NOT NULL,
         FOREIGN KEY (userid_fk) REFERENCES person(userid_pk)
-        ) ENGINE=InnoDB;""")
+        )""")
 
     cursor.execute("""CREATE TABLE IF NOT EXISTS withdrawal (
         userid_fk VARCHAR(17) NOT NULL,
@@ -47,7 +47,7 @@ def run():
         address_to VARCHAR(34) NOT NULL,
         amount FLOAT NOT NULL,
         FOREIGN KEY (userid_fk) REFERENCES person(userid_pk)
-        ) ENGINE=InnoDB;""")
+        )""")
 
     cursor.execute("""CREATE TABLE IF NOT EXISTS tip (
         userid_from_fk VARCHAR(17) NOT NULL,
@@ -55,13 +55,13 @@ def run():
         ammount FLOAT NOT NULL,
         FOREIGN KEY (userid_from_fk) REFERENCES person(userid_pk),
         FOREIGN KEY (userid_to_fk) REFERENCES person(userid_pk)
-        ) ENGINE=InnoDB;""")
+        )""")
 
     cursor.execute("""CREATE TABLE IF NOT EXISTS server (
         server_id VARCHAR(18) NOT NULL,
         enable_soak TINYINT(1) NOT NULL,
         PRIMARY KEY (server_id)
-        ) ENGINE=InnoDB;""")
+        )""")
 
     cursor.execute("""CREATE TABLE IF NOT EXISTS channel (
         channel_id VARCHAR(18) NOT NULL,
@@ -69,7 +69,7 @@ def run():
         enabled TINYINT(1) NOT NULL,
         FOREIGN KEY (server_id) REFERENCES server(server_id),
         PRIMARY KEY (channel_id)
-        ) ENGINE=InnoDB;""")
+        )""")
 
     cursor.execute("CREATE INDEX userindex ON db(user) using BTREE;")
     cursor.execute("CREATE INDEX serverindex ON server(server_id) using BTREE;")
