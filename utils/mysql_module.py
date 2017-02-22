@@ -138,3 +138,24 @@ class Mysql:
         except BrokenPipeError:
             self.connected = 0
             self.my_connection()
+
+
+    def check_soak(self, server):
+        to_exec = "SELECT enable_soak FROM server WHERE server_id = %s"
+        try:
+            self.cursor.execute(to_exec, (str(server.id)))
+            result_set = self.cursor.fetchone()
+            return result_set
+        except BrokenPipeError:
+            self.connected = 0
+            self.my_connection()
+
+    def set_soak(self, server, to):
+        to_exec = "UPDATE server SET enable_soak = %s WHERE server_id = %s"
+        try:
+            self.cursor.execute(to_exec, (to, str(server.id),))
+            self.connection.commit()
+            return
+        except BrokenPipeError:
+            self.connected = 0
+            self.my_connection()
