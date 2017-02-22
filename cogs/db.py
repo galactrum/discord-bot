@@ -17,7 +17,8 @@ class DB:
         database.run()
         await self.bot.say("Ok!")
 
-
+    @commands.command(pass_context=True)
+    @commands.check(checks.is_owner)
     async def check_soak(self, ctx):
         result_set = Mysql.check_soak(ctx.message.server)
         await self.bot.say(result_set)
