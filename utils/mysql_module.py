@@ -122,7 +122,7 @@ class Mysql:
     def add_channel(self, channel):
         to_exec = "INSERT INTO channel(channel_id, server_id, enabled) VALUES(%s, %s, 1)"
         try:
-            self.cursor.execute(to_exec, (str(channel.id), str(channel.server.id),))
+            self.cursor.execute(to_exec, (str(channel.id), str(channel.server.id)))
             self.connection.commit()
             return
         except BrokenPipeError:
