@@ -139,7 +139,6 @@ class Mysql:
             self.connected = 0
             self.my_connection()
 
-
     def check_soak(self, server):
         to_exec = "SELECT enable_soak FROM server WHERE server_id = %s"
         try:
