@@ -94,9 +94,9 @@ class Mysql:
             self.my_connection()
 
     def add_server(self, server):
-        to_exec = "INSERT INTO server(server_id) VALUES(%s)"
+        to_exec = "INSERT INTO server(server_id, enable_soak) VALUES(%s)"
         try:
-            self.cursor.execute(to_exec, (str(server.id),))
+            self.cursor.execute(to_exec, (str(server.id), int(server.large)))
             self.connection.commit()
             return
         except BrokenPipeError:
