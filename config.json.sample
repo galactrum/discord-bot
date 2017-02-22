@@ -20,6 +20,8 @@
             "file": "log.txt",
             "file_level": 3
         },
-        "owners": ["owners discord id"]
+        "owners": ["owners discord id"],
+        "prefix": "!",
+        "description": "Netcoin Tipbot"
     }
 ]}

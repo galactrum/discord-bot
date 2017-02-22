@@ -65,14 +65,27 @@ class Mysql:
         return result_set
 
     def add_server(self, server):
-        to_exec = "INSERT INTO server(serverid) VALUES(%s)"
+        to_exec = "INSERT INTO server(server_id) VALUES(%s)"
         self.cursor.execute(to_exec, (str(server.id),))
         self.connection.commit()
         return
 
-    def get_flag(self, server, flag):
-        to_exec = "SELECT flagvalue FROM flag WHERE serverid=%s and flag=%s"
-        self.cursor.execute(to_exec, (str(server.id)))
-        result_set = self.cursor.fetchone()
-        return result_set
+    def remove_server(self, server):
+        to_exec = "DELETE FROM server WHERE server_id = %s"
+        self.cursor.execute(to_exec, (str(server.id),))
+        to_exec = "DELETE FROM channel WHERE server_id = %s"
+        self.cursor.execute(to_exec, (str(server.id),))
+        self.connection.commit()
+        return
 
+    def add_channel(self, channel):
+        to_exec = "INSERT INTO channel(channel_id, server_id, enabled) VALUES(%s, %s, 1)"
+        self.cursor.execute(to_exec, (str(channel.id), str(channel.server.id),))
+        self.connection.commit()
+        return
+
+    def remove_channel(self, channel):
+        to_exec = "DELETE FROM channel WHERE channel_id = %s"
+        self.cursor.execute(to_exec, (str(channel.id),))
+        self.connection.commit()
+        return

@@ -54,4 +54,17 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS tip (
     FOREIGN KEY (userid_to_fk) REFERENCES person(userid_pk),
     ) ENGINE=InnoDB;""")
 
+cursor.execute("""CREATE TABLE IF NOT EXISTS server (
+    server_id VARCHAR(18) NOT NULL,
+    PRIMARY KEY (server_id)
+    ) ENGINE=InnoDB;""")
+
+cursor.execute("""CREATE TABLE IF NOT EXISTS channel (
+    channel_id VARCHAR(18) NOT NULL,
+    server_id VARCHAR(18) NOT NULL,
+    enabled TINYINT(1) NOT NULL,
+    FOREIGN KEY (server_id) REFERENCES server(server_id),
+    PRIMARY KEY (channel_id)
+    ) ENGINE=InnoDB;""")
+
 cursor.execute("CREATE INDEX userindex ON db(user) using BTREE;")
