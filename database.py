@@ -32,7 +32,7 @@ def run():
         balance FLOAT NOT NULL,
         PRIMARY KEY (username)
         )""")
-
+    '''
     cursor.execute("""CREATE TABLE IF NOT EXISTS deposit (
         userid_fk VARCHAR(17) NOT NULL,
         address_from VARCHAR(34) NOT NULL,
@@ -56,7 +56,7 @@ def run():
         FOREIGN KEY (userid_from_fk) REFERENCES person(userid_pk),
         FOREIGN KEY (userid_to_fk) REFERENCES person(userid_pk)
         )""")
-
+    '''
     cursor.execute("""CREATE TABLE IF NOT EXISTS server (
         server_id VARCHAR(18) NOT NULL,
         enable_soak TINYINT(1) NOT NULL,
