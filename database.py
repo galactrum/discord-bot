@@ -38,7 +38,7 @@ def run():
         address_from VARCHAR(34) NOT NULL,
         address_to VARCHAR(34) NOT NULL,
         amount FLOAT NOT NULL,
-        FOREIGN KEY (userid_fk) REFERENCES person(userid_pk),
+        FOREIGN KEY (userid_fk) REFERENCES person(userid_pk)
         ) ENGINE=InnoDB;""")
 
     cursor.execute("""CREATE TABLE IF NOT EXISTS withdrawal (
@@ -46,7 +46,7 @@ def run():
         address_from VARCHAR(34) NOT NULL,
         address_to VARCHAR(34) NOT NULL,
         amount FLOAT NOT NULL,
-        FOREIGN KEY (userid_fk) REFERENCES person(userid_pk),
+        FOREIGN KEY (userid_fk) REFERENCES person(userid_pk)
         ) ENGINE=InnoDB;""")
 
     cursor.execute("""CREATE TABLE IF NOT EXISTS tip (
@@ -54,7 +54,7 @@ def run():
         userid_to_fk VARCHAR(17) NOT NULL,
         ammount FLOAT NOT NULL,
         FOREIGN KEY (userid_from_fk) REFERENCES person(userid_pk),
-        FOREIGN KEY (userid_to_fk) REFERENCES person(userid_pk),
+        FOREIGN KEY (userid_to_fk) REFERENCES person(userid_pk)
         ) ENGINE=InnoDB;""")
 
     cursor.execute("""CREATE TABLE IF NOT EXISTS server (
