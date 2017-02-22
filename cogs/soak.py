@@ -69,7 +69,7 @@ class Soak:
             #Now update db with new balance
 
     @commands.command(pass_context=True)
-    @commands.check(checks.allow_soak)
+    #@commands.check(checks.allow_soak)
     async def soak(self, ctx, amount: float):
         """Tip all online users"""
         snowflake = ctx.message.author.id
