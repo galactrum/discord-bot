@@ -7,7 +7,7 @@ config = parsing.parse_json('config.json')
 
 Mysql = mysql_module.Mysql()
 
-bot = commands.Bot(command_prefix=config["prefix"], description=config["description"])
+bot = commands.Bot(command_prefix=commands.when_mentioned, description=config["description"])
 
 try:
     os.remove("log.txt")
