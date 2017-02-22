@@ -1,18 +1,18 @@
 import discord
 from discord.ext import commands
-from utils import output, parsing, checks
+from utils import output, parsing, checks, mysql_module
 import os, traceback
 
-description = '''Netcoin Tipbot'''
-bot = commands.Bot(command_prefix='!', description=description)
+config = parsing.parse_json('config.json')
+
+Mysql = mysql_module.Mysql()
+
+bot = commands.Bot(command_prefix=config["prefix"], description=config["description"])
 
 try:
     os.remove("log.txt")
 except FileNotFoundError:
     pass
-
-config = parsing.parse_json('config.json')
-
 
 startup_extensions = os.listdir("./cogs")
 if "__pycache__" in startup_extensions:
@@ -35,16 +35,21 @@ async def on_ready():
             output.error('Failed to load extension {}\n\t->{}'.format(extension, exc))
     output.success('Successfully loaded the following extension(s); {}'.format(loaded_extensions))
 
+
 async def send_cmd_help(ctx):
     if ctx.invoked_subcommand:
         pages = bot.formatter.format_help_for(ctx, ctx.invoked_subcommand)
         for page in pages:
-            em = discord.Embed(title="Missing args :x:", description=page.strip("```").replace('<', '[').replace('>', ']'), color=discord.Color.red())
+            em = discord.Embed(title="Missing args :x:",
+                               description=page.strip("```").replace('<', '[').replace('>', ']'),
+                               color=discord.Color.red())
             await bot.send_message(ctx.message.channel, embed=em)
     else:
         pages = bot.formatter.format_help_for(ctx, ctx.command)
         for page in pages:
-            em = discord.Embed(title="Missing args :x:", description=page.strip("```").replace('<', '[').replace('>', ']'), color=discord.Color.red())
+            em = discord.Embed(title="Missing args :x:",
+                               description=page.strip("```").replace('<', '[').replace('>', ']'),
+                               color=discord.Color.red())
             await bot.send_message(ctx.message.channel, embed=em)
 
 
@@ -85,7 +90,7 @@ async def load(ctx, module: str):
                      'exception occured;\n\t->{}'.format(author, module, exc))
         await bot.say('Failed to load extension {}\n\t->{}'.format(module, exc))
 
-    
+
 @bot.command(pass_context=True)
 @commands.check(checks.is_owner)
 async def unload(ctx, module: str):
@@ -104,13 +109,13 @@ async def unload(ctx, module: str):
         await bot.say('Failed to load extension {}\n\t->{}'.format(module, exc))
 
 
-@bot.command(pass_context=True)
+@bot.command()
 @commands.check(checks.is_owner)
-async def loaded(ctx):
+async def loaded():
     """List loaded cogs"""
     string = ""
     for cog in loaded_extensions:
-        string += cog + "\n"
+        string += str(cog) + "\n"
 
     await bot.say('Currently loaded extensions:\n```{}```'.format(string))
 
@@ -132,7 +137,37 @@ async def restart(ctx):
         exc = '{}: {}'.format(type(e).__name__, e)
         output.error('{} has attempted to restart the bot, but the following '
                      'exception occurred;\n\t->{}'.format(author, exc))
-        
+
+
+@bot.event
+async def on_server_join(server):
+    output.info("Added to {0}".format(server.name))
+    await bot.say(server.default_channel,
+                  "Hey {0}, {1} seems nice. To set me up run {2}configure otherwise I will work in all channels".format(
+                      server.owner.mention, server.name, config["prefix"]))
+    Mysql.add_server(server)
+    for channel in server.channels:
+        Mysql.add_channel(channel)
+
+
+@bot.event
+async def on_server_leave(server):
+    output.info("Removed from {0}".format(server.name))
+    Mysql.remove_server(server)
+
+
+@bot.event
+async def on_channel_create(channel):
+    output.info("Channel {0} added to {1}".format(channel.name, channel.server.name))
+    Mysql.add_channel(channel)
+
+
+@bot.event
+async def on_channel_delete(channel):
+    output.info("Channel {0} deleted from {1}".format(channel.name, channel.server.name))
+    Mysql.remove_channel(channel)
+
+
 @bot.event
 async def on_command_error(error, ctx):
     channel = ctx.message.channel
@@ -142,7 +177,8 @@ async def on_command_error(error, ctx):
         await send_cmd_help(ctx)
     elif isinstance(error, commands.CommandInvokeError):
         output.error("Exception in command '{}', {}".format(ctx.command.qualified_name, error.original))
-        oneliner = "Error in command '{}' - {}: {}\nIf this issue persists, Please report it in the support server.".format(ctx.command.qualified_name, type(error.original).__name__,str(error.original))
+        oneliner = "Error in command '{}' - {}: {}\nIf this issue persists, Please report it in the support server.".format(
+            ctx.command.qualified_name, type(error.original).__name__, str(error.original))
         await ctx.bot.send_message(channel, oneliner)
 
 

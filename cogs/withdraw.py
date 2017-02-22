@@ -91,11 +91,6 @@ class Withdraw:
 
         result_set = Mysql.get_bal_lasttxid(snowflake)
 
-        if result_set["lasttxid"] == "0":
-            user_bal = await self.parse_whole_bal(snowflake)
-        else:
-            user_bal = await self.parse_part_bal(result_set,snowflake)
-
         conf = rpc.validateaddress(address)
         if not conf["isvalid"]:
             await self.bot.say("{} **:warning:Invalid address!:warning:**".format(ctx.message.author.mention))
