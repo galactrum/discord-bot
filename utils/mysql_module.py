@@ -39,7 +39,7 @@ class Mysql:
         return result_set
 
     def get_bal_lasttxid(self, snowflake):
-        to_exec = " SELECT balance, staked, lasttxid FROM db WHERE snowflake LIKE %s "
+        to_exec = "SELECT balance, staked, lasttxid FROM db WHERE snowflake LIKE %s"
         self.cursor.execute(to_exec, (str(snowflake)))
         result_set = self.cursor.fetchone()
 
@@ -65,8 +65,11 @@ class Mysql:
         return result_set
 
     def add_server(self, server):
-        to_exec = "INSERT INTO server(server_id) VALUES(%s)"
-        self.cursor.execute(to_exec, (str(server.id),))
+        val = 1
+        if server.large:
+            val = 0
+        to_exec = "INSERT INTO server(server_id, enable_soak) VALUES(%s, %s)"
+        self.cursor.execute(to_exec, (str(server.id), str(val)))
         self.connection.commit()
         return
 
@@ -87,5 +90,17 @@ class Mysql:
     def remove_channel(self, channel):
         to_exec = "DELETE FROM channel WHERE channel_id = %s"
         self.cursor.execute(to_exec, (str(channel.id),))
+        self.connection.commit()
+        return
+
+    def check_soak(self, server):
+        to_exec = "SELECT enable_soak FROM server WHERE server_id = %s"
+        self.cursor.execute(to_exec, (str(server.id)))
+        result_set = self.cursor.fetchone()
+        return result_set
+
+    def set_soak(self, server, to):
+        to_exec = "UPDATE server SET enable_soak = %s WHERE server_id = %s"
+        self.cursor.execute(to_exec, (to, str(server.id),))
         self.connection.commit()
         return

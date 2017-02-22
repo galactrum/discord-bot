@@ -11,16 +11,17 @@ conn = pymysql.connect(
     port=port,
     user=user,
     passwd=passwd,
-    charset='utf8'
+    charset='utf8',
+    db=database
 )
 
 cursor = conn.cursor()
 
 #cursor.execute("DROP DATABASE IF EXISTS {};".format(database))
-cursor.execute("CREATE DATABASE IF NOT EXISTS {};".format(database))
-conn.commit()
+#cursor.execute("CREATE DATABASE IF NOT EXISTS {};".format(database))
+#conn.commit()
 
-cursor.execute("USE {};".format(database))
+#cursor.execute("USE {};".format(database))
 
 
 cursor.execute("""CREATE TABLE IF NOT EXISTS person (
@@ -56,6 +57,7 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS tip (
 
 cursor.execute("""CREATE TABLE IF NOT EXISTS server (
     server_id VARCHAR(18) NOT NULL,
+    enable_soak TINYINT(1) NOT NULL,
     PRIMARY KEY (server_id)
     ) ENGINE=InnoDB;""")
 

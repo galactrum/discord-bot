@@ -1,6 +1,6 @@
 import discord, json, requests, pymysql.cursors
 from discord.ext import commands
-from utils import rpc_module, mysql_module, parsing
+from utils import rpc_module, mysql_module, checks
 
 rpc = rpc_module.Rpc()
 Mysql = mysql_module.Mysql()
@@ -69,6 +69,7 @@ class Soak:
             #Now update db with new balance
 
     @commands.command(pass_context=True)
+    @commands.check(checks.allow_soak)
     async def soak(self, ctx, amount: float):
         """Tip all online users"""
         snowflake = ctx.message.author.id
