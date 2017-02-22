@@ -66,7 +66,7 @@ def run():
     cursor.execute("""CREATE TABLE IF NOT EXISTS channel (
         channel_id VARCHAR(18) NOT NULL,
         server_id VARCHAR(18) NOT NULL,
-        enabled TINYINT(1) NOT NULL,
+        enabled BOOLEAN NOT NULL,
         FOREIGN KEY (server_id) REFERENCES server(server_id),
         PRIMARY KEY (channel_id)
         )""")
