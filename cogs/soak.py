@@ -75,7 +75,7 @@ class Soak:
         snowflake = ctx.message.author.id
         name = ctx.message.author
         
-        online_users = [x for x in ctx.message.channel.members if x.status == discord.Status.online]
+        online_users = [x for x in ctx.message.server.members if x.status == discord.Status.online]
         online_users.remove(name)
         for user in online_users:
             if user.bot == True:
