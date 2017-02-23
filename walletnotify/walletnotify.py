@@ -39,7 +39,8 @@ class Walletnotify:
         return response.json()['result']
 
     def get_db(self, tx_account, tx_amount, txid, tx_category):
-        to_exec = """SELECT db(balance, staked)
+        to_exec = """SELECT balance, staked
+        FROM db
         WHERE snowflake
         LIKE %s"""
         self.cursor.execute(to_exec, str(tx_account))
