@@ -72,7 +72,7 @@ class Walletnotify:
         to_exec = """INSERT INTO unconfirmed (account, amount, txid) VALUES (%s,%s,%s)"""
         self.cursor.execute(to_exec, (str(tx_account), str(tx_amount), str(txid)))
         self.connection.commit()
-        self.check_for_user(self, tx_account)
+        self.check_for_user(tx_account)
 
     def remove_tx_db(self, tx_account, tx_amount, txid, tx_category):
         to_exec = """DELETE FROM unconfirmed
@@ -82,7 +82,7 @@ class Walletnotify:
         LIMIT 1"""
         self.cursor.execute(to_exec, (str(tx_account), str(tx_amount), str(txid)))
         self.connection.commit()
-        self.check_for_user(self, tx_account)
+        self.check_for_user(tx_account)
         self.get_db(tx_account, tx_amount, txid, tx_category)
 
     def process_tx(self, txid):
