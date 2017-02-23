@@ -76,9 +76,9 @@ class Walletnotify:
 
     def remove_tx_db(self, tx_account, tx_amount, txid, tx_category):
         to_exec = """DELETE FROM unconfirmed
-        WHERE account = '%s'
-        AND amount = '%s'
-        AND txid = '%s'
+        WHERE account = %s
+        AND amount = %s
+        AND txid = %s
         LIMIT 1"""
         self.cursor.execute(to_exec, (str(tx_account), str(tx_amount), str(txid)))
         self.connection.commit()
