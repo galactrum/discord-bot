@@ -5,7 +5,7 @@ from utils import parsing, output
 class Walletnotify:
     def __init__(self):
         self.txid = txid
-        self.config = parsing.parse_json('walletnotify.json')
+        self.config = parsing.parse_json('walletnotify/walletnotify.json')
         ##MySQL
         self.config_mysql = self.config["mysql"]
         self.host = self.config_mysql["db_host"]
