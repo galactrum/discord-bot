@@ -38,6 +38,22 @@ class Walletnotify:
                                 auth=(self.rpc_user, self.rpc_pass))
         return response.json()['result']
 
+    def update_balance_db(self, tx_account, new_balance, txid):
+        to_exec = """UPDATE db
+                        SET balance=%s, lasttxid=%s
+                        WHERE snowflake
+                        LIKE %s"""
+        self.cursor.execute(to_exec, (new_balance, txid, tx_account))
+        self.connection.commit()
+
+    def update_stake_db(self, tx_account, new_stake, txid):
+        to_exec = """UPDATE db
+                SET staked=%s, lasttxid=%s
+                WHERE snowflake
+                LIKE %s"""
+        self.cursor.execute(to_exec, (new_stake, txid, tx_account))
+        self.connection.commit()
+
     def get_db(self, tx_account, tx_amount, txid, tx_category):
         to_exec = """SELECT balance, staked
         FROM db
@@ -47,10 +63,10 @@ class Walletnotify:
         result_set = self.cursor.fetchone()
         if tx_category == "generated":
             new_stake = int(result_set["staked"]) - tx_amount
-            self.update_db(tx_account, new_stake, txid)
+            self.update_stake_db(tx_account, new_stake, txid)
         else:
             new_balance = int(result_set["balance"]) + tx_amount
-            self.update_db(tx_account, new_balance, txid)
+            self.update_balance_db(tx_account, new_balance, txid)
 
     def make_user(self, tx_account):
         to_exec = "INSERT INTO db(snowflake, balance) VALUES(%s,%s)"
