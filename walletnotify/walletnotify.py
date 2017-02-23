@@ -51,15 +51,34 @@ class Walletnotify:
             new_balance = int(result_set["balance"]) + tx_amount
             self.update_db(tx_account, new_balance, txid)
 
+    def make_user(self, tx_account):
+        to_exec = "INSERT INTO db(snowflake, balance) VALUES(%s,%s)"
+        self.cursor.execute(to_exec, (str(tx_account), '0'))
+        self.connection.commit()
+
+    def check_for_user(self, tx_account):
+        to_exec = """SELECT snowflake
+        FROM db
+        WHERE snowflake
+        LIKE %s"""
+        self.cursor.execute(to_exec, (str(tx_account)))
+        result_set = self.cursor.fetchone()
+        if result_set == None:
+            self.make_user(tx_account)
+
+        return result_set
+
     def add_tx_db(self, tx_account, tx_amount, txid):
         to_exec = "INSERT INTO unconfirmed(account, amount, txid) VALUES(%s,%s,%s)"
         self.cursor.execute(to_exec, (str(tx_account), str(tx_amount), str(txid)))
         self.connection.commit()
+        self.check_for_user(self, tx_account)
 
     def remove_tx_db(self, tx_account, tx_amount, txid, tx_category):
         to_exec = "DELETE FROM unconfirmed WHERE VALUES(%s,%s,%s)"
         self.cursor.execute(to_exec, (str(tx_account), str(tx_amount), str(txid)))
         self.connection.commit()
+        self.check_for_user(self, tx_account)
         self.get_db(tx_account, tx_amount, txid, tx_category)
 
     def process_tx(self, txid):
