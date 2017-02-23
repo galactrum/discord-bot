@@ -82,10 +82,10 @@ class Walletnotify:
         self.get_db(tx_account, tx_amount, txid, tx_category)
 
     def process_tx(self, txid):
-        transaction = self.gettransaction(txid)[0]
+        transaction = self.gettransaction(txid)
         tx_conf = transaction["confirmations"]
-        tx_account = transaction["details"]["account"]
-        tx_amount = int(transaction["details"]["amount"])
+        tx_account = transaction["details"][0]["account"]
+        tx_amount = int(transaction["details"][0]["amount"])
         if "generated" in transaction:
             tx_category = "generated"
         elif tx_amount < 0:
