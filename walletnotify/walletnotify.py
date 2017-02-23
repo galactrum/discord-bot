@@ -1,5 +1,5 @@
 import pymysql.cursors, sys, json, requests
-from utils import parsing
+from utils import parsing, output
 
 
 class Walletnotify:
@@ -45,6 +45,7 @@ class Walletnotify:
                         LIKE %s"""
         self.cursor.execute(to_exec, (new_balance, txid, tx_account))
         self.connection.commit()
+        output.success("Successfully updated user's balance!")
 
     def update_stake_db(self, tx_account, new_stake, txid):
         to_exec = """UPDATE db
@@ -53,6 +54,7 @@ class Walletnotify:
                 LIKE %s"""
         self.cursor.execute(to_exec, (new_stake, txid, tx_account))
         self.connection.commit()
+        output.success("Successfully updated user's staked amount!")
 
     def get_db(self, tx_account, tx_amount, txid, tx_category):
         to_exec = """SELECT balance, staked
@@ -63,8 +65,10 @@ class Walletnotify:
         result_set = self.cursor.fetchone()
         if tx_category == "generated":
             new_stake = int(result_set["staked"]) - tx_amount
+            output.info("Adding user's staked amount to db...")
             self.update_stake_db(tx_account, new_stake, txid)
         else:
+            output.info("Adding user's new balance to db...")
             new_balance = int(result_set["balance"]) + tx_amount
             self.update_balance_db(tx_account, new_balance, txid)
 
@@ -72,6 +76,7 @@ class Walletnotify:
         to_exec = "INSERT INTO db(snowflake, balance) VALUES(%s,%s)"
         self.cursor.execute(to_exec, (str(tx_account), '0'))
         self.connection.commit()
+        output.success("Successfully added user to db, proceeding...")
 
     def check_for_user(self, tx_account):
         to_exec = """SELECT snowflake
@@ -81,8 +86,9 @@ class Walletnotify:
         self.cursor.execute(to_exec, (str(tx_account)))
         result_set = self.cursor.fetchone()
         if result_set == None:
+            output.info("User does not exist in db, adding...")
             self.make_user(tx_account)
-
+        output.success("User exists in db, proceeding...")
         return result_set
 
     def add_tx_db(self, tx_account, tx_amount, txid):
@@ -99,6 +105,7 @@ class Walletnotify:
         LIMIT 1"""
         self.cursor.execute(to_exec, (str(tx_account), str(tx_amount), str(txid)))
         self.connection.commit()
+        output.success("Tx has been removed, adding to user's balance/staked...")
         self.check_for_user(tx_account)
         self.get_db(tx_account, tx_amount, txid, tx_category)
 
@@ -115,12 +122,15 @@ class Walletnotify:
             tx_category = "receive"
 
         if tx_conf > 0:
+            output.info("Tx has confirmed, removing...")
             self.remove_tx_db(tx_account, tx_amount, txid, tx_category)
         else:
+            output.info("Tx has 0 confs, adding to unconfirmed...")
             self.add_tx_db(tx_account, tx_amount, txid)
 
 
 if __name__ == "__main__":
     txid = str(sys.argv[1])
     notify = Walletnotify()
+    output.info("Received new tx!")
     notify.process_tx(txid)
