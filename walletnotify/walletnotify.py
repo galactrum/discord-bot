@@ -132,5 +132,5 @@ class Walletnotify:
 if __name__ == "__main__":
     txid = str(sys.argv[1])
     notify = Walletnotify()
-    output.info("\nReceived new tx!")
+    output.info("Received new tx!")
     notify.process_tx(txid)

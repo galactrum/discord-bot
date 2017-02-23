@@ -12,7 +12,7 @@ message = ['[ERROR]   ', '[WARNING] ', '[SUCCESS] ', '[INFO]    ']
 
 
 def do_syn(string, var):
-    print(color[var]+message[var]+'\033[1;37;40m{0}'.format(string))
+    print('\n'+color[var]+message[var]+'\033[1;37;40m{0}'.format(string))
 
 
 def error(string):
