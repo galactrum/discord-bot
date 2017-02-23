@@ -1,3 +1,3 @@
 #!/bin/bash
 
-python3 walletnotify.py $1
+python3 walletnotify/walletnotify.py $1
