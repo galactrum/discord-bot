@@ -1,0 +1,16 @@
+{"data": [
+    {
+        "mysql": {
+            "db_host": "localhost",
+            "db_user": "aareon",
+            "db_pass": "NArutoman13",
+            "db": "netcoin"
+        },
+        "rpc": {
+            "rpc_host": "localhost",
+            "rpc_port": "11311",
+            "rpc_user": "srf2UUR0",
+            "rpc_pass": "srf2UUR0XomxYkWw"
+        }
+    }
+]}
