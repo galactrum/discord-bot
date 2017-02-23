@@ -75,10 +75,10 @@ class Walletnotify:
         self.check_for_user(self, tx_account)
 
     def remove_tx_db(self, tx_account, tx_amount, txid, tx_category):
-        to_exec = """DELETE FROM `unconfirmed`
-        WHERE `unconfirmed`.`account` = '%s'
-        AND `unconfirmed`.`amount` = '%s'
-        AND `unconfirmed`.`txid` = '%s'
+        to_exec = """DELETE FROM unconfirmed
+        WHERE account = '%s'
+        AND amount = '%s'
+        AND txid = '%s'
         LIMIT 1"""
         self.cursor.execute(to_exec, (str(tx_account), str(tx_amount), str(txid)))
         self.connection.commit()
