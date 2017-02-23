@@ -101,4 +101,5 @@ class Walletnotify:
 
 if __name__ == "__main__":
     txid = str(sys.argv[1])
-    Walletnotify.process_tx(txid)
+    notify = Walletnotify()
+    notify.process_tx(txid)
