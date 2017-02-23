@@ -64,12 +64,12 @@ class Walletnotify:
         self.cursor.execute(to_exec, str(tx_account))
         result_set = self.cursor.fetchone()
         if tx_category == "generated":
-            new_stake = int(result_set["staked"]) - tx_amount
+            new_stake = float(result_set["staked"]) - tx_amount
             output.info("Adding user's staked amount to db...")
             self.update_stake_db(tx_account, new_stake, txid)
         else:
             output.info("Adding user's new balance to db...")
-            new_balance = int(result_set["balance"]) + tx_amount
+            new_balance = float(result_set["balance"]) + tx_amount
             self.update_balance_db(tx_account, new_balance, txid)
 
     def make_user(self, tx_account):
@@ -113,7 +113,7 @@ class Walletnotify:
         transaction = self.gettransaction(txid)
         tx_conf = transaction["confirmations"]
         tx_account = transaction["details"][0]["account"]
-        tx_amount = int(transaction["details"][0]["amount"])
+        tx_amount = float(transaction["details"][0]["amount"])
         if "generated" in transaction:
             tx_category = "generated"
         elif tx_amount < 0:
