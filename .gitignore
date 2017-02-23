@@ -95,6 +95,5 @@ ENV/
 # PyCharm
 *.idea/
 
-walletnotify/walletnotify.json
-config.json
+*.json
 log.txt
