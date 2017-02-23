@@ -69,13 +69,13 @@ class Walletnotify:
         return result_set
 
     def add_tx_db(self, tx_account, tx_amount, txid):
-        to_exec = "INSERT INTO unconfirmed(account, amount, txid) VALUES(%s,%s,%s)"
+        to_exec = """INSERT INTO unconfirmed (account, amount, txid) VALUES (%s,%s,%s)"""
         self.cursor.execute(to_exec, (str(tx_account), str(tx_amount), str(txid)))
         self.connection.commit()
         self.check_for_user(self, tx_account)
 
     def remove_tx_db(self, tx_account, tx_amount, txid, tx_category):
-        to_exec = "DELETE FROM unconfirmed WHERE VALUES(%s,%s,%s)"
+        to_exec = """DELETE FROM unconfirmed (account, amount, txid) WHERE VALUES (%s,%s,%s)"""
         self.cursor.execute(to_exec, (str(tx_account), str(tx_amount), str(txid)))
         self.connection.commit()
         self.check_for_user(self, tx_account)
