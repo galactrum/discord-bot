@@ -102,7 +102,7 @@ class Walletnotify:
         WHERE account = %s
         AND amount = %s
         AND txid = %s
-        LIMIT 1"""
+        LIMIT 2"""
         self.cursor.execute(to_exec, (str(tx_account), str(tx_amount), str(txid)))
         self.connection.commit()
         output.success("Tx has been removed, adding to user's balance/staked...")
