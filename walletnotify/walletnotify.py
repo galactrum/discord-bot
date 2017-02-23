@@ -82,7 +82,7 @@ class Walletnotify:
         self.get_db(tx_account, tx_amount, txid, tx_category)
 
     def process_tx(self, txid):
-        transaction = self.gettransaction(txid)
+        transaction = self.gettransaction(txid)[0]
         tx_conf = transaction["confirmations"]
         tx_account = transaction["details"]["account"]
         tx_amount = int(transaction["details"]["amount"])
