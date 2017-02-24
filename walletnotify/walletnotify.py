@@ -102,7 +102,7 @@ class Walletnotify:
         WHERE account = %s
         AND amount = %s
         AND txid = %s
-        LIMIT 2"""
+        LIMIT 1"""
         self.cursor.execute(to_exec, (str(tx_account), str(tx_amount), str(txid)))
         self.connection.commit()
         output.success("Tx has been removed, adding to user's balance/staked...")
@@ -112,21 +112,21 @@ class Walletnotify:
     def process_tx(self, txid):
         transaction = self.gettransaction(txid)
         tx_conf = transaction["confirmations"]
-        tx_account = transaction["details"][0]["account"]
-        tx_amount = float(transaction["details"][0]["amount"])
-        if "generated" in transaction:
-            tx_category = "generated"
-        elif tx_amount < 0:
-            tx_category = "send"
+        if len(transaction["details"]) > 1:
+            tx_account = transaction["details"][1]["account"]
+            tx_amount = float(transaction["details"][1]["amount"])
+            tx_category = transaction["details"][1]["category"]
         else:
-            tx_category = "receive"
+            tx_account = transaction["details"][0]["account"]
+            tx_amount = float(transaction["details"][0]["amount"])
+            tx_category = transaction["details"][0]["category"]
 
         if tx_conf > 0:
-            output.info("Tx has confirmed, removing...")
+            output.info("{} tx has confirmed, removing...".format(tx_category))
             self.remove_tx_db(tx_account, tx_amount, txid, tx_category)
         else:
-            output.info("Tx has 0 confs, adding to unconfirmed...")
-            self.add_tx_db(tx_account, tx_amount, txid)
+            output.info("{} tx has 0 confs, adding to unconfirmed...".format(tx_category))
+            self.add_tx_db(tx_account, tx_amount, txid, tx_category)
 
 
 if __name__ == "__main__":
