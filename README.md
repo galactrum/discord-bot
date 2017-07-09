@@ -1,13 +1,13 @@
-# Discord-Netcoin-Bot
+# Discord-Verge-Bot
 [<img src="https://discordapp.com/api/guilds/219586006335225856/widget.png?style=shield">](https://discord.me/netcoin)
 
-These files are intended to function as a multi-functional tipbot for "Netcoin"
+These files are intended to function as a multi-functional tipbot for Verge Currency
 
 # Requirements
 * discord.py installed
 * Python 3.5+
 * A mySQL database
-* The Netcoin wallet w/ RPC enabled.
+* The Verge wallet w/ RPC enabled.
 
 # Functions
 * Display general wallet information
