@@ -1,5 +1,5 @@
 # Discord-Verge-Bot
-[<img src="https://discordapp.com/api/guilds/219586006335225856/widget.png?style=shield">](https://discord.me/netcoin)
+[<img src="https://discordapp.com/api/guilds/325024453065179137/widget.png?style=shield">](https://discord.me/VergeCurrency)
 
 These files are intended to function as a multi-functional tipbot for Verge Currency
 
