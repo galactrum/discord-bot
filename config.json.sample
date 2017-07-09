@@ -10,8 +10,8 @@
             "db": "database"
         },
         "rpc": {
-            "rpc_host": "hostname",
-            "rpc_port": "port",
+            "rpc_host": "127.0.0.1",
+            "rpc_port": "20102",
             "rpc_user": "user",
             "rpc_pass": "pass"
         },
@@ -22,6 +22,6 @@
         },
         "owners": ["owners discord id"],
         "prefix": "!",
-        "description": "Netcoin Tipbot"
+        "description": "Verge Tipbot"
     }
 ]}
