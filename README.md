@@ -1,5 +1,5 @@
 # Discord-Phore-Tips
-[<img src="https://discordapp.com/api/guilds/373488573623697409/widget.png?style=shield">](https://discord.gg/7sv6ErF)
+[Phore Discord](https://discord.gg/7sv6ErF)
 
 
 These files are intended to function as a multi-functional tipbot for Phore Currency
