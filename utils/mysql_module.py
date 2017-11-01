@@ -1,160 +1,118 @@
-import pymysql.cursors, json
+import pymysql.cursors
+import discord
 from utils import parsing, output
 
 class Mysql:
+    """
+    Handles database related tasks.
+    """
 
     def __init__(self):
         config = parsing.parse_json('config.json')["mysql"]
-        self.host = config["db_host"]
-        try:
-            self.port = int(config["db_port"])
-        except KeyError:
-            self.port = 3306
-        self.db_user = config["db_user"]
-        self.db_pass = config["db_pass"]
-        self.db = config["db"]
-        self.connected = 1
-        self.my_connection()
+        self.__host = config["db_host"]
+        self.__port = int(config.get("db_port", 3306))
+        self.__db_user = config["db_user"]
+        self.__db_pass = config["db_pass"]
+        self.__db = config["db"]
+        self.__connected = 1
+        self.__setup_connection()
 
-    def my_connection(self):
-        if self.connected == 0:
-            output.warning("Connection has been lost, attempting to reconnect...")
-        elif self.connected == 1:
-            output.info("Establishing connection to database...")
-        self.connection = pymysql.connect(
-            host=self.host,
-            port=self.port,
-            user=self.db_user,
-            password=self.db_pass,
-            db=self.db)
-        self.cursor = self.connection.cursor(pymysql.cursors.DictCursor)
-        return
+    def __setup_connection(self):
+        self.__connection = pymysql.connect(
+            host=self.__host,
+            port=self.__port,
+            user=self.__db_user,
+            password=self.__db_pass,
+            db=self.__db)
+        self.__cursor = self.__connection.cursor(pymysql.cursors.DictCursor)
 
     def make_user(self, name, snowflake):
-        to_exec = "INSERT INTO db(user, snowflake, balance) VALUES(%s,%s,%s)"
-        try:
-            self.cursor.execute(to_exec, (str(name).encode('ascii', 'ignore'), snowflake, '0'))
-            self.connection.commit()
-        except BrokenPipeError:
-            self.connected = 0
-            self.my_connection()
+        """
+        Sets up a new user in the database with given name and snowflake ID
+        """
+        to_exec = "INSERT INTO users (snowflake_pk, username, balance) VALUES(%s, %s, %s)"
+        self.__cursor.execute(to_exec, (str(snowflake), name, '0'))
+        self.__connection.commit()
 
     def check_for_user(self, name, snowflake):
-        to_exec = """SELECT snowflake
-        FROM db
-        WHERE snowflake
-        LIKE %s"""
-        try:
-            self.cursor.execute(to_exec, (str(snowflake)))
-            result_set = self.cursor.fetchone()
-            if result_set == None:
-                self.make_user(name, snowflake)
+        """
+        Checks for a new user and creates one if needed.
+        Returns snowflake of created user.
+        """
 
-            return result_set
-        except BrokenPipeError:
-            self.connected = 0
-            self.my_connection()
-
-    def get_bal_lasttxid(self, snowflake):
-        to_exec = " SELECT balance, staked, lasttxid FROM db WHERE snowflake LIKE %s "
-        try:
-            self.cursor.execute(to_exec, (str(snowflake)))
-            result_set = self.cursor.fetchone()
-
-            return result_set
-        except BrokenPipeError:
-            self.connected = 0
-            self.my_connection()
-
-    def update_db(self, snowflake, db_bal, db_staked, lasttxid):
-        to_exec = """UPDATE db
-        SET balance=%s, staked=%s, lasttxid=%s
-        WHERE snowflake
-        LIKE %s"""
-        try:
-            self.cursor.execute(to_exec, (db_bal,db_staked,lasttxid,snowflake))
-            self.connection.commit()
-        except BrokenPipeError:
-            self.connected = 0
-            self.my_connection()
+        to_exec = "SELECT snowflake_pk FROM users WHERE snowflake_pk LIKE %s"
+        self.__cursor.execute(to_exec, (str(snowflake)))
+        result_set = self.__cursor.fetchone()
+        if result_set is None:
+            self.make_user(name, snowflake)
+            result_set = (snowflake)
+        return result_set
 
     def get_user(self, snowflake):
-        to_exec = """
-        SELECT snowflake, balance, staked, lasttxid
-        FROM db
-        WHERE snowflake
-        LIKE %s"""
-        try:
-            self.cursor.execute(to_exec, (str(snowflake)))
-            result_set = self.cursor.fetchone()
+        """
+        Gets a user given a snowflake ID.
+        """
+        to_exec = "SELECT snowflake_pk, username, balance FROM users WHERE snowflake_pk LIKE %s"
+        self.__cursor.execute(to_exec, (str(snowflake)))
+        result_set = self.__cursor.fetchone()
 
-            return result_set
-        except BrokenPipeError:
-            self.connected = 0
-            self.my_connection()
+        return result_set
 
-    def add_server(self, server):
-        to_exec = "INSERT INTO server(server_id, enable_soak) VALUES(%s, %s)"
-        try:
-            self.cursor.execute(to_exec, (str(server.id), str(int(server.large))))
-            self.connection.commit()
-            return
-        except BrokenPipeError:
-            self.connected = 0
-            self.my_connection()
+    def add_server(self, server: discord.Server):
+        """
+        Adds a server to the database.
+        """
+        to_exec = "INSERT INTO server (server_id, enable_soak) VALUES(%s, %s)"
+        self.__cursor.execute(to_exec, (str(server.id), str(int(server.large))))
+        self.__connection.commit()
 
-    def remove_server(self, server):
+    def remove_server(self, server: discord.Server):
+        """
+        Removes a server from the database.
+        """
         to_exec = "DELETE FROM server WHERE server_id = %s"
-        try:
-            self.cursor.execute(to_exec, (str(server.id),))
-        except BrokenPipeError:
-            self.connected = 0
-            self.my_connection()
+        self.__cursor.execute(to_exec, (str(server.id),))
         to_exec = "DELETE FROM channel WHERE server_id = %s"
-        try:
-            self.cursor.execute(to_exec, (str(server.id),))
-            self.connection.commit()
-            return
-        except BrokenPipeError:
-            self.connected = 0
-            self.my_connection()
+        self.__cursor.execute(to_exec, (str(server.id),))
+        self.__connection.commit()
 
-    def add_channel(self, channel):
+    def add_channel(self, channel: discord.Channel):
+        """
+        Adds a channel to the database.
+        """
         to_exec = "INSERT INTO channel(channel_id, server_id, enabled) VALUES(%s, %s, 1)"
-        try:
-            self.cursor.execute(to_exec, (str(channel.id), str(channel.server.id)))
-            self.connection.commit()
-            return
-        except BrokenPipeError:
-            self.connected = 0
-            self.my_connection()
+        self.__cursor.execute(to_exec, (str(channel.id), str(channel.server.id)))
+        self.__connection.commit()
 
     def remove_channel(self, channel):
+        """
+        Removes a channel from the database.
+        """
         to_exec = "DELETE FROM channel WHERE channel_id = %s"
-        try:
-            self.cursor.execute(to_exec, (str(channel.id),))
-            self.connection.commit()
-            return
-        except BrokenPipeError:
-            self.connected = 0
-            self.my_connection()
+        self.__cursor.execute(to_exec, (str(channel.id),))
+        self.__connection.commit()
 
-    def check_soak(self, server):
+    def check_soak(self, server: discord.Server) -> bool:
+        """
+        Checks if soak is enabled for a specific server.
+        """
         to_exec = "SELECT enable_soak FROM server WHERE server_id = %s"
-        try:
-            self.cursor.execute(to_exec, (str(server.id)))
-            result_set = self.cursor.fetchone()
-            return result_set
-        except BrokenPipeError:
-            self.connected = 0
-            self.my_connection()
+        self.__cursor.execute(to_exec, (str(server.id)))
+        result_set = self.__cursor.fetchone()
+        return result_set['enable_soak']
 
     def set_soak(self, server, to):
+        """
+        Sets the soak setting for a server.
+        """
         to_exec = "UPDATE server SET enable_soak = %s WHERE server_id = %s"
-        try:
-            self.cursor.execute(to_exec, (to, str(server.id),))
-            self.connection.commit()
-            return
-        except BrokenPipeError:
-            self.connected = 0
-            self.my_connection()
+        self.__cursor.execute(to_exec, (to, str(server.id),))
+        self.__connection.commit()
+
+    def set_balance(self, user, to):
+        """
+        Sets the soak setting for a server.
+        """
+        to_exec = "UPDATE users SET balance = %s WHERE snowflake_pk = %s"
+        self.__cursor.execute(to_exec, (to, user.id,))
+        self.__connection.commit()

@@ -7,7 +7,10 @@ class Invite:
 
     @commands.command()
     async def invite(self):
-        await self.bot.say(":tada: https://discordapp.com/oauth2/authorize?permissions=0&client_id=274290564969660416&scope=bot")
+        """
+        Get the bots invite link
+        """
+        await self.bot.say(":tada: https://discordapp.com/oauth2/authorize?permissions=0&client_id={}&scope=bot".format(self.bot.user.id))
 
 
 def setup(bot):

@@ -1,13 +1,15 @@
 import discord
 from discord.ext import commands
 from utils import output, parsing, checks, mysql_module
-import os, traceback
+import os
+import traceback
+import database
 
 config = parsing.parse_json('config.json')
 
 Mysql = mysql_module.Mysql()
 
-bot = commands.Bot(command_prefix=commands.when_mentioned, description=config["description"])
+bot = commands.Bot(command_prefix=config['prefix'], description=config["description"])
 
 try:
     os.remove("log.txt")
@@ -34,6 +36,8 @@ async def on_ready():
             exc = '{}: {}'.format(type(e).__name__, e)
             output.error('Failed to load extension {}\n\t->{}'.format(extension, exc))
     output.success('Successfully loaded the following extension(s); {}'.format(loaded_extensions))
+    output.info('You can now invite the bot to a server using the following link:')
+    output.info('Invite: https://discordapp.com/oauth2/authorize?client_id={}&scope=bot'.format(bot.user.id))
 
 
 async def send_cmd_help(ctx):
@@ -145,9 +149,6 @@ async def on_server_join(server):
     Mysql.add_server(server)
     for channel in server.channels:
         Mysql.add_channel(channel)
-    await bot.say(server.default_channel,
-                  "Hey {0}, {1} seems nice. To set me up run {2}configure otherwise I will work in all channels".format(
-                      server.owner.mention, server.name, config["prefix"]))
 
 
 @bot.event
@@ -158,6 +159,8 @@ async def on_server_leave(server):
 
 @bot.event
 async def on_channel_create(channel):
+    if isinstance(channel, discord.PrivateChannel):
+        return
     Mysql.add_channel(channel)
     output.info("Channel {0} added to {1}".format(channel.name, channel.server.name))
 
@@ -181,6 +184,6 @@ async def on_command_error(error, ctx):
             ctx.command.qualified_name, type(error.original).__name__, str(error.original))
         await ctx.bot.send_message(channel, oneliner)
 
-
+database.run()
 bot.run(config["discord"]["token"])
 bot.loop.close()

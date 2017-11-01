@@ -26,43 +26,38 @@ cursor = connection.cursor(pymysql.cursors.DictCursor)
 
 
 def run():
-    cursor.execute("""CREATE TABLE IF NOT EXISTS person (
-        userid_pk VARCHAR(17) NOT NULL,
+    cursor.execute("""CREATE TABLE IF NOT EXISTS users (
+        snowflake_pk BIGINT UNSIGNED NOT NULL,
         username VARCHAR(37) NOT NULL,
-        balance FLOAT NOT NULL,
-        PRIMARY KEY (username)
+        balance DECIMAL(20, 8) NOT NULL,
+        PRIMARY KEY (snowflake_pk)
         )""")
-    '''
     cursor.execute("""CREATE TABLE IF NOT EXISTS deposit (
-        userid_fk VARCHAR(17) NOT NULL,
+        snowflake_fk BIGINT UNSIGNED NOT NULL,
         address_from VARCHAR(34) NOT NULL,
         address_to VARCHAR(34) NOT NULL,
-        amount FLOAT NOT NULL,
-        FOREIGN KEY (userid_fk) REFERENCES person(userid_pk)
+        amount DECIMAL(20, 8) NOT NULL,
+        FOREIGN KEY (snowflake_fk) REFERENCES users(snowflake_pk)
         )""")
-
     cursor.execute("""CREATE TABLE IF NOT EXISTS withdrawal (
-        userid_fk VARCHAR(17) NOT NULL,
+        snowflake_fk BIGINT UNSIGNED NOT NULL,
         address_from VARCHAR(34) NOT NULL,
         address_to VARCHAR(34) NOT NULL,
-        amount FLOAT NOT NULL,
-        FOREIGN KEY (userid_fk) REFERENCES person(userid_pk)
+        amount DECIMAL(20, 8) NOT NULL,
+        FOREIGN KEY (snowflake_fk) REFERENCES users(snowflake_pk)
         )""")
-
     cursor.execute("""CREATE TABLE IF NOT EXISTS tip (
-        userid_from_fk VARCHAR(17) NOT NULL,
-        userid_to_fk VARCHAR(17) NOT NULL,
-        ammount FLOAT NOT NULL,
-        FOREIGN KEY (userid_from_fk) REFERENCES person(userid_pk),
-        FOREIGN KEY (userid_to_fk) REFERENCES person(userid_pk)
+        snowflake_from_fk BIGINT UNSIGNED NOT NULL,
+        snowflake_to_fk BIGINT UNSIGNED NOT NULL,
+        ammount DECIMAL(20, 8) NOT NULL,
+        FOREIGN KEY (snowflake_from_fk) REFERENCES users(snowflake_pk),
+        FOREIGN KEY (snowflake_to_fk) REFERENCES users(snowflake_pk)
         )""")
-    '''
     cursor.execute("""CREATE TABLE IF NOT EXISTS server (
         server_id VARCHAR(18) NOT NULL,
         enable_soak TINYINT(1) NOT NULL,
         PRIMARY KEY (server_id)
         )""")
-
     cursor.execute("""CREATE TABLE IF NOT EXISTS channel (
         channel_id VARCHAR(18) NOT NULL,
         server_id VARCHAR(18) NOT NULL,
@@ -70,7 +65,3 @@ def run():
         FOREIGN KEY (server_id) REFERENCES server(server_id),
         PRIMARY KEY (channel_id)
         )""")
-
-    cursor.execute("CREATE INDEX userindex ON db(user) using BTREE;")
-    cursor.execute("CREATE INDEX serverindex ON server(server_id) using BTREE;")
-    cursor.execute("CREATE INDEX channelindex ON channel(channel_id) using BTREE;")

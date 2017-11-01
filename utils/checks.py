@@ -2,7 +2,7 @@ from utils import parsing, mysql_module
 
 config = parsing.parse_json('config.json')
 
-Mysql = mysql_module.Mysql()
+mysql = mysql_module.Mysql()
 
 
 def is_owner(ctx):
@@ -14,5 +14,4 @@ def is_server_owner(ctx):
 
 
 def allow_soak(ctx):
-    result_set = Mysql.check_soak(ctx.message.server)
-    return result_set[0]
+    return mysql.check_soak(ctx.message.server)

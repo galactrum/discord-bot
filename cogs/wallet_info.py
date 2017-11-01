@@ -11,21 +11,14 @@ class Wallet:
     @commands.command()
     async def wallet(self):
         """Shows wallet info"""
-        get_info = self.rpc.getinfo()
-        wallet_balance = str(float(get_info["balance"])+float(get_info["stake"]))
-        block_height = get_info["blocks"]
-        stake_info = self.rpc.getstakinginfo()
+        info = self.rpc.getinfo()
+        wallet_balance = str(float(info["balance"]))
+        block_height = info["blocks"]
         connection_count = self.rpc.getconnectioncount()
-        stake_weight = stake_info["weight"]
-        net_weight = stake_info["netstakeweight"]
         embed = discord.Embed(colour=discord.Colour.red())
-        embed.add_field(name="Wallet owner", value="Aareon#0892")
-        embed.add_field(name="Balance (NET)", value=wallet_balance)
-        embed.add_field(name="Staking Weight", value=stake_weight)
-        embed.add_field(name="Net Stake Weight", value=net_weight)
+        embed.add_field(name="Balance", value="{:.8f} PHR".format(float(wallet_balance)))
         embed.add_field(name="Connections", value=connection_count)
         embed.add_field(name="Block Height", value=block_height)
-        embed.set_footer(text="Sponsored by altcointrain.com - Choo!!! Choo!!!")
 
         try:
             await self.bot.say(embed=embed)

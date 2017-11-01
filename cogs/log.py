@@ -12,6 +12,9 @@ class Log:
     @commands.command(pass_context=True)
     @commands.check(checks.is_owner)
     async def log(self, ctx, num_lines: int):
+        """
+        Displays the last couple lines of the log.
+        """
         with open(config["file"], "r") as f:
             text = f.readlines()
         length = len(text)
