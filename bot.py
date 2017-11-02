@@ -35,9 +35,8 @@ async def on_ready():
         except Exception as e:
             exc = '{}: {}'.format(type(e).__name__, e)
             output.error('Failed to load extension {}\n\t->{}'.format(extension, exc))
-    output.success('Successfully loaded the following extension(s); {}'.format(loaded_extensions))
-    output.info('You can now invite the bot to a server using the following link:')
-    output.info('Invite: https://discordapp.com/oauth2/authorize?client_id={}&scope=bot'.format(bot.user.id))
+    output.success('Successfully loaded the following extension(s): {}'.format(', '.join(loaded_extensions)))
+    output.info('You can now invite the bot to a server using the following link: https://discordapp.com/oauth2/authorize?client_id={}&scope=bot'.format(bot.user.id))
 
 
 async def send_cmd_help(ctx):

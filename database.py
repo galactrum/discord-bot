@@ -1,4 +1,5 @@
 import pymysql.cursors
+import warnings
 from utils import parsing, output
 
 config = parsing.parse_json('config.json')["mysql"]
@@ -26,42 +27,44 @@ cursor = connection.cursor(pymysql.cursors.DictCursor)
 
 
 def run():
-    cursor.execute("""CREATE TABLE IF NOT EXISTS users (
-        snowflake_pk BIGINT UNSIGNED NOT NULL,
-        username VARCHAR(37) NOT NULL,
-        balance DECIMAL(20, 8) NOT NULL,
-        PRIMARY KEY (snowflake_pk)
-        )""")
-    cursor.execute("""CREATE TABLE IF NOT EXISTS deposit (
-        snowflake_fk BIGINT UNSIGNED NOT NULL,
-        address_from VARCHAR(34) NOT NULL,
-        address_to VARCHAR(34) NOT NULL,
-        amount DECIMAL(20, 8) NOT NULL,
-        FOREIGN KEY (snowflake_fk) REFERENCES users(snowflake_pk)
-        )""")
-    cursor.execute("""CREATE TABLE IF NOT EXISTS withdrawal (
-        snowflake_fk BIGINT UNSIGNED NOT NULL,
-        address_from VARCHAR(34) NOT NULL,
-        address_to VARCHAR(34) NOT NULL,
-        amount DECIMAL(20, 8) NOT NULL,
-        FOREIGN KEY (snowflake_fk) REFERENCES users(snowflake_pk)
-        )""")
-    cursor.execute("""CREATE TABLE IF NOT EXISTS tip (
-        snowflake_from_fk BIGINT UNSIGNED NOT NULL,
-        snowflake_to_fk BIGINT UNSIGNED NOT NULL,
-        ammount DECIMAL(20, 8) NOT NULL,
-        FOREIGN KEY (snowflake_from_fk) REFERENCES users(snowflake_pk),
-        FOREIGN KEY (snowflake_to_fk) REFERENCES users(snowflake_pk)
-        )""")
-    cursor.execute("""CREATE TABLE IF NOT EXISTS server (
-        server_id VARCHAR(18) NOT NULL,
-        enable_soak TINYINT(1) NOT NULL,
-        PRIMARY KEY (server_id)
-        )""")
-    cursor.execute("""CREATE TABLE IF NOT EXISTS channel (
-        channel_id VARCHAR(18) NOT NULL,
-        server_id VARCHAR(18) NOT NULL,
-        enabled TINYINT(1) NOT NULL,
-        FOREIGN KEY (server_id) REFERENCES server(server_id),
-        PRIMARY KEY (channel_id)
-        )""")
+    with warnings.catch_warnings():
+        warnings.simplefilter('ignore')
+        cursor.execute("""CREATE TABLE IF NOT EXISTS users (
+            snowflake_pk BIGINT UNSIGNED NOT NULL,
+            username VARCHAR(37) NOT NULL,
+            balance DECIMAL(20, 8) NOT NULL,
+            PRIMARY KEY (snowflake_pk)
+            )""")
+        cursor.execute("""CREATE TABLE IF NOT EXISTS deposit (
+            snowflake_fk BIGINT UNSIGNED NOT NULL,
+            address_from VARCHAR(34) NOT NULL,
+            address_to VARCHAR(34) NOT NULL,
+            amount DECIMAL(20, 8) NOT NULL,
+            FOREIGN KEY (snowflake_fk) REFERENCES users(snowflake_pk)
+            )""")
+        cursor.execute("""CREATE TABLE IF NOT EXISTS withdrawal (
+            snowflake_fk BIGINT UNSIGNED NOT NULL,
+            address_from VARCHAR(34) NOT NULL,
+            address_to VARCHAR(34) NOT NULL,
+            amount DECIMAL(20, 8) NOT NULL,
+            FOREIGN KEY (snowflake_fk) REFERENCES users(snowflake_pk)
+            )""")
+        cursor.execute("""CREATE TABLE IF NOT EXISTS tip (
+            snowflake_from_fk BIGINT UNSIGNED NOT NULL,
+            snowflake_to_fk BIGINT UNSIGNED NOT NULL,
+            ammount DECIMAL(20, 8) NOT NULL,
+            FOREIGN KEY (snowflake_from_fk) REFERENCES users(snowflake_pk),
+            FOREIGN KEY (snowflake_to_fk) REFERENCES users(snowflake_pk)
+            )""")
+        cursor.execute("""CREATE TABLE IF NOT EXISTS server (
+            server_id VARCHAR(18) NOT NULL,
+            enable_soak TINYINT(1) NOT NULL,
+            PRIMARY KEY (server_id)
+            )""")
+        cursor.execute("""CREATE TABLE IF NOT EXISTS channel (
+            channel_id VARCHAR(18) NOT NULL,
+            server_id VARCHAR(18) NOT NULL,
+            enabled TINYINT(1) NOT NULL,
+            FOREIGN KEY (server_id) REFERENCES server(server_id),
+            PRIMARY KEY (channel_id)
+            )""")
