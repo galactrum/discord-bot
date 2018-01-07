@@ -33,6 +33,7 @@ def run():
             snowflake_pk BIGINT UNSIGNED NOT NULL,
             username VARCHAR(37) NOT NULL,
             balance DECIMAL(20, 8) NOT NULL,
+            address VARCHAR(34),
             PRIMARY KEY (snowflake_pk)
             )""")
         cursor.execute("""CREATE TABLE IF NOT EXISTS deposit (

@@ -13,6 +13,12 @@ class Rpc:
         self.serverURL = 'http://' + self.rpc_host + ':' + self.rpc_port
         self.headers = {'content-type': 'application/json'}
 
+    def getnewaddress(self):
+        payload = json.dumps({"method": "getnewaddress", "params": [], "jsonrpc": "2.0"})
+        response = requests.get(self.serverURL, headers=self.headers, data=payload,
+                                auth=(self.rpc_user, self.rpc_pass))
+        return response.json()['result']
+
     def listtransactions(self, params, count):
         payload = json.dumps({"method": "listtransactions", "params": [params, count], "jsonrpc": "2.0"})
         response = requests.get(self.serverURL, headers=self.headers, data=payload,

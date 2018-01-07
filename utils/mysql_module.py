@@ -1,6 +1,8 @@
 import pymysql.cursors
 import discord
-from utils import parsing, output
+from utils import parsing, output, rpc_module
+
+rpc = rpc_module.Rpc()
 
 class Mysql:
     instance = None
@@ -18,7 +20,6 @@ class Mysql:
         """
         def __init__(self):
             config = parsing.parse_json('config.json')["mysql"]
-            print(config)
             self.__host = config["db_host"]
             self.__port = int(config.get("db_port", 3306))
             self.__db_user = config["db_user"]
@@ -37,33 +38,37 @@ class Mysql:
                 db=self.__db)
             self.__cursor = self.__connection.cursor(pymysql.cursors.DictCursor)
 
-        def make_user(self, name, snowflake):
+        def make_user(self, name, snowflake, address):
             """
             Sets up a new user in the database with given name and snowflake ID
             """
-            to_exec = "INSERT INTO users (snowflake_pk, username, balance) VALUES(%s, %s, %s)"
-            self.__cursor.execute(to_exec, (str(snowflake), name, '0'))
+            to_exec = "INSERT INTO users (snowflake_pk, username, balance, address) VALUES(%s, %s, %s, %s)"
+            self.__cursor.execute(to_exec, (str(snowflake), name, '0', str(address)))
             self.__connection.commit()
 
         def check_for_user(self, name, snowflake):
             """
             Checks for a new user and creates one if needed.
-            Returns snowflake of created user.
+            Also checks if an user is a legacy user and creates an address for them
             """
-
-            to_exec = "SELECT snowflake_pk FROM users WHERE snowflake_pk LIKE %s"
+            to_exec = "SELECT snowflake_pk, address, balance FROM users WHERE snowflake_pk LIKE %s"
             self.__cursor.execute(to_exec, (str(snowflake)))
             result_set = self.__cursor.fetchone()
+
             if result_set is None:
-                self.make_user(name, snowflake)
-                result_set = (snowflake)
-            return result_set
+                address = rpc.getnewaddress()
+                self.make_user(name, snowflake, address)
+            elif result_set["address"] == "":
+                address = rpc.getnewaddress()
+                to_exec = "UPDATE users SET address = %s WHERE snowflake_pk = %s"
+                self.__cursor.execute(to_exec, (address, str(snowflake)))
+                self.__connection.commit()
 
         def get_user(self, snowflake):
             """
             Gets a user given a snowflake ID.
             """
-            to_exec = "SELECT snowflake_pk, username, balance FROM users WHERE snowflake_pk LIKE %s"
+            to_exec = "SELECT snowflake_pk, username, balance, address FROM users WHERE snowflake_pk LIKE %s"
             self.__cursor.execute(to_exec, (str(snowflake)))
             result_set = self.__cursor.fetchone()
 
@@ -127,3 +132,11 @@ class Mysql:
             to_exec = "UPDATE users SET balance = %s WHERE snowflake_pk = %s"
             self.__cursor.execute(to_exec, (to, user.id,))
             self.__connection.commit()
+
+        def get_balance(self, snowflake):
+            result_set = self.get_user(snowflake)
+            return result_set.get("balance")
+
+        def get_address(self, snowflake):
+            result_set = self.get_user(snowflake)
+            return result_set.get("address")
