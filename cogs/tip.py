@@ -26,15 +26,14 @@ class Tip:
             return
 
         mysql.check_for_user(name, snowflake)
+        mysql.check_for_user(user.name, tip_user)
 
         result_set = mysql.get_user(snowflake)
 
         if float(result_set["balance"]) < amount:
             await self.bot.say("{} **:warning:You cannot tip more money than you have!:warning:**".format(ctx.message.author.mention))
         else:
-            tip_user_address = rpc.getaccountaddress(tip_user)
-
-            rpc.sendfrom(snowflake, tip_user_address, amount)
+            mysql.add_tip(snowflake, tip_user, amount)
             await self.bot.say("{} **Tipped {} {} PHR! :money_with_wings:**".format(ctx.message.author.mention, user.mention, str(amount)))
 
 def setup(bot):

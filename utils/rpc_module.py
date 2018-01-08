@@ -13,6 +13,12 @@ class Rpc:
         self.serverURL = 'http://' + self.rpc_host + ':' + self.rpc_port
         self.headers = {'content-type': 'application/json'}
 
+    def listreceivedbyaddess(self, address, includeWatchOnly = False):
+        payload = json.dumps({"method": "listreceivedbyaddress", "params": [address, includeWatchOnly], "jsonrpc": "2.0"})
+        response = requests.get(self.serverURL, headers=self.headers, data=payload,
+                                auth=(self.rpc_user, self.rpc_pass))
+        return response.json()['result']
+
     def getnewaddress(self):
         payload = json.dumps({"method": "getnewaddress", "params": [], "jsonrpc": "2.0"})
         response = requests.get(self.serverURL, headers=self.headers, data=payload,
@@ -57,6 +63,12 @@ class Rpc:
 
     def sendfrom(self, account, address, amount):
         payload = json.dumps({"method": "sendfrom", "params": [account, address, amount], "jsonrpc": "2.0"})
+        response = requests.get(self.serverURL, headers=self.headers, data=payload,
+                                auth=(self.rpc_user, self.rpc_pass))
+        return response.json()['result']
+
+    def sendtoaddress(self, address, amount):
+        payload = json.dumps({"method": "sendtoaddress", "params": [address, amount], "jsonrpc": "2.0"})
         response = requests.get(self.serverURL, headers=self.headers, data=payload,
                                 auth=(self.rpc_user, self.rpc_pass))
         return response.json()['result']

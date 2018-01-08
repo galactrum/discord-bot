@@ -33,27 +33,26 @@ def run():
             snowflake_pk BIGINT UNSIGNED NOT NULL,
             username VARCHAR(37) NOT NULL,
             balance DECIMAL(20, 8) NOT NULL,
-            address VARCHAR(34),
+            address VARCHAR(34) NOT NULL,
             PRIMARY KEY (snowflake_pk)
             )""")
         cursor.execute("""CREATE TABLE IF NOT EXISTS deposit (
             snowflake_fk BIGINT UNSIGNED NOT NULL,
-            address_from VARCHAR(34) NOT NULL,
-            address_to VARCHAR(34) NOT NULL,
             amount DECIMAL(20, 8) NOT NULL,
+            txid VARCHAR(256) NOT NULL,
+            status VARCHAR(20) NOT NULL,
             FOREIGN KEY (snowflake_fk) REFERENCES users(snowflake_pk)
             )""")
         cursor.execute("""CREATE TABLE IF NOT EXISTS withdrawal (
             snowflake_fk BIGINT UNSIGNED NOT NULL,
-            address_from VARCHAR(34) NOT NULL,
-            address_to VARCHAR(34) NOT NULL,
             amount DECIMAL(20, 8) NOT NULL,
+            txid VARCHAR(256) NOT NULL,
             FOREIGN KEY (snowflake_fk) REFERENCES users(snowflake_pk)
             )""")
         cursor.execute("""CREATE TABLE IF NOT EXISTS tip (
             snowflake_from_fk BIGINT UNSIGNED NOT NULL,
             snowflake_to_fk BIGINT UNSIGNED NOT NULL,
-            ammount DECIMAL(20, 8) NOT NULL,
+            amount DECIMAL(20, 8) NOT NULL,
             FOREIGN KEY (snowflake_from_fk) REFERENCES users(snowflake_pk),
             FOREIGN KEY (snowflake_to_fk) REFERENCES users(snowflake_pk)
             )""")
