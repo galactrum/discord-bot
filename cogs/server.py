@@ -16,7 +16,10 @@ class Server:
         Should the users in the server be allowed to soak all online users?
         """
         mysql.set_soak(ctx.message.server, int(enable))
-        await self.bot.say("Ok!")
+        if enable:
+            await self.bot.say("Ok! Soaking is now enabled!")
+        else:
+            await self.bot.say("Ok! Soaking is now disabled.")
 
     @commands.command(pass_context=True)
     @commands.check(checks.is_owner)
@@ -25,7 +28,10 @@ class Server:
         Checks if soak is available on the server.
         """
         result_set = mysql.check_soak(ctx.message.server)
-        await self.bot.say(result_set)
+        if result_set:
+            await self.bot.say("Soaking is enabled!")
+        else:
+            await self.bot.say("Soaking is disabled.")
 
 
 def setup(bot):

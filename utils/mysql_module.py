@@ -88,6 +88,17 @@ class Mysql:
             result_set = self.__cursor.fetchone()
             return result_set
 
+        def check_server(self, server: discord.Server):
+            """
+            Checks for a new server and creates a db entry if needed.
+            """
+            to_exec = "SELECT server_id, enable_soak FROM server WHERE server_id LIKE %s"
+            self.__cursor.execute(to_exec, (server.id))
+            result_set = self.__cursor.fetchone()
+
+            if result_set is None:
+                self.add_server(server)
+        
         def add_server(self, server: discord.Server):
             """
             Adds a server to the database.
@@ -126,6 +137,7 @@ class Mysql:
             """
             Checks if soak is enabled for a specific server.
             """
+            self.check_server(server)
             to_exec = "SELECT enable_soak FROM server WHERE server_id = %s"
             self.__cursor.execute(to_exec, (str(server.id)))
             result_set = self.__cursor.fetchone()

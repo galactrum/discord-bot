@@ -24,6 +24,10 @@ class Soak:
             if user.bot:
                 online_users.remove(user)
 
+        if len(online_users) == 0:
+            await self.bot.say("{}, you are all alone if you don't include bots! Trying soaking when people are online.".format(ctx.message.author.mention))
+            return
+
         mysql.check_for_user(name, snowflake)
         result_set = mysql.get_user(snowflake)
 
@@ -33,11 +37,9 @@ class Soak:
 
         amount_split = math.floor(float(amount) * 1e8 / len(online_users)) / 1e8
 
-        payments = {}
         for user in online_users:
-            address = rpc.getaccountaddress(user.id)
-            payments[address] = amount_split
-        rpc.sendmany(snowflake, payments)
+            mysql.check_for_user(user.name, user.id)
+            mysql.add_tip(snowflake, user.id, amount_split)
 
         await self.bot.say("{} **Soaked {} PHR on {} [{}] :money_with_wings:**".format(ctx.message.author.mention, str(amount_split), ', '.join([x.mention for x in online_users]), str(amount)))
 
