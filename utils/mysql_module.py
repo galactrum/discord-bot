@@ -1,11 +1,12 @@
 import pymysql.cursors
 import discord
-from utils import parsing, output, rpc_module
-from decimal import *
+from utils import parsing, rpc_module
+from decimal import Decimal
 
 rpc = rpc_module.Rpc()
 
 MIN_CONFIRMATIONS_FOR_DEPOSIT = 2
+
 
 class Mysql:
     instance = None
@@ -31,7 +32,6 @@ class Mysql:
             self.__connected = 1
             self.__setup_connection()
 
-
         def __setup_connection(self):
             self.__connection = pymysql.connect(
                 host=self.__host,
@@ -39,14 +39,17 @@ class Mysql:
                 user=self.__db_user,
                 password=self.__db_pass,
                 db=self.__db)
-            self.__cursor = self.__connection.cursor(pymysql.cursors.DictCursor)
+            self.__cursor = self.__connection.cursor(
+                pymysql.cursors.DictCursor)
 
+# region User
         def make_user(self, name, snowflake, address):
             """
             Sets up a new user in the database with given name and snowflake ID
             """
             to_exec = "INSERT INTO users (snowflake_pk, username, balance, address) VALUES(%s, %s, %s, %s)"
-            self.__cursor.execute(to_exec, (str(snowflake), name, '0', str(address)))
+            self.__cursor.execute(
+                to_exec, (str(snowflake), name, '0', str(address)))
             self.__connection.commit()
 
         def check_for_user(self, name, snowflake):
@@ -72,14 +75,17 @@ class Mysql:
             return result_set
 
         def get_user_by_address(self, address):
-            """
-            Gets a user given an address.
-            """
             to_exec = "SELECT snowflake_pk, username, balance, address FROM users WHERE address LIKE %s"
             self.__cursor.execute(to_exec, (str(address)))
             result_set = self.__cursor.fetchone()
             return result_set
 
+        def get_address(self, snowflake):
+            result_set = self.get_user(snowflake)
+            return result_set.get("address")
+# endregion
+
+# region Servers/Channels
         def check_server(self, server: discord.Server):
             """
             Checks for a new server and creates a db entry if needed.
@@ -90,13 +96,14 @@ class Mysql:
 
             if result_set is None:
                 self.add_server(server)
-        
+
         def add_server(self, server: discord.Server):
             """
             Adds a server to the database.
             """
             to_exec = "INSERT INTO server (server_id, enable_soak) VALUES(%s, %s)"
-            self.__cursor.execute(to_exec, (str(server.id), str(int(server.large))))
+            self.__cursor.execute(
+                to_exec, (str(server.id), str(int(server.large))))
             self.__connection.commit()
 
         def remove_server(self, server: discord.Server):
@@ -114,7 +121,8 @@ class Mysql:
             Adds a channel to the database.
             """
             to_exec = "INSERT INTO channel(channel_id, server_id, enabled) VALUES(%s, %s, 1)"
-            self.__cursor.execute(to_exec, (str(channel.id), str(channel.server.id)))
+            self.__cursor.execute(
+                to_exec, (str(channel.id), str(channel.server.id)))
             self.__connection.commit()
 
         def remove_channel(self, channel):
@@ -124,25 +132,9 @@ class Mysql:
             to_exec = "DELETE FROM channel WHERE channel_id = %s"
             self.__cursor.execute(to_exec, (str(channel.id),))
             self.__connection.commit()
+# endregion
 
-        def check_soak(self, server: discord.Server) -> bool:
-            """
-            Checks if soak is enabled for a specific server.
-            """
-            self.check_server(server)
-            to_exec = "SELECT enable_soak FROM server WHERE server_id = %s"
-            self.__cursor.execute(to_exec, (str(server.id)))
-            result_set = self.__cursor.fetchone()
-            return result_set['enable_soak']
-
-        def set_soak(self, server, to):
-            """
-            Sets the soak setting for a server.
-            """
-            to_exec = "UPDATE server SET enable_soak = %s WHERE server_id = %s"
-            self.__cursor.execute(to_exec, (to, str(server.id),))
-            self.__connection.commit()
-
+# region Balance
         def set_balance(self, snowflake, to):
             """
             Sets the soak setting for a server.
@@ -151,29 +143,19 @@ class Mysql:
             self.__cursor.execute(to_exec, (to, snowflake,))
             self.__connection.commit()
 
-        def get_balance(self, snowflake, check_update = False):
+        def get_balance(self, snowflake, check_update=False):
             if check_update:
                 self.check_for_updated_balance()
             result_set = self.get_user(snowflake)
             return result_set.get("balance")
 
         def add_to_balance(self, snowflake, amount):
-            self.set_balance(snowflake, self.get_balance(snowflake) + Decimal(amount))
+            self.set_balance(snowflake, self.get_balance(
+                snowflake) + Decimal(amount))
 
         def remove_from_balance(self, snowflake, amount):
-            self.set_balance(snowflake, self.get_balance(snowflake) - Decimal(amount))
-
-        def get_address(self, snowflake):
-            result_set = self.get_user(snowflake)
-            return result_set.get("address")
-
-
-        def get_username_by_address(self, address):
-            user = self.get_user_by_address(address)
-            if not user:
-                return None
-
-            return user["address"]
+            self.set_balance(snowflake, self.get_balance(
+                snowflake) - Decimal(amount))
 
         def check_for_updated_balance(self):
             # could this be empty here?
@@ -194,7 +176,8 @@ class Mysql:
                     self.add_to_balance(snowflake_cur, amount)
                     self.add_deposit(snowflake_cur, amount, txid, 'CONFIRMED')
                 elif status == "DOESNT_EXIST" and confirmations < MIN_CONFIRMATIONS_FOR_DEPOSIT:
-                    self.add_deposit(snowflake_cur, amount, txid, 'UNCONFIRMED')
+                    self.add_deposit(snowflake_cur, amount,
+                                     txid, 'UNCONFIRMED')
                 elif status == "UNCONFIRMED" and confirmations >= MIN_CONFIRMATIONS_FOR_DEPOSIT:
                     self.add_to_balance(snowflake_cur, amount)
                     self.confirm_deposit(txid)
@@ -207,10 +190,13 @@ class Mysql:
                 return "DOESNT_EXIST"
 
             return result_set["status"]
+# endregion
 
+# region Deposit/Withdraw/Tip/Soak
         def add_deposit(self, snowflake, amount, txid, status):
             to_exec = "INSERT INTO deposit(snowflake_fk, amount, txid, status) VALUES(%s, %s, %s, %s)"
-            self.__cursor.execute(to_exec, (str(snowflake), str(amount), str(txid), str(status)))
+            self.__cursor.execute(
+                to_exec, (str(snowflake), str(amount), str(txid), str(status)))
             self.__connection.commit()
 
         def confirm_deposit(self, txid):
@@ -228,7 +214,8 @@ class Mysql:
 
         def add_withdrawal(self, snowflake, amount, txid):
             to_exec = "INSERT INTO withdrawal(snowflake_fk, amount, txid) VALUES(%s, %s, %s)"
-            self.__cursor.execute(to_exec, (str(snowflake), str(amount), str(txid)))
+            self.__cursor.execute(
+                to_exec, (str(snowflake), str(amount), str(txid)))
             self.__connection.commit()
             return txid
 
@@ -236,7 +223,25 @@ class Mysql:
             self.remove_from_balance(snowflake_from_fk, amount)
             self.add_to_balance(snowflake_to_fk, amount)
             tip_exec = "INSERT INTO tip(snowflake_from_fk, snowflake_to_fk, amount) VALUES(%s, %s, %s)"
-            self.__cursor.execute(tip_exec, (str(snowflake_from_fk), str(snowflake_to_fk), str(amount)))
+            self.__cursor.execute(
+                tip_exec, (str(snowflake_from_fk), str(snowflake_to_fk), str(amount)))
             self.__connection.commit()
-            
 
+        def check_soak(self, server: discord.Server) -> bool:
+            """
+            Checks if soak is enabled for a specific server.
+            """
+            self.check_server(server)
+            to_exec = "SELECT enable_soak FROM server WHERE server_id = %s"
+            self.__cursor.execute(to_exec, (str(server.id)))
+            result_set = self.__cursor.fetchone()
+            return result_set['enable_soak']
+
+        def set_soak(self, server, to):
+            """
+            Sets the soak setting for a server.
+            """
+            to_exec = "UPDATE server SET enable_soak = %s WHERE server_id = %s"
+            self.__cursor.execute(to_exec, (to, str(server.id),))
+            self.__connection.commit()
+# endregion
