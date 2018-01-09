@@ -29,6 +29,7 @@ cursor = connection.cursor(pymysql.cursors.DictCursor)
 def run():
     with warnings.catch_warnings():
         warnings.simplefilter('ignore')
+
         cursor.execute("""CREATE TABLE IF NOT EXISTS users (
             snowflake_pk BIGINT UNSIGNED NOT NULL,
             username VARCHAR(37) NOT NULL,

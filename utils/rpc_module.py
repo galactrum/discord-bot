@@ -30,11 +30,11 @@ class Rpc:
         response = requests.get(self.serverURL, headers=self.headers, data=payload,
                                 auth=(self.rpc_user, self.rpc_pass))
         return response.json()['result']
-
+    
     def getconnectioncount(self):
         payload = json.dumps({"method": "getconnectioncount", "params": [], "jsonrpc": "2.0"})
         response = requests.get(self.serverURL, headers=self.headers, data=payload,
-                                auth=(self.rpc_user, self.rpc_pass))
+                               auth=(self.rpc_user, self.rpc_pass))
         return response.json()['result']
 
     def getinfo(self):
@@ -49,32 +49,8 @@ class Rpc:
                                 auth=(self.rpc_user, self.rpc_pass))
         return response.json()['result']
 
-    def getaccountaddress(self, account):
-        payload = json.dumps({"method": "getaccountaddress", "params": [account], "jsonrpc": "2.0"})
-        response = requests.get(self.serverURL, headers=self.headers, data=payload,
-                                auth=(self.rpc_user, self.rpc_pass))
-        return response.json()['result']
-
-    def getbalance(self, account):
-        payload = json.dumps({"method": "getbalance", "params": [account], "jsonrpc": "2.0"})
-        response = requests.get(self.serverURL, headers=self.headers, data=payload,
-                                auth=(self.rpc_user, self.rpc_pass))
-        return response.json()['result']
-
-    def sendfrom(self, account, address, amount):
-        payload = json.dumps({"method": "sendfrom", "params": [account, address, amount], "jsonrpc": "2.0"})
-        response = requests.get(self.serverURL, headers=self.headers, data=payload,
-                                auth=(self.rpc_user, self.rpc_pass))
-        return response.json()['result']
-
     def sendtoaddress(self, address, amount):
         payload = json.dumps({"method": "sendtoaddress", "params": [address, amount], "jsonrpc": "2.0"})
-        response = requests.get(self.serverURL, headers=self.headers, data=payload,
-                                auth=(self.rpc_user, self.rpc_pass))
-        return response.json()['result']
-
-    def sendmany(self, account, payments):
-        payload = json.dumps({"method": "sendmany", "params": [account, payments], "jsonrpc": "2.0"})
         response = requests.get(self.serverURL, headers=self.headers, data=payload,
                                 auth=(self.rpc_user, self.rpc_pass))
         return response.json()['result']
