@@ -29,9 +29,9 @@ class Soak:
             return
 
         mysql.check_for_user(name, snowflake)
-        result_set = mysql.get_user(snowflake)
+        balance = mysql.get_balance(snowflake, check_update=True)
 
-        if float(result_set["balance"]) < amount:
+        if float(balance) < amount:
             await self.bot.say("{} **:warning:You cannot tip more money than you have!:warning:**".format(ctx.message.author.mention))
             return
 

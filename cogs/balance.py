@@ -38,7 +38,7 @@ class Balance:
         mysql.check_for_user(name, snowflake)
 
         # Execute and return SQL Query
-        await self.do_embed(ctx.message.author, mysql.get_balance(snowflake, True))
+        await self.do_embed(ctx.message.author, mysql.get_balance(snowflake, check_update=True))
 
 
 def setup(bot):

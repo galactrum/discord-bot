@@ -44,8 +44,8 @@ class Withdraw:
             await self.bot.say("{} **:warning:You cannot withdraw to an address owned by this bot!:warning:** Please use tip instead!".format(ctx.message.author.mention))
             return
 
-        result_set = mysql.get_user(snowflake)
-        if float(result_set["balance"]) < amount:
+        balance = mysql.get_balance(snowflake, check_update=True)
+        if float(balance) < amount:
             await self.bot.say("{} **:warning:You cannot withdraw more money than you have!:warning:**".format(ctx.message.author.mention))
             return
 
