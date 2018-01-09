@@ -61,14 +61,6 @@ class Mysql:
             if result_set is None:
                 address = rpc.getnewaddress()
                 self.make_user(name, snowflake, address)
-            elif result_set["address"] == "":
-                address = rpc.getnewaddress()
-                to_exec = "UPDATE users SET address = %s WHERE snowflake_pk = %s"
-                self.__cursor.execute(to_exec, (address, str(snowflake)))
-                self.__connection.commit()
-                # Check calculate balance from database because previous balance might be wrong
-                balance = self.calculate_balance_from_beginning(snowflake)
-                self.set_balance(snowflake, balance)
 
         def get_user(self, snowflake):
             """
@@ -246,43 +238,5 @@ class Mysql:
             tip_exec = "INSERT INTO tip(snowflake_from_fk, snowflake_to_fk, amount) VALUES(%s, %s, %s)"
             self.__cursor.execute(tip_exec, (str(snowflake_from_fk), str(snowflake_to_fk), str(amount)))
             self.__connection.commit()
-
-        def calculate_balance_from_beginning(self, snowflake):
-            tips_from_exec = "SELECT amount FROM tip WHERE snowflake_from_fk = %s"
-            self.__cursor.execute(tips_from_exec, (snowflake))
-            tips_from = self.__cursor.fetchall()
-
-            tips_to_exec = "SELECT amount FROM tip WHERE snowflake_to_fk = %s"
-            self.__cursor.execute(tips_to_exec, (snowflake))
-            tips_to = self.__cursor.fetchall()
-
-            withdrawals_exec = "SELECT amount FROM withdrawal WHERE snowflake_fk = %s"
-            self.__cursor.execute(withdrawals_exec, (snowflake))
-            withdrawals = self.__cursor.fetchall()
-
-            deposits_exec = "SELECT amount from deposit WHERE snowflake_fk = %s"
-            self.__cursor.execute(deposits_exec, (snowflake))
-            deposits = self.__cursor.fetchall()
-
-            print(tips_from, tips_to, withdrawals, deposits)
-
-            balance_sum = 0
-            for tip_from in tips_from:
-                # add up the tips from others
-                balance_sum += tip_from["amount"]
-
-            for tip_to in tips_to:
-                # subtract the tips from others
-                balance_sum -= tip_to["amount"]
-
-            for withdrawal in withdrawals:
-                # subtract withdrawals
-                balance_sum -= withdrawal["amount"]
-
-            for deposit in deposits:
-                # add up deposits
-                balance_sum += deposit["amount"]
-
-            return balance_sum
             
 
