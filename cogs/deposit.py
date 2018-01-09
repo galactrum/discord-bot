@@ -14,7 +14,7 @@ class Deposit:
         # Check if user exists in db
         mysql.check_for_user(user.name, user.id)
         user_addy = mysql.get_address(user.id)
-        await self.bot.say(user.mention + "'s Deposit Address: `" + str(user_addy) + "`")
+        await self.bot.send_message(user, user.mention + "'s Deposit Address: `" + str(user_addy) + "`")
 
 def setup(bot):
     bot.add_cog(Deposit(bot))
