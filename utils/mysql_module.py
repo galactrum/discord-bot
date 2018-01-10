@@ -135,11 +135,13 @@ class Mysql:
             self.set_balance(snowflake, self.get_balance(
                 snowflake) - Decimal(amount))
 
-
         def check_for_updated_balance(self, snowflake):
             """
             Uses RPC to get the latest transactions and updates
             the user balances accordingly
+
+            This code is based off of parse_incoming_transactions in
+            https://github.com/tehranifar/ZTipBot/blob/master/src/wallet.py
             """
             transaction_list = rpc.listtransactions(snowflake, 100)
             for tx in transaction_list:
