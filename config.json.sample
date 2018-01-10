@@ -20,6 +20,7 @@
             "file": "log.txt",
             "file_level": 3
         },
+        "txfee": 0.001,
         "owners": ["owners discord id"],
         "prefix": "!",
         "description": "Verge Tipbot"

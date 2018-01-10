@@ -31,6 +31,7 @@ class Mysql:
             self.__db = config["db"]
             self.__connected = 1
             self.__setup_connection()
+            self.txfee = parsing.parse_json('config.json')["txfee"]
 
         def __setup_connection(self):
             self.__connection = pymysql.connect(
@@ -187,7 +188,11 @@ class Mysql:
             self.__connection.commit()
 
         def create_withdrawal(self, snowflake, address, amount):
-            txid = rpc.sendtoaddress(address, amount)
+            res = rpc.settxfee(self.txfee)
+            if not res:
+                return None
+
+            txid = rpc.sendtoaddress(address, amount - self.txfee)
             if not txid:
                 return None
 

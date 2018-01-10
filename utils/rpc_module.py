@@ -54,3 +54,9 @@ class Rpc:
         response = requests.get(self.serverURL, headers=self.headers, data=payload,
                                 auth=(self.rpc_user, self.rpc_pass))
         return response.json()['result']
+
+    def settxfee(self, amount):
+        payload = json.dumps({"method": "settxfee", "params": [amount], "jsonrpc": "2.0"})
+        response = requests.get(self.serverURL, headers=self.headers, data=payload,
+                                auth=(self.rpc_user, self.rpc_pass))
+        return response.json()['result']

@@ -11,13 +11,11 @@ class Withdraw:
     def __init__(self, bot):
         self.bot = bot
 
-    # todo: don't let people withdraw to addresses contained in this wallet
     @commands.command(pass_context=True)
-    async def withdraw(self, ctx, address:str, amount:float):
+    async def withdraw(self, ctx, address: str, amount: float):
         """Withdraw coins from your account to any Phore address"""
         snowflake = ctx.message.author.id
-        name = ctx.message.author.name
-        
+        name = ctx.message.author.name      
         if amount <= 0.0:
             await self.bot.say("{} **:warning:You cannot withdraw <= 0!:warning:**".format(ctx.message.author.mention))
             return
