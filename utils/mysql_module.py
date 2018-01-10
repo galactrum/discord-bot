@@ -45,16 +45,16 @@ class Mysql:
 
 # region User
         def make_user(self, name, snowflake, address):
-            to_exec = "INSERT INTO users (snowflake_pk, username, balance, address) VALUES(%s, %s, %s, %s)"
+            to_exec = "INSERT INTO users (snowflake_pk, username, balance, balance_unconfirmed, address) VALUES(%s, %s, %s, %s, %s)"
             self.__cursor.execute(
-                to_exec, (str(snowflake), name, '0', str(address)))
+                to_exec, (str(snowflake), name, '0', '0', str(address)))
             self.__connection.commit()
 
         def check_for_user(self, name, snowflake):
             """
             Checks for a new user and creates one if needed.
             """
-            to_exec = "SELECT snowflake_pk, address, balance FROM users WHERE snowflake_pk LIKE %s"
+            to_exec = "SELECT snowflake_pk, address, balance, balance_unconfirmed FROM users WHERE snowflake_pk LIKE %s"
             self.__cursor.execute(to_exec, (str(snowflake)))
             result_set = self.__cursor.fetchone()
 
@@ -63,13 +63,13 @@ class Mysql:
                 self.make_user(name, snowflake, address)
 
         def get_user(self, snowflake):
-            to_exec = "SELECT snowflake_pk, username, balance, address FROM users WHERE snowflake_pk LIKE %s"
+            to_exec = "SELECT snowflake_pk, username, balance, balance_unconfirmed, address FROM users WHERE snowflake_pk LIKE %s"
             self.__cursor.execute(to_exec, (str(snowflake)))
             result_set = self.__cursor.fetchone()
             return result_set
 
         def get_user_by_address(self, address):
-            to_exec = "SELECT snowflake_pk, username, balance, address FROM users WHERE address LIKE %s"
+            to_exec = "SELECT snowflake_pk, username, balance, balance_unconfirmed, address FROM users WHERE address LIKE %s"
             self.__cursor.execute(to_exec, (str(address)))
             result_set = self.__cursor.fetchone()
             return result_set
@@ -116,18 +116,24 @@ class Mysql:
 # endregion
 
 # region Balance
-        def set_balance(self, snowflake, to):
-            to_exec = "UPDATE users SET balance = %s WHERE snowflake_pk = %s"
+        def set_balance(self, snowflake, to, isUnconfirmed = False):
+            if isUnconfirmed:
+                to_exec = "UPDATE users SET balance_unconfirmed = %s WHERE snowflake_pk = %s"
+            else:
+                to_exec = "UPDATE users SET balance = %s WHERE snowflake_pk = %s"
             self.__cursor.execute(to_exec, (to, snowflake,))
             self.__connection.commit()
 
-        def get_balance(self, snowflake, check_update=False):
+        def get_balance(self, snowflake, check_update=False, checkUnconfirmed = False):
             if check_update:
                 self.check_for_updated_balance(snowflake)
             result_set = self.get_user(snowflake)
-            return result_set.get("balance")
+            if checkUnconfirmed:
+                return result_set.get("balance_unconfirmed")
+            else:
+                return result_set.get("balance")
 
-        def add_to_balance(self, snowflake, amount):
+        def add_to_balance(self, snowflake, amount, isUnconfirmed = False):
             self.set_balance(snowflake, self.get_balance(
                 snowflake) + Decimal(amount))
 
@@ -135,6 +141,13 @@ class Mysql:
             self.set_balance(snowflake, self.get_balance(
                 snowflake) - Decimal(amount))
 
+        def add_to_balance_unconfirmed(self, snowflake, amount):
+            balance_unconfirmed = self.get_balance(snowflake, checkUnconfirmed = True) 
+            self.set_balance(snowflake, balance_unconfirmed + Decimal(amount), isUnconfirmed = True)
+
+        def remove_from_balance_unconfirmed(self, snowflake, amount):
+            balance_unconfirmed = self.get_balance(snowflake, checkUnconfirmed = True) 
+            self.set_balance(snowflake, balance_unconfirmed - Decimal(amount), isUnconfirmed = True)
 
         def check_for_updated_balance(self, snowflake):
             """
@@ -163,8 +176,10 @@ class Mysql:
                 elif status == "DOESNT_EXIST" and confirmations < MIN_CONFIRMATIONS_FOR_DEPOSIT:
                     self.add_deposit(snowflake_cur, amount,
                                      txid, 'UNCONFIRMED')
+                    self.add_to_balance_unconfirmed(snowflake_cur, amount)
                 elif status == "UNCONFIRMED" and confirmations >= MIN_CONFIRMATIONS_FOR_DEPOSIT:
                     self.add_to_balance(snowflake_cur, amount)
+                    self.remove_from_balance_unconfirmed(snowflake_cur, amount)
                     self.confirm_deposit(txid)
 
         def get_transaction_status_by_txid(self, txid):
