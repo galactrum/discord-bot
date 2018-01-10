@@ -81,6 +81,8 @@ class Mysql:
 
 # region Servers/Channels
         def check_server(self, server: discord.Server):
+            if server is None:
+                return               
             to_exec = "SELECT server_id, enable_soak FROM server WHERE server_id LIKE %s"
             self.__cursor.execute(to_exec, (server.id))
             result_set = self.__cursor.fetchone()
@@ -215,6 +217,8 @@ class Mysql:
             self.__connection.commit()
 
         def check_soak(self, server: discord.Server) -> bool:
+            if server is None:
+                return False
             self.check_server(server)
             to_exec = "SELECT enable_soak FROM server WHERE server_id = %s"
             self.__cursor.execute(to_exec, (str(server.id)))
@@ -222,6 +226,7 @@ class Mysql:
             return result_set['enable_soak']
 
         def set_soak(self, server, to):
+            self.check_server(server)
             to_exec = "UPDATE server SET enable_soak = %s WHERE server_id = %s"
             self.__cursor.execute(to_exec, (to, str(server.id),))
             self.__connection.commit()

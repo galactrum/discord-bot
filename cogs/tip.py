@@ -1,6 +1,6 @@
 import discord, json, requests, pymysql.cursors
 from discord.ext import commands
-from utils import rpc_module, mysql_module, parsing
+from utils import rpc_module, mysql_module, parsing, checks
 
 rpc = rpc_module.Rpc()
 mysql = mysql_module.Mysql()
@@ -11,6 +11,7 @@ class Tip:
         self.bot = bot
 
     @commands.command(pass_context=True)
+    @commands.check(checks.in_server)
     async def tip(self, ctx, user:discord.Member, amount:float):
         """Tip a user coins"""
         snowflake = ctx.message.author.id

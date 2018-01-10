@@ -19,7 +19,8 @@ class Soak:
         name = ctx.message.author.name
 
         online_users = [x for x in ctx.message.server.members if x.status == discord.Status.online]
-        online_users.remove(ctx.message.author)
+        if ctx.message.author in online_users:
+            online_users.remove(ctx.message.author)
         for user in online_users:
             if user.bot:
                 online_users.remove(user)

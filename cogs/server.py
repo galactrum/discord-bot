@@ -10,6 +10,7 @@ class Server:
         self.bot = bot
 
     @commands.command(pass_context=True)
+    @commands.check(checks.in_server)
     @commands.check(checks.is_owner)
     async def allowsoak(self, ctx, enable: bool):
         """
@@ -22,6 +23,7 @@ class Server:
             await self.bot.say("Ok! Soaking is now disabled.")
 
     @commands.command(pass_context=True)
+    @commands.check(checks.in_server)
     @commands.check(checks.is_owner)
     async def checksoak(self, ctx):
         """
