@@ -58,7 +58,7 @@ class Mysql:
             result_set = self.__cursor.fetchone()
 
             if result_set is None:
-                address = rpc.getnewaddress()
+                address = rpc.getnewaddress(snowflake)
                 self.make_user(name, snowflake, address)
 
         def get_user(self, snowflake):
@@ -120,7 +120,7 @@ class Mysql:
 
         def get_balance(self, snowflake, check_update=False):
             if check_update:
-                self.check_for_updated_balance()
+                self.check_for_updated_balance(snowflake)
             result_set = self.get_user(snowflake)
             return result_set.get("balance")
 
@@ -132,12 +132,13 @@ class Mysql:
             self.set_balance(snowflake, self.get_balance(
                 snowflake) - Decimal(amount))
 
-        def check_for_updated_balance(self):
+
+        def check_for_updated_balance(self, snowflake):
             """
             Uses RPC to get the latest transactions and updates
             the user balances accordingly
             """
-            transaction_list = rpc.listtransactions("*", 100)
+            transaction_list = rpc.listtransactions(snowflake, 100)
             for tx in transaction_list:
                 if tx["category"] != "receive":
                     continue
