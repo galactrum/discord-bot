@@ -1,6 +1,6 @@
 import discord, json, requests, pymysql.cursors
 from discord.ext import commands
-from utils import rpc_module, mysql_module, parsing
+from utils import rpc_module, mysql_module, parsing, checks
 
 rpc = rpc_module.Rpc()
 mysql = mysql_module.Mysql()
@@ -11,6 +11,7 @@ class Tip:
         self.bot = bot
 
     @commands.command(pass_context=True)
+    @commands.check(checks.in_server)
     async def tip(self, ctx, user:discord.Member, amount:float):
         """Tip a user coins"""
         snowflake = ctx.message.author.id
@@ -26,15 +27,14 @@ class Tip:
             return
 
         mysql.check_for_user(name, snowflake)
+        mysql.check_for_user(user.name, tip_user)
 
-        result_set = mysql.get_user(snowflake)
+        balance = mysql.get_balance(snowflake, check_update=True)
 
-        if float(result_set["balance"]) < amount:
+        if float(balance) < amount:
             await self.bot.say("{} **:warning:You cannot tip more money than you have!:warning:**".format(ctx.message.author.mention))
         else:
-            tip_user_address = rpc.getaccountaddress(tip_user)
-
-            rpc.sendfrom(snowflake, tip_user_address, amount)
+            mysql.add_tip(snowflake, tip_user, amount)
             await self.bot.say("{} **Tipped {} {} PHR! :money_with_wings:**".format(ctx.message.author.mention, user.mention, str(amount)))
 
 def setup(bot):

@@ -13,16 +13,28 @@ class Rpc:
         self.serverURL = 'http://' + self.rpc_host + ':' + self.rpc_port
         self.headers = {'content-type': 'application/json'}
 
+    def listreceivedbyaddess(self, minconf, includeempty = False, includeWatchOnly = False):
+        payload = json.dumps({"method": "listreceivedbyaddress", "params": [minconf, includeempty, includeWatchOnly], "jsonrpc": "2.0"})
+        response = requests.get(self.serverURL, headers=self.headers, data=payload,
+                                auth=(self.rpc_user, self.rpc_pass))
+        return response.json()['result']
+
+    def getnewaddress(self, account):
+        payload = json.dumps({"method": "getnewaddress", "params": [account], "jsonrpc": "2.0"})
+        response = requests.get(self.serverURL, headers=self.headers, data=payload,
+                                auth=(self.rpc_user, self.rpc_pass))
+        return response.json()['result']
+
     def listtransactions(self, params, count):
         payload = json.dumps({"method": "listtransactions", "params": [params, count], "jsonrpc": "2.0"})
         response = requests.get(self.serverURL, headers=self.headers, data=payload,
                                 auth=(self.rpc_user, self.rpc_pass))
         return response.json()['result']
-
+    
     def getconnectioncount(self):
         payload = json.dumps({"method": "getconnectioncount", "params": [], "jsonrpc": "2.0"})
         response = requests.get(self.serverURL, headers=self.headers, data=payload,
-                                auth=(self.rpc_user, self.rpc_pass))
+                               auth=(self.rpc_user, self.rpc_pass))
         return response.json()['result']
 
     def getinfo(self):
@@ -37,26 +49,14 @@ class Rpc:
                                 auth=(self.rpc_user, self.rpc_pass))
         return response.json()['result']
 
-    def getaccountaddress(self, account):
-        payload = json.dumps({"method": "getaccountaddress", "params": [account], "jsonrpc": "2.0"})
+    def sendtoaddress(self, address, amount):
+        payload = json.dumps({"method": "sendtoaddress", "params": [address, amount], "jsonrpc": "2.0"})
         response = requests.get(self.serverURL, headers=self.headers, data=payload,
                                 auth=(self.rpc_user, self.rpc_pass))
         return response.json()['result']
 
-    def getbalance(self, account):
-        payload = json.dumps({"method": "getbalance", "params": [account], "jsonrpc": "2.0"})
-        response = requests.get(self.serverURL, headers=self.headers, data=payload,
-                                auth=(self.rpc_user, self.rpc_pass))
-        return response.json()['result']
-
-    def sendfrom(self, account, address, amount):
-        payload = json.dumps({"method": "sendfrom", "params": [account, address, amount], "jsonrpc": "2.0"})
-        response = requests.get(self.serverURL, headers=self.headers, data=payload,
-                                auth=(self.rpc_user, self.rpc_pass))
-        return response.json()['result']
-
-    def sendmany(self, account, payments):
-        payload = json.dumps({"method": "sendmany", "params": [account, payments], "jsonrpc": "2.0"})
+    def settxfee(self, amount):
+        payload = json.dumps({"method": "settxfee", "params": [amount], "jsonrpc": "2.0"})
         response = requests.get(self.serverURL, headers=self.headers, data=payload,
                                 auth=(self.rpc_user, self.rpc_pass))
         return response.json()['result']

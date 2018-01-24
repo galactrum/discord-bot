@@ -12,6 +12,8 @@ def is_owner(ctx):
 def is_server_owner(ctx):
     return ctx.message.author.id == ctx.message.server.owner
 
+def in_server(ctx):
+    return ctx.message.server is not None
 
 def allow_soak(ctx):
     return mysql.check_soak(ctx.message.server)

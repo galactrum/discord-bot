@@ -12,13 +12,16 @@ class Withdraw:
         self.bot = bot
 
     @commands.command(pass_context=True)
-    async def withdraw(self, ctx, address:str, amount:float):
+    async def withdraw(self, ctx, address: str, amount: float):
         """Withdraw coins from your account to any Phore address"""
         snowflake = ctx.message.author.id
-        name = ctx.message.author.name
-        amount = abs(amount)
-        
-        if math.log10(amount) > 8:
+        name = ctx.message.author.name      
+        if amount <= 0.0:
+            await self.bot.say("{} **:warning:You cannot withdraw <= 0!:warning:**".format(ctx.message.author.mention))
+            return
+
+        abs_amount = abs(amount)
+        if math.log10(abs_amount) > 8:
             await self.bot.say(":warning:**Invalid amount!**:warning:")
             return
 
@@ -29,9 +32,26 @@ class Withdraw:
             await self.bot.say("{} **:warning:Invalid address!:warning:**".format(ctx.message.author.mention))
             return
 
-        txid = rpc.sendfrom(snowflake, address, amount)
+        ownedByBot = False
+        for address_info in rpc.listreceivedbyaddess(0, True):
+            if address_info["address"] == address:
+                ownedByBot = True
+                break
 
-        await self.bot.say("{} **Withdrew {} PHR! :money_with_wings:**\nView the transaction here: https://chainz.cryptoid.info/phr/tx.dws?{}.htm".format(ctx.message.author.mention, str(amount), txid))
+        if ownedByBot:
+            await self.bot.say("{} **:warning:You cannot withdraw to an address owned by this bot!:warning:** Please use tip instead!".format(ctx.message.author.mention))
+            return
+
+        balance = mysql.get_balance(snowflake, check_update=True)
+        if float(balance) < amount:
+            await self.bot.say("{} **:warning:You cannot withdraw more money than you have!:warning:**".format(ctx.message.author.mention))
+            return
+
+        txid = mysql.create_withdrawal(snowflake, address, amount)
+        if txid is None:
+            await self.bot.say("{} your withdraw failed despite having the necessary balance! Please contact the support team".format(ctx.message.author.mention))
+        else:
+            await self.bot.say("{} **Withdrew {} PHR! :money_with_wings:**\nView the transaction here: https://chainz.cryptoid.info/phr/tx.dws?{}.htm".format(ctx.message.author.mention, str(amount), txid))
 
 def setup(bot):
     bot.add_cog(Withdraw(bot))

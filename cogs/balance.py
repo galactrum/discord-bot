@@ -27,10 +27,6 @@ class Balance:
         except discord.HTTPException:
             await self.bot.say("I need the `Embed links` permission to send this")
 
-    def __check_for_new_balance(self, user):
-        balance = rpc.getbalance(user.id)
-        mysql.set_balance(user, balance)
-
     @commands.command(pass_context=True)
     async def balance(self, ctx):
         """Display your balance"""
@@ -38,15 +34,11 @@ class Balance:
         snowflake = ctx.message.author.id
         name = ctx.message.author.name
 
-        self.__check_for_new_balance(ctx.message.author)
-
         # Check if user exists in db
-        result_set = mysql.check_for_user(name, snowflake)
+        mysql.check_for_user(name, snowflake)
 
         # Execute and return SQL Query
-        result_set = mysql.get_user(snowflake)
-
-        await self.do_embed(ctx.message.author, result_set['balance'])
+        await self.do_embed(ctx.message.author, mysql.get_balance(snowflake, check_update=True))
 
 
 def setup(bot):
