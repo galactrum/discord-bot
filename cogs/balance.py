@@ -32,10 +32,9 @@ class Balance:
         """Display your balance"""
         # Set important variables
         snowflake = ctx.message.author.id
-        name = ctx.message.author.name
 
         # Check if user exists in db
-        mysql.check_for_user(name, snowflake)
+        mysql.check_for_user(snowflake)
 
         # Execute and return SQL Query
         await self.do_embed(ctx.message.author, mysql.get_balance(snowflake, check_update=True))
