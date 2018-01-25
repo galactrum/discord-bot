@@ -12,7 +12,7 @@ class Deposit:
     async def deposit(self, ctx):
         user = ctx.message.author
         # Check if user exists in db
-        mysql.check_for_user(user.name, user.id)
+        mysql.check_for_user(user.id)
         user_addy = mysql.get_address(user.id)
         await self.bot.send_message(user, user.mention + "'s Deposit Address: `" + str(user_addy) + "`")
 

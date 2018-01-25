@@ -44,13 +44,13 @@ class Mysql:
                 pymysql.cursors.DictCursor)
 
 # region User
-        def make_user(self, name, snowflake, address):
-            to_exec = "INSERT INTO users (snowflake_pk, username, balance, balance_unconfirmed, address) VALUES(%s, %s, %s, %s, %s)"
+        def make_user(self, snowflake, address):
+            to_exec = "INSERT INTO users (snowflake_pk, balance, balance_unconfirmed, address) VALUES(%s, %s, %s, %s, %s)"
             self.__cursor.execute(
-                to_exec, (str(snowflake), name, '0', '0', str(address)))
+                to_exec, (str(snowflake), '0', '0', str(address)))
             self.__connection.commit()
 
-        def check_for_user(self, name, snowflake):
+        def check_for_user(self, snowflake):
             """
             Checks for a new user and creates one if needed.
             """
@@ -60,16 +60,16 @@ class Mysql:
 
             if result_set is None:
                 address = rpc.getnewaddress(snowflake)
-                self.make_user(name, snowflake, address)
+                self.make_user(snowflake, address)
 
         def get_user(self, snowflake):
-            to_exec = "SELECT snowflake_pk, username, balance, balance_unconfirmed, address FROM users WHERE snowflake_pk LIKE %s"
+            to_exec = "SELECT snowflake_pk, balance, balance_unconfirmed, address FROM users WHERE snowflake_pk LIKE %s"
             self.__cursor.execute(to_exec, (str(snowflake)))
             result_set = self.__cursor.fetchone()
             return result_set
 
         def get_user_by_address(self, address):
-            to_exec = "SELECT snowflake_pk, username, balance, balance_unconfirmed, address FROM users WHERE address LIKE %s"
+            to_exec = "SELECT snowflake_pk, balance, balance_unconfirmed, address FROM users WHERE address LIKE %s"
             self.__cursor.execute(to_exec, (str(address)))
             result_set = self.__cursor.fetchone()
             return result_set

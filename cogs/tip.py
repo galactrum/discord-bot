@@ -15,7 +15,6 @@ class Tip:
     async def tip(self, ctx, user:discord.Member, amount:float):
         """Tip a user coins"""
         snowflake = ctx.message.author.id
-        name = ctx.message.author.name
 
         tip_user = user.id
         if snowflake == tip_user:
@@ -26,8 +25,8 @@ class Tip:
             await self.bot.say("{} **:warning:You cannot tip <= 0!:warning:**".format(ctx.message.author.mention))
             return
 
-        mysql.check_for_user(name, snowflake)
-        mysql.check_for_user(user.name, tip_user)
+        mysql.check_for_user(snowflake)
+        mysql.check_for_user(tip_user)
 
         balance = mysql.get_balance(snowflake, check_update=True)
 
