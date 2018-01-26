@@ -16,12 +16,13 @@ class Balance:
     def __init__(self, bot):
         self.bot = bot
 
-    async def do_embed(self, name, db_bal):
+    async def do_embed(self, name, db_bal, db_bal_unconfirmed):
         # Simple embed function for displaying username and balance
         embed = discord.Embed(colour=0xff0000)
         embed.add_field(name="User", value=name.mention)
         embed.add_field(name="Balance", value="{:.8f} PHR".format(round(float(db_bal), 8)))
-
+        if float(db_bal_unconfirmed) != 0.0:
+            embed.add_field(name="Unconfirmed Deposits", value="{:.8f} PHR".format(round(float(db_bal_unconfirmed), 8)))
         try:
             await self.bot.say(embed=embed)
         except discord.HTTPException:
@@ -36,8 +37,11 @@ class Balance:
         # Check if user exists in db
         mysql.check_for_user(snowflake)
 
+        balance = mysql.get_balance(snowflake, check_update=True)
+        balance_unconfirmed = mysql.get_balance(snowflake, checkUnconfirmed = True)
+
         # Execute and return SQL Query
-        await self.do_embed(ctx.message.author, mysql.get_balance(snowflake, check_update=True))
+        await self.do_embed(ctx.message.author, balance, balance_unconfirmed)
 
 
 def setup(bot):
