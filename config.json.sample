@@ -20,6 +20,12 @@
             "file": "log.txt",
             "file_level": 3
         },
+        "soak": {
+            "soak_max_recipients": 50,
+            "use_max_recipients": false,
+            "soak_min_received": 0.001,
+            "use_min_received": false
+        },
         "txfee": 0.001,
         "owners": ["owners discord id"],
         "prefix": "!",
