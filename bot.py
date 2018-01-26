@@ -56,7 +56,7 @@ async def send_cmd_help(ctx):
             await bot.send_message(ctx.message.channel, embed=em)
 
 
-@bot.command(pass_context=True)
+@bot.command(pass_context=True, hidden=True)
 @commands.check(checks.is_owner)
 async def shutdown(ctx):
     """Shut down the bot"""
@@ -74,7 +74,7 @@ async def shutdown(ctx):
                      'exception occurred;\n\t->{}'.format(author, exc))
 
 
-@bot.command(pass_context=True)
+@bot.command(pass_context=True, hidden=True)
 @commands.check(checks.is_owner)
 async def load(ctx, module: str):
     """Load a cog located in /cogs"""
@@ -94,7 +94,7 @@ async def load(ctx, module: str):
         await bot.say('Failed to load extension {}\n\t->{}'.format(module, exc))
 
 
-@bot.command(pass_context=True)
+@bot.command(pass_context=True, hidden=True)
 @commands.check(checks.is_owner)
 async def unload(ctx, module: str):
     """Unload any loaded cog"""
@@ -112,7 +112,7 @@ async def unload(ctx, module: str):
         await bot.say('Failed to load extension {}\n\t->{}'.format(module, exc))
 
 
-@bot.command()
+@bot.command(hidden=True)
 @commands.check(checks.is_owner)
 async def loaded():
     """List loaded cogs"""
@@ -123,7 +123,7 @@ async def loaded():
     await bot.say('Currently loaded extensions:\n```{}```'.format(string))
 
 
-@bot.command(pass_context=True)
+@bot.command(pass_context=True, hidden=True)
 @commands.check(checks.is_owner)
 async def restart(ctx):
     """Restart the bot"""

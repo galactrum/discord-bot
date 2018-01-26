@@ -9,7 +9,7 @@ class Log:
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(pass_context=True)
+    @commands.command(pass_context=True, hidden=True)
     @commands.check(checks.is_owner)
     async def log(self, ctx, num_lines: int):
         """

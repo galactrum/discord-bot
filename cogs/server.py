@@ -9,7 +9,7 @@ class Server:
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(pass_context=True)
+    @commands.command(pass_context=True, hidden=True)
     @commands.check(checks.in_server)
     @commands.check(checks.is_owner)
     async def allowsoak(self, ctx, enable: bool):
