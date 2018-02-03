@@ -37,7 +37,7 @@ class Soak:
         balance = mysql.get_balance(snowflake, check_update=True)
 
         if float(balance) < amount:
-            await self.bot.say("{} **:warning:You cannot tip more money than you have!:warning:**".format(ctx.message.author.mention))
+            await self.bot.say("{} **:warning:You cannot soak more money than you have!:warning:**".format(ctx.message.author.mention))
             return
 
         online_users = [x for x in ctx.message.server.members if x.status == discord.Status.online]
@@ -62,10 +62,10 @@ class Soak:
 
         amount_split = math.floor(float(amount) * 1e8 / len_receivers) / 1e8
         if amount_split == 0:
-            await self.bot.say("{} **:warning:{} is not enough to split between {} users:warning:**".format(amount, len_receivers))
+            await self.bot.say("{} **:warning:{} is not enough to split between {} users:warning:**".format(ctx.message.author.mention, amount, len_receivers))
             return
 
-        for i in len_receivers:
+        for i in range(len_receivers):
             user = random.choice(online_users)
             online_users.remove(user)
             mysql.check_for_user(user.id)

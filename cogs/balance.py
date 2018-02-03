@@ -38,7 +38,7 @@ class Balance:
         mysql.check_for_user(snowflake)
 
         balance = mysql.get_balance(snowflake, check_update=True)
-        balance_unconfirmed = mysql.get_balance(snowflake, checkUnconfirmed = True)
+        balance_unconfirmed = mysql.get_balance(snowflake, check_unconfirmed = True)
 
         # Execute and return SQL Query
         await self.do_embed(ctx.message.author, balance, balance_unconfirmed)
