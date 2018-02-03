@@ -45,7 +45,7 @@ class Mysql:
 
 # region User
         def make_user(self, snowflake, address):
-            to_exec = "INSERT INTO users (snowflake_pk, balance, balance_unconfirmed, address) VALUES(%s, %s, %s, %s, %s)"
+            to_exec = "INSERT INTO users (snowflake_pk, balance, balance_unconfirmed, address) VALUES(%s, %s, %s, %s)"
             self.__cursor.execute(
                 to_exec, (str(snowflake), '0', '0', str(address)))
             self.__connection.commit()

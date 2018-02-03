@@ -65,13 +65,14 @@ class Soak:
             await self.bot.say("{} **:warning:{} is not enough to split between {} users:warning:**".format(ctx.message.author.mention, amount, len_receivers))
             return
 
+        receivers = []
         for i in range(len_receivers):
             user = random.choice(online_users)
-            online_users.remove(user)
+            receivers.append(online_users.remove(user))
             mysql.check_for_user(user.id)
             mysql.add_tip(snowflake, user.id, amount_split)
 
-        long_soak_msg = "{} **Soaked {} PHR on {} [{}] :money_with_wings:**".format(ctx.message.author.mention, str(amount_split), ', '.join([x.mention for x in online_users]), str(amount))
+        long_soak_msg = "{} **Soaked {} PHR on {} [{}] :money_with_wings:**".format(ctx.message.author.mention, str(amount_split), ', '.join([x.mention for x in receivers]), str(amount))
 
         if len(long_soak_msg) > 2000:
             await self.bot.say("{} **Soaked {} PHR on {} users [{}] :money_with_wings:**".format(ctx.message.author.mention, str(amount_split), len_receivers, str(amount)))
