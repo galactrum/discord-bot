@@ -41,9 +41,14 @@ class Mysql:
                 password=self.__db_pass,
                 db=self.__db)
 
+        def __setup_cursor(self, cur_type):
+            # ping the server and reset the connection if it is down
+            self.__connection.ping(True)
+            return self.__connection.cursor(cur_type)
+
 # region User
         def make_user(self, snowflake, address):
-            cursor = self.__connection.cursor(
+            cursor = self.__setup_cursor(
                 pymysql.cursors.DictCursor)
             to_exec = "INSERT INTO users (snowflake_pk, balance, balance_unconfirmed, address) VALUES(%s, %s, %s, %s)"
             cursor.execute(
@@ -55,7 +60,7 @@ class Mysql:
             """
             Checks for a new user and creates one if needed.
             """
-            cursor = self.__connection.cursor(
+            cursor = self.__setup_cursor(
                 pymysql.cursors.DictCursor)
             to_exec = "SELECT snowflake_pk, address, balance, balance_unconfirmed FROM users WHERE snowflake_pk LIKE %s"
             cursor.execute(to_exec, (str(snowflake)))
@@ -67,7 +72,7 @@ class Mysql:
                 self.make_user(snowflake, address)
 
         def get_user(self, snowflake):
-            cursor = self.__connection.cursor(
+            cursor = self.__setup_cursor(
                 pymysql.cursors.DictCursor)
             to_exec = "SELECT snowflake_pk, balance, balance_unconfirmed, address FROM users WHERE snowflake_pk LIKE %s"
             cursor.execute(to_exec, (str(snowflake)))
@@ -76,7 +81,7 @@ class Mysql:
             return result_set
 
         def get_user_by_address(self, address):
-            cursor = self.__connection.cursor(
+            cursor = self.__setup_cursor(
                 pymysql.cursors.DictCursor)           
             to_exec = "SELECT snowflake_pk, balance, balance_unconfirmed, address FROM users WHERE address LIKE %s"
             cursor.execute(to_exec, (str(address)))
@@ -93,7 +98,7 @@ class Mysql:
         def check_server(self, server: discord.Server):
             if server is None:
                 return
-            cursor = self.__connection.cursor(
+            cursor = self.__setup_cursor(
                 pymysql.cursors.DictCursor)        
             to_exec = "SELECT server_id, enable_soak FROM server WHERE server_id LIKE %s"
             cursor.execute(to_exec, (server.id))
@@ -104,7 +109,7 @@ class Mysql:
                 self.add_server(server)
 
         def add_server(self, server: discord.Server):
-            cursor = self.__connection.cursor(
+            cursor = self.__setup_cursor(
                 pymysql.cursors.DictCursor)
             to_exec = "INSERT INTO server (server_id, enable_soak) VALUES(%s, %s)"
             cursor.execute(
@@ -113,7 +118,7 @@ class Mysql:
             self.__connection.commit()
 
         def remove_server(self, server: discord.Server):
-            cursor = self.__connection.cursor(
+            cursor = self.__setup_cursor(
                 pymysql.cursors.DictCursor)
             to_exec = "DELETE FROM server WHERE server_id = %s"
             cursor.execute(to_exec, (str(server.id),))
@@ -123,7 +128,7 @@ class Mysql:
             self.__connection.commit()
 
         def add_channel(self, channel: discord.Channel):
-            cursor = self.__connection.cursor(
+            cursor = self.__setup_cursor(
                 pymysql.cursors.DictCursor)            
             to_exec = "INSERT INTO channel(channel_id, server_id, enabled) VALUES(%s, %s, 1)"
             cursor.execute(
@@ -132,7 +137,7 @@ class Mysql:
             self.__connection.commit()
 
         def remove_channel(self, channel):
-            cursor = self.__connection.cursor(
+            cursor = self.__setup_cursor(
                 pymysql.cursors.DictCursor)            
             to_exec = "DELETE FROM channel WHERE channel_id = %s"
             cursor.execute(to_exec, (str(channel.id),))
@@ -142,7 +147,7 @@ class Mysql:
 
 # region Balance
         def set_balance(self, snowflake, to, is_unconfirmed = False):
-            cursor = self.__connection.cursor(
+            cursor = self.__setup_cursor(
                 pymysql.cursors.DictCursor)
             if is_unconfirmed:
                 to_exec = "UPDATE users SET balance_unconfirmed = %s WHERE snowflake_pk = %s"
@@ -214,7 +219,7 @@ class Mysql:
                     self.confirm_deposit(txid)
 
         def get_transaction_status_by_txid(self, txid):
-            cursor = self.__connection.cursor(
+            cursor = self.__setup_cursor(
                 pymysql.cursors.DictCursor)
             to_exec = "SELECT status from deposit WHERE txid = %s"
             cursor.execute(to_exec, (txid,))
@@ -228,7 +233,7 @@ class Mysql:
 
 # region Deposit/Withdraw/Tip/Soak
         def add_deposit(self, snowflake, amount, txid, status):
-            cursor = self.__connection.cursor(
+            cursor = self.__setup_cursor(
                 pymysql.cursors.DictCursor)
             to_exec = "INSERT INTO deposit(snowflake_fk, amount, txid, status) VALUES(%s, %s, %s, %s)"
             cursor.execute(
@@ -237,7 +242,7 @@ class Mysql:
             self.__connection.commit()
 
         def confirm_deposit(self, txid):
-            cursor = self.__connection.cursor(
+            cursor = self.__setup_cursor(
                 pymysql.cursors.DictCursor)
             to_exec = "UPDATE deposit SET status = %s WHERE txid = %s"
             cursor.execute(to_exec, ('CONFIRMED', str(txid)))
@@ -257,7 +262,7 @@ class Mysql:
             return self.add_withdrawal(snowflake, amount, txid)
 
         def add_withdrawal(self, snowflake, amount, txid):
-            cursor = self.__connection.cursor(
+            cursor = self.__setup_cursor(
                 pymysql.cursors.DictCursor)
             to_exec = "INSERT INTO withdrawal(snowflake_fk, amount, txid) VALUES(%s, %s, %s)"
             cursor.execute(
@@ -269,7 +274,7 @@ class Mysql:
         def add_tip(self, snowflake_from_fk, snowflake_to_fk, amount):
             self.remove_from_balance(snowflake_from_fk, amount)
             self.add_to_balance(snowflake_to_fk, amount)
-            cursor = self.__connection.cursor(
+            cursor = self.__setup_cursor(
                 pymysql.cursors.DictCursor)
             tip_exec = "INSERT INTO tip(snowflake_from_fk, snowflake_to_fk, amount) VALUES(%s, %s, %s)"
             cursor.execute(
@@ -281,7 +286,7 @@ class Mysql:
             if server is None:
                 return False
             self.check_server(server)
-            cursor = self.__connection.cursor(
+            cursor = self.__setup_cursor(
                 pymysql.cursors.DictCursor)
             to_exec = "SELECT enable_soak FROM server WHERE server_id = %s"
             cursor.execute(to_exec, (str(server.id)))
@@ -291,7 +296,7 @@ class Mysql:
 
         def set_soak(self, server, to):
             self.check_server(server)
-            cursor = self.__connection.cursor(
+            cursor = self.__setup_cursor(
                 pymysql.cursors.DictCursor)
             to_exec = "UPDATE server SET enable_soak = %s WHERE server_id = %s"
             cursor.execute(to_exec, (to, str(server.id),))
