@@ -1,19 +1,19 @@
 {"data": [
     {
         "discord": {
-            "token": "token"
+            "token": "put the bot token here"
         },
         "mysql": {
-            "db_host": "hostname",
-            "db_user": "user",
-            "db_pass": "pass",
-            "db": "database"
+            "db_host": "localhost",
+            "db_user": "root",
+            "db_pass": "put mysql password here",
+            "db": "mysql"
         },
         "rpc": {
             "rpc_host": "127.0.0.1",
-            "rpc_port": "20102",
-            "rpc_user": "user",
-            "rpc_pass": "pass"
+            "rpc_port": "6269",
+            "rpc_user": "this username should match the one in the wallet config",
+            "rpc_pass": "this password should match the one in the wallet config"
         },
         "logging": {
             "print_level": 3,
@@ -22,13 +22,13 @@
         },
         "soak": {
             "soak_max_recipients": 50,
-            "use_max_recipients": false,
-            "soak_min_received": 0.001,
-            "use_min_received": false
+            "use_max_recipients": true,
+            "soak_min_received": 0.0001,
+            "use_min_received": true
         },
-        "txfee": 0.001,
-        "owners": ["owners discord id"],
+        "txfee": 0,
+        "owners": ["put your discord id here"],
         "prefix": "!",
-        "description": "Verge Tipbot"
+        "description": "Galactrum Tipbot"
     }
 ]}

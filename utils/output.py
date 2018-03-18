@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.5
+#!/usr/bin/env python3.6
 """
 Pretty (Simple) Output module
 Aareon Sullivan - 2017

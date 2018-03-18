@@ -10,7 +10,7 @@ class Uptime:
     @commands.command()
     async def uptime(self):
         """
-        Get the time the bot has been active.
+        Get the time the bot has been active
         """
         current_time = time.time()
         difference = int(round(current_time - start_time))

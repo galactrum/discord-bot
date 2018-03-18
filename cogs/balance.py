@@ -20,9 +20,9 @@ class Balance:
         # Simple embed function for displaying username and balance
         embed = discord.Embed(colour=0xff0000)
         embed.add_field(name="User", value=name.mention)
-        embed.add_field(name="Balance", value="{:.8f} PHR".format(round(float(db_bal), 8)))
+        embed.add_field(name="Balance", value="{:.8f} ORE".format(round(float(db_bal), 8)))
         if float(db_bal_unconfirmed) != 0.0:
-            embed.add_field(name="Unconfirmed Deposits", value="{:.8f} PHR".format(round(float(db_bal_unconfirmed), 8)))
+            embed.add_field(name="Unconfirmed Deposits", value="{:.8f} ORE".format(round(float(db_bal_unconfirmed), 8)))
         try:
             await self.bot.say(embed=embed)
         except discord.HTTPException:

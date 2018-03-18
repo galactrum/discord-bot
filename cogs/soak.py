@@ -28,7 +28,7 @@ class Soak:
     async def soak(self, ctx, amount: float):
         """Tip all online users"""
         if self.use_max_recipients and self.soak_max_recipients == 0:
-            await self.bot.say("**:warning: max users for soak is set to 0! Talk to the config owner. :warning:**")
+            await self.bot.say("**:warning: Max users for soak is set to 0! Talk to the config owner. :warning:**")
             return
 
         snowflake = ctx.message.author.id
@@ -37,7 +37,7 @@ class Soak:
         balance = mysql.get_balance(snowflake, check_update=True)
 
         if float(balance) < amount:
-            await self.bot.say("{} **:warning:You cannot soak more money than you have!:warning:**".format(ctx.message.author.mention))
+            await self.bot.say("{} **:warning: You cannot soak more money than you have! :warning:**".format(ctx.message.author.mention))
             return
 
         online_users = [x for x in ctx.message.server.members if x.status == discord.Status.online]
@@ -54,33 +54,36 @@ class Soak:
             len_receivers = len(online_users)
 
         if self.use_min_received:
+            if amount < self.soak_min_received:
+                await self.bot.say("{}, **:warning: {} is less than the minimum amount ({})  allowed to be soaked! :warning:**".format(ctx.message.author.mention, amount, self.soak_min_received))
+                return
             len_receivers = min(len_receivers, amount / self.soak_min_received)
 
         if len_receivers == 0:
-            await self.bot.say("{}, you are all alone if you don't include bots! Trying soaking when people are online.".format(ctx.message.author.mention))
+            await self.bot.say("{}, **:warning:  you are all alone if you don't include bots! Try soaking when people are online. :warning:**".format(ctx.message.author.mention))
             return
 
         amount_split = math.floor(float(amount) * 1e8 / len_receivers) / 1e8
         if amount_split == 0:
-            await self.bot.say("{} **:warning:{} is not enough to split between {} users:warning:**".format(ctx.message.author.mention, amount, len_receivers))
+            await self.bot.say("{} **:warning: {} ORE is not enough to split between {} users! :warning:**".format(ctx.message.author.mention, amount, len_receivers))
             return
-
         receivers = []
-        for i in range(len_receivers):
+        for i in range(int(len_receivers)):
             user = random.choice(online_users)
-            receivers.append(online_users.remove(user))
+            receivers.append(user)
+            online_users.remove(user)
             mysql.check_for_user(user.id)
             mysql.add_tip(snowflake, user.id, amount_split)
-
-        long_soak_msg = "{} **Soaked {} PHR on {} [{}] :money_with_wings:**".format(ctx.message.author.mention, str(amount_split), ', '.join([x.mention for x in receivers]), str(amount))
+        long_soak_msg = ":moneybag: {} **Soaked {} ORE on {} [Total {} ORE]** :moneybag:".format(ctx.message.author.mention, str(amount_split), ', '.join([x.mention for x in receivers]), str(amount))
 
         if len(long_soak_msg) > 2000:
-            await self.bot.say("{} **Soaked {} PHR on {} users [{}] :money_with_wings:**".format(ctx.message.author.mention, str(amount_split), len_receivers, str(amount)))
+            await self.bot.say(":moneybag: {} **Soaked {} ORE on {} users [{}]** :moneybag:".format(ctx.message.author.mention, str(amount_split), len_receivers, str(amount)))
         else:
             await self.bot.say(long_soak_msg)
 
     @commands.command()
     async def soak_info(self):        
+        """Display min soak amount and maximum soak recipients"""
         if self.use_max_recipients:
             st_max_users = str(self.soak_max_recipients)
         else:
@@ -91,7 +94,7 @@ class Soak:
         else:
             st_min_received = "<disabled>"
             
-        await self.bot.say("Soak info: max recipients {}, min amount receivable {}".format(st_max_users, st_min_received))
+        await self.bot.say(":information_source: Soak info: max recipients {}, min amount receivable {} :information_source:".format(st_max_users, st_min_received))
 
 def setup(bot):
     bot.add_cog(Soak(bot))

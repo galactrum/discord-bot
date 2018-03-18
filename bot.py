@@ -4,6 +4,7 @@ from utils import output, parsing, checks, mysql_module
 import os
 import traceback
 import database
+import pdb
 
 config = parsing.parse_json('config.json')
 
@@ -59,7 +60,7 @@ async def send_cmd_help(ctx):
 @bot.command(pass_context=True, hidden=True)
 @commands.check(checks.is_owner)
 async def shutdown(ctx):
-    """Shut down the bot"""
+    """Shut down the bot [ADMIN ONLY]"""
     author = str(ctx.message.author)
 
     try:
@@ -77,7 +78,7 @@ async def shutdown(ctx):
 @bot.command(pass_context=True, hidden=True)
 @commands.check(checks.is_owner)
 async def load(ctx, module: str):
-    """Load a cog located in /cogs"""
+    """Load a cog located in /cogs [ADMIN ONLY]"""
     author = str(ctx.message.author)
     module = module.strip()
 
@@ -97,7 +98,7 @@ async def load(ctx, module: str):
 @bot.command(pass_context=True, hidden=True)
 @commands.check(checks.is_owner)
 async def unload(ctx, module: str):
-    """Unload any loaded cog"""
+    """Unload any loaded cog [ADMIN ONLY]"""
     author = str(ctx.message.author)
     module = module.strip()
 
@@ -115,7 +116,7 @@ async def unload(ctx, module: str):
 @bot.command(hidden=True)
 @commands.check(checks.is_owner)
 async def loaded():
-    """List loaded cogs"""
+    """List loaded cogs [ADMIN ONLY]"""
     string = ""
     for cog in loaded_extensions:
         string += str(cog) + "\n"
@@ -126,7 +127,7 @@ async def loaded():
 @bot.command(pass_context=True, hidden=True)
 @commands.check(checks.is_owner)
 async def restart(ctx):
-    """Restart the bot"""
+    """Restart the bot [ADMIN ONLY]"""
     author = str(ctx.message.author)
 
     try:
