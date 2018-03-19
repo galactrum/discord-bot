@@ -30,7 +30,7 @@ sudo apt-get install mysql-server
 When prompted, set up a password for root.
 ### Configure mySQL Security
 ```
-mysql\_secure\_installantion
+mysql_secure_installation
 ```
 Press "Y" and ENTER to accept all the questions, with the exception of the one that asks if you'd like to change the root password.
 ### Verify mySQL is Running
@@ -61,4 +61,8 @@ sudo ln -s /usr/bin/python3.6 /usr/local/bin/python3
 Install the discord library used for the bot
 ```
 python3 -m pip install -U discord.py
+```
+## Install PyMySQL Library
+```
+pip install PyMySQL
 ```
