@@ -24,7 +24,9 @@ Once a VPS is obtained, follow these instructions.
 ## mySQL
 These instructions will help you install and setup a mySQL database
 ### Install mySQL
-> sudo apt-get install mysql-server
+```
+sudo apt-get install mysql-server
+```
 When prompted, set up a password for root.
 ### Configure mySQL Security
 ```
