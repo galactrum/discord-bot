@@ -1,8 +1,8 @@
-# Galactrum-Tip-Bot
+# Galactrum-Bot
 [Galactrum Discord](https://discord.gg/PM3J6d)
 
 
-These files are intended to function as a multi-functional tipbot for Galactrum (ORE)
+These files are intended to function as a multi-functional bot for Galactrum (ORE)
 
 # Requirements
 * discord.py installed

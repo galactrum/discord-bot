@@ -32,7 +32,7 @@ class Help:
                 desc += "\n"
 
         embed = discord.Embed(description=desc)
-        embed.set_author(icon_url=self.bot.user.avatar_url, name="GalactrumTips commands!")
+        embed.set_author(icon_url=self.bot.user.avatar_url, name="GalactrumBot commands!")
         try:
             await self.bot.send_message(ctx.message.author, embed=embed)
             if ctx.message.server is not None:
