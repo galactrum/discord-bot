@@ -27,6 +27,11 @@ class Soak:
     @commands.check(checks.allow_soak)
     async def soak(self, ctx, amount: float):
         """Tip all online users"""
+        channel_name = ctx.message.channel.name
+        allowed_channel = parsing.parse_json('config.json')['command_channels'][ctx.command.name]
+        if channel_name != allowed_channel:
+            return
+
         if self.use_max_recipients and self.soak_max_recipients == 0:
             await self.bot.say("**:warning: Max users for soak is set to 0! Talk to the config owner. :warning:**")
             return
@@ -81,9 +86,14 @@ class Soak:
         else:
             await self.bot.say(long_soak_msg)
 
-    @commands.command()
-    async def soak_info(self):        
+    @commands.command(pass_context=True)
+    async def soak_info(self, ctx):        
         """Display min soak amount and maximum soak recipients"""
+        channel_name = ctx.message.channel.name
+        allowed_channel = parsing.parse_json('config.json')['command_channels'][ctx.command.name]
+        if channel_name != allowed_channel:
+            return
+
         if self.use_max_recipients:
             st_max_users = str(self.soak_max_recipients)
         else:

@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from utils import rpc_module, mysql_module
+from utils import rpc_module, mysql_module, parsing
 
 #result_set = database response with parameters from query
 #db_bal = nomenclature for result_set["balance"]
@@ -31,6 +31,10 @@ class Balance:
     @commands.command(pass_context=True)
     async def balance(self, ctx):
         """Display your balance"""
+        channel_name = ctx.message.channel.name
+        allowed_channel = parsing.parse_json('config.json')['command_channels'][ctx.command.name]
+        if channel_name != allowed_channel:
+            return
         # Set important variables
         snowflake = ctx.message.author.id
 

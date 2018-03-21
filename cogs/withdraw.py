@@ -15,6 +15,11 @@ class Withdraw:
     async def withdraw(self, ctx, address: str, amount: float):
         """Withdraw coins from your account to any Galactrum address"""
         snowflake = ctx.message.author.id    
+        channel_name = ctx.message.channel.name
+        allowed_channel = parsing.parse_json('config.json')['command_channels'][ctx.command.name]
+        if channel_name != allowed_channel:
+            return
+
         if amount <= 0.0:
             await self.bot.say("{} **:warning: You cannot withdraw <= 0! :warning:**".format(ctx.message.author.mention))
             return

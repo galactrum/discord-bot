@@ -1,6 +1,6 @@
 import discord, os
 from discord.ext import commands
-from utils import checks, output
+from utils import checks, output, parsing
 from aiohttp import ClientSession
 import urllib.request
 import json
@@ -9,11 +9,16 @@ class Stats:
     def __init__(self, bot: discord.ext.commands.Bot):
         self.bot = bot
 
-    @commands.command()
-    async def stats(self, amount=1):
+    @commands.command(pass_context=True)
+    async def stats(self, ctx, amount=1):
         """
         Show stats about ORE
         """
+        channel_name = ctx.message.channel.name
+        allowed_channel = parsing.parse_json('config.json')['command_channels'][ctx.command.name]
+        if channel_name != allowed_channel:
+            return
+
         headers={"user-agent" : "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36"}
         try:
             async with ClientSession() as session:

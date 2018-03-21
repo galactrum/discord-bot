@@ -41,6 +41,11 @@ async def on_ready():
 
 
 async def send_cmd_help(ctx):
+    channel = ctx.message.channel
+    allowed_channel = parsing.parse_json('config.json')['command_channels'][ctx.command.name]
+    if channel.name != allowed_channel:
+        return
+
     if ctx.invoked_subcommand:
         pages = bot.formatter.format_help_for(ctx, ctx.invoked_subcommand)
         for page in pages:

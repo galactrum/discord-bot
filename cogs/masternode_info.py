@@ -1,6 +1,6 @@
 import discord, json, requests, math
 from discord.ext import commands
-from utils import rpc_module as rpc
+from utils import rpc_module as rpc, parsing
 
 
 class Masternodes:
@@ -8,9 +8,14 @@ class Masternodes:
         self.bot = bot
         self.rpc = rpc.Rpc()
 
-    @commands.command()
-    async def mninfo(self):
+    @commands.command(pass_context=True)
+    async def mninfo(self, ctx):
         """Show masternodes info"""
+        channel_name = ctx.message.channel.name
+        allowed_channel = parsing.parse_json('config.json')['command_channels'][ctx.command.name]
+        if channel_name != allowed_channel:
+            return
+
         mn_info = self.rpc.masternodelist()
         block_number = self.rpc.getblockcount()
         total_mn = 0

@@ -11,6 +11,11 @@ class Deposit:
     @commands.command(pass_context=True)
     async def deposit(self, ctx):
         """ Display my public wallet address to deposit funds  """
+        channel_name = ctx.message.channel.name
+        allowed_channel = parsing.parse_json('config.json')['command_channels'][ctx.command.name]
+        if channel_name != allowed_channel:
+            return
+
         user = ctx.message.author
         # Check if user exists in db
         mysql.check_for_user(user.id)

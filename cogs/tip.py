@@ -14,6 +14,11 @@ class Tip:
     @commands.check(checks.in_server)
     async def tip(self, ctx, user:discord.Member, amount:float):
         """Tip a user coins"""
+        channel_name = ctx.message.channel.name
+        allowed_channel = parsing.parse_json('config.json')['command_channels'][ctx.command.name]
+        if channel_name != allowed_channel:
+            return
+
         snowflake = ctx.message.author.id
 
         tip_user = user.id

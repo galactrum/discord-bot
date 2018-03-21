@@ -53,6 +53,10 @@ Python's pip is a useful tool used to install python libraries
 wget https://bootstrap.pypa.io/get-pip.py
 sudo python3.6 get-pip.py
 ```
+## Install json-rpc Library
+```
+pip install json-rpc
+```
 ## Link python3 to python3.6
 ```
 sudo ln -s /usr/bin/python3.6 /usr/local/bin/python3
