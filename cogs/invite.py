@@ -1,4 +1,5 @@
 from discord.ext import commands
+from utils import parsing
 
 
 class Invite:
@@ -11,8 +12,8 @@ class Invite:
         Get the bot's invite link
         """
         channel_name = ctx.message.channel.name
-        allowed_channel = parsing.parse_json('config.json')['command_channels'][ctx.command.name]
-        if channel_name != allowed_channel:
+        allowed_channels = parsing.parse_json('config.json')['command_channels'][ctx.command.name]
+        if channel_name not in allowed_channels:
             return
 
         await self.bot.say(":tada: https://discordapp.com/oauth2/authorize?permissions=0&client_id={}&scope=bot".format(self.bot.user.id))

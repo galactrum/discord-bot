@@ -15,8 +15,8 @@ class Tip:
     async def tip(self, ctx, user:discord.Member, amount:float):
         """Tip a user coins"""
         channel_name = ctx.message.channel.name
-        allowed_channel = parsing.parse_json('config.json')['command_channels'][ctx.command.name]
-        if channel_name != allowed_channel:
+        allowed_channels = parsing.parse_json('config.json')['command_channels'][ctx.command.name]
+        if channel_name not in allowed_channels:
             return
 
         snowflake = ctx.message.author.id

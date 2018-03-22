@@ -32,8 +32,8 @@ class Balance:
     async def balance(self, ctx):
         """Display your balance"""
         channel_name = ctx.message.channel.name
-        allowed_channel = parsing.parse_json('config.json')['command_channels'][ctx.command.name]
-        if channel_name != allowed_channel:
+        allowed_channels = parsing.parse_json('config.json')['command_channels'][ctx.command.name]
+        if channel_name not in allowed_channels:
             return
         # Set important variables
         snowflake = ctx.message.author.id

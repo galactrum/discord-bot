@@ -42,8 +42,8 @@ async def on_ready():
 
 async def send_cmd_help(ctx):
     channel = ctx.message.channel
-    allowed_channel = parsing.parse_json('config.json')['command_channels'][ctx.command.name]
-    if channel.name != allowed_channel:
+    allowed_channels = parsing.parse_json('config.json')['command_channels'][ctx.command.name]
+    if channel.name not in allowed_channels:
         return
 
     if ctx.invoked_subcommand:

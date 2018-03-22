@@ -14,8 +14,8 @@ class Uptime:
         Get the time the bot has been active
         """
         channel_name = ctx.message.channel.name
-        allowed_channel = parsing.parse_json('config.json')['command_channels'][ctx.command.name]
-        if channel_name != allowed_channel:
+        allowed_channels = parsing.parse_json('config.json')['command_channels'][ctx.command.name]
+        if channel_name not in allowed_channels:
             return
 
         current_time = time.time()

@@ -16,8 +16,8 @@ class Withdraw:
         """Withdraw coins from your account to any Galactrum address"""
         snowflake = ctx.message.author.id    
         channel_name = ctx.message.channel.name
-        allowed_channel = parsing.parse_json('config.json')['command_channels'][ctx.command.name]
-        if channel_name != allowed_channel:
+        allowed_channels = parsing.parse_json('config.json')['command_channels'][ctx.command.name]
+        if channel_name not in allowed_channels:
             return
 
         if amount <= 0.0:

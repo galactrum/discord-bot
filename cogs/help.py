@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from utils import checks
+from utils import checks, parsing
 
 class Help:
     def __init__(self, bot: discord.ext.commands.Bot):
@@ -12,6 +12,11 @@ class Help:
         """
         Display a useful list of commands
         """
+        channel_name = ctx.message.channel.name
+        allowed_channels = parsing.parse_json('config.json')['command_channels'][ctx.command.name]
+        if channel_name not in allowed_channels:
+            return
+
         desc = ""
         for key in self.bot.commands.keys():
             command = self.bot.get_command(key)

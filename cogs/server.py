@@ -29,8 +29,8 @@ class Server:
         Checks if soak is available on the server
         """
         channel_name = ctx.message.channel.name
-        allowed_channel = parsing.parse_json('config.json')['command_channels'][ctx.command.name]
-        if channel_name != allowed_channel:
+        allowed_channels = parsing.parse_json('config.json')['command_channels'][ctx.command.name]
+        if channel_name not in allowed_channels:
             return
 
         result_set = mysql.check_soak(ctx.message.server)

@@ -12,8 +12,8 @@ class Deposit:
     async def deposit(self, ctx):
         """ Display my public wallet address to deposit funds  """
         channel_name = ctx.message.channel.name
-        allowed_channel = parsing.parse_json('config.json')['command_channels'][ctx.command.name]
-        if channel_name != allowed_channel:
+        allowed_channels = parsing.parse_json('config.json')['command_channels'][ctx.command.name]
+        if channel_name not in allowed_channels:
             return
 
         user = ctx.message.author

@@ -28,8 +28,8 @@ class Soak:
     async def soak(self, ctx, amount: float):
         """Tip all online users"""
         channel_name = ctx.message.channel.name
-        allowed_channel = parsing.parse_json('config.json')['command_channels'][ctx.command.name]
-        if channel_name != allowed_channel:
+        allowed_channels = parsing.parse_json('config.json')['command_channels'][ctx.command.name]
+        if channel_name not in allowed_channels:
             return
 
         if self.use_max_recipients and self.soak_max_recipients == 0:
@@ -90,8 +90,8 @@ class Soak:
     async def soak_info(self, ctx):        
         """Display min soak amount and maximum soak recipients"""
         channel_name = ctx.message.channel.name
-        allowed_channel = parsing.parse_json('config.json')['command_channels'][ctx.command.name]
-        if channel_name != allowed_channel:
+        allowed_channels = parsing.parse_json('config.json')['command_channels'][ctx.command.name]
+        if channel_name not in allowed_channels:
             return
 
         if self.use_max_recipients:

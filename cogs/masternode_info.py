@@ -12,8 +12,8 @@ class Masternodes:
     async def mninfo(self, ctx):
         """Show masternodes info"""
         channel_name = ctx.message.channel.name
-        allowed_channel = parsing.parse_json('config.json')['command_channels'][ctx.command.name]
-        if channel_name != allowed_channel:
+        allowed_channels = parsing.parse_json('config.json')['command_channels'][ctx.command.name]
+        if channel_name not in allowed_channels:
             return
 
         mn_info = self.rpc.masternodelist()
