@@ -58,7 +58,7 @@ class Masternodes:
         embed.add_field(name="Active Masternodes", value="{}".format(active_mn))
         embed.add_field(name='\u200b',value='\u200b')
         embed.add_field(name="Daily Income", value="{0:.4f} ORE".format(daily_reward))
-        embed.add_field(name="Monthly Income", value="{0:.4f} ORE".format(weekly_reward))
+        embed.add_field(name="Monthly Income", value="{0:.4f} ORE".format(monthly_reward))
         embed.add_field(name="Yearly Income", value="{0:.4f} ORE".format(yearly_reward))
         embed.add_field(name="Reward Frequency", value="{:02}:{:02}:{:02}".format(avg_reward_freq_hr,avg_reward_freq_min,avg_reward_freq_sec))
         embed.add_field(name="Days to ROI", value="{0:.0f} days".format(roi_days))

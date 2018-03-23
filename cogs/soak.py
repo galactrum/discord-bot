@@ -106,5 +106,22 @@ class Soak:
             
         await self.bot.say(":information_source: Soak info: max recipients {}, min amount receivable {} :information_source:".format(st_max_users, st_min_received))
 
+    @commands.command(pass_context=True)
+    @commands.check(checks.in_server)
+    async def checksoak(self, ctx):
+        """
+        Checks if soak is available on the server
+        """
+        channel_name = ctx.message.channel.name
+        allowed_channels = parsing.parse_json('config.json')['command_channels'][ctx.command.name]
+        if channel_name not in allowed_channels:
+            return
+
+        result_set = mysql.check_soak(ctx.message.server)
+        if result_set:
+            await self.bot.say("Soaking is enabled! :white_check_mark:")
+        else:
+            await self.bot.say("Soaking is disabled! :no_entry_sign:")
+
 def setup(bot):
     bot.add_cog(Soak(bot))
