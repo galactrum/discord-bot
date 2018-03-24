@@ -26,7 +26,9 @@ class Soak:
     @commands.command(pass_context=True)
     @commands.check(checks.allow_soak)
     async def soak(self, ctx, amount: float):
-        """Tip all online users"""
+        """
+        Tip all online users
+        """
         channel_name = ctx.message.channel.name
         allowed_channels = parsing.parse_json('config.json')['command_channels'][ctx.command.name]
         if channel_name not in allowed_channels:
@@ -45,12 +47,12 @@ class Soak:
             await self.bot.say("{} **:warning: You cannot soak more money than you have! :warning:**".format(ctx.message.author.mention))
             return
 
-        online_users = [x for x in ctx.message.server.members if x.status == discord.Status.online]
+        online_users = [x for x in ctx.message.server.members if (x.status == discord.Status.online and not x.bot) ]
         if ctx.message.author in online_users:
             online_users.remove(ctx.message.author)
 
         for user in online_users:
-            if user.bot:
+            if not mysql.check_soakme(user.id):
                 online_users.remove(user)
 
         if self.use_max_recipients:
@@ -122,6 +124,22 @@ class Soak:
             await self.bot.say("Soaking is enabled! :white_check_mark:")
         else:
             await self.bot.say("Soaking is disabled! :no_entry_sign:")
+
+    @commands.command(pass_context=True)
+    async def soakme(self, ctx, enable: bool):
+        """
+        Allow/disallow other users from soaking you
+        """
+        snowflake = ctx.message.author.id
+        mysql.check_for_user(snowflake)
+
+        mysql.set_soakme(snowflake, int(enable))
+        if enable:
+            await self.bot.say("Ok! You will be soaked! :white_check_mark:")
+        else:
+            await self.bot.say("Ok! You will no longer be soaked! :no_entry_sign:")
+           
+        
 
 def setup(bot):
     bot.add_cog(Soak(bot))

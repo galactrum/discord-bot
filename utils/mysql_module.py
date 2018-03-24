@@ -50,9 +50,9 @@ class Mysql:
         def make_user(self, snowflake, address):
             cursor = self.__setup_cursor(
                 pymysql.cursors.DictCursor)
-            to_exec = "INSERT INTO users (snowflake_pk, balance, balance_unconfirmed, address) VALUES(%s, %s, %s, %s)"
+            to_exec = "INSERT INTO users (snowflake_pk, balance, balance_unconfirmed, address, allow_soak) VALUES(%s, %s, %s, %s, %s)"
             cursor.execute(
-                to_exec, (str(snowflake), '0', '0', str(address)))
+                to_exec, (str(snowflake), '0', '0', str(address), 1))
             cursor.close()
             self.__connection.commit()
 
@@ -62,7 +62,7 @@ class Mysql:
             """
             cursor = self.__setup_cursor(
                 pymysql.cursors.DictCursor)
-            to_exec = "SELECT snowflake_pk, address, balance, balance_unconfirmed FROM users WHERE snowflake_pk LIKE %s"
+            to_exec = "SELECT snowflake_pk, address, balance, balance_unconfirmed allow_soak FROM users WHERE snowflake_pk LIKE %s"
             cursor.execute(to_exec, (str(snowflake)))
             result_set = cursor.fetchone()
             cursor.close()
@@ -74,7 +74,7 @@ class Mysql:
         def get_user(self, snowflake):
             cursor = self.__setup_cursor(
                 pymysql.cursors.DictCursor)
-            to_exec = "SELECT snowflake_pk, balance, balance_unconfirmed, address FROM users WHERE snowflake_pk LIKE %s"
+            to_exec = "SELECT snowflake_pk, balance, balance_unconfirmed, address, allow_soak FROM users WHERE snowflake_pk LIKE %s"
             cursor.execute(to_exec, (str(snowflake)))
             result_set = cursor.fetchone()
             cursor.close()
@@ -83,7 +83,7 @@ class Mysql:
         def get_user_by_address(self, address):
             cursor = self.__setup_cursor(
                 pymysql.cursors.DictCursor)           
-            to_exec = "SELECT snowflake_pk, balance, balance_unconfirmed, address FROM users WHERE address LIKE %s"
+            to_exec = "SELECT snowflake_pk, balance, balance_unconfirmed, address, allow_soak FROM users WHERE address LIKE %s"
             cursor.execute(to_exec, (str(address)))
             result_set = cursor.fetchone()
             cursor.close()
@@ -302,4 +302,21 @@ class Mysql:
             cursor.execute(to_exec, (to, str(server.id),))
             cursor.close()
             self.__connection.commit()
+
+        def set_soakme(self, snowflake, to):
+            cursor = self.__setup_cursor(
+                pymysql.cursors.DictCursor)
+            to_exec = "UPDATE users SET allow_soak = %s WHERE snowflake_pk = %s"
+            cursor.execute(to_exec, (to, str(snowflake)))
+            cursor.close()
+            self.__connection.commit()
+
+        def check_soakme(self, snowflake) -> bool:
+            cursor = self.__setup_cursor(
+                pymysql.cursors.DictCursor)
+            to_exec = "SELECT allow_soak FROM users WHERE snowflake_pk = %s"
+            cursor.execute(to_exec, (str(snowflake)))
+            result_set = cursor.fetchone()
+            cursor.close()
+            return result_set['allow_soak']
 # endregion
