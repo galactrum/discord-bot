@@ -52,6 +52,7 @@ class Soak:
             online_users.remove(ctx.message.author)
 
         for user in online_users:
+            mysql.check_for_user(user.id)
             if not mysql.check_soakme(user.id):
                 online_users.remove(user)
 
