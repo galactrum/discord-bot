@@ -54,7 +54,7 @@ class Mining:
                     embed.add_field(name="24hr Blocks", value='{}'.format(blocks24h))
                     embed.add_field(name="Last Block Found", value='{}'.format(lastblock))
                     embed.add_field(name="Time Since Last Block", value='{0:.2f} min'.format(timesincelast/60))
-                    embed.set_footer(text="ccminer.exe -a lyra2v2 -o stratum+tcp://pool.bsod.pw:1982 -u <Wallet Address>.rigname -p c=ORE -R 5")
+                    embed.set_footer(text="ccminer.exe -a lyra2v2 -o stratum+tcp://pool.bsod.pw:1982 -u <Wallet Address>.<Rigname> -p c=ORE -R 5")
                     await self.bot.say(embed=embed)
 
         except:
@@ -83,7 +83,7 @@ class Mining:
                     embed.add_field(name="24hr Blocks", value='{}'.format(blocks24h))
                     embed.add_field(name="Last Block Found", value='{}'.format(lastblock))
                     embed.add_field(name="Time Since Last Block", value='{0:.2f} min'.format(timesincelast/60))
-                    embed.set_footer(text="ccminer.exe -a lyra2v2 -o stratum+tcp://erstweal.com:4531 -u <Wallet Address> -p c=ORE")
+                    embed.set_footer(text="ccminer.exe -a lyra2v2 -o stratum+tcp://erstweal.com:4531 -u <Wallet Address> -p <Rigname> c=ORE")
                     await self.bot.say(embed=embed)
 
         except:
