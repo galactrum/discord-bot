@@ -55,6 +55,12 @@ class Rpc:
                                 auth=(self.rpc_user, self.rpc_pass))
         return response.json()['result']
 
+    def getmininginfo(self):
+        payload = json.dumps({"method": "getmininginfo", "params": [], "jsonrpc": "2.0"})
+        response = requests.post(self.serverURL, headers=self.headers, data=payload,
+                                auth=(self.rpc_user, self.rpc_pass))
+        return response.json()['result']
+
     def validateaddress(self, params):
         payload = json.dumps({"method": "validateaddress", "params": [params], "jsonrpc": "2.0"})
         response = requests.post(self.serverURL, headers=self.headers, data=payload,
