@@ -82,7 +82,7 @@ class Soak:
             online_users.remove(user)
             mysql.check_for_user(user.id)
             mysql.add_tip(snowflake, user.id, amount_split)
-        long_soak_msg = ":moneybag: {} **Soaked {} ORE on {} [Total {} ORE]** :moneybag:".format(ctx.message.author.mention, str(amount_split), ', '.join([x.mention for x in receivers]), str(amount))
+        long_soak_msg = ":moneybag: {} **Soaked {} ORE on {} [Total {} ORE]** :moneybag:\nNOTE: You can opt out of soak by doing \"!soakme 0\". This will ensure you do not get picked for soak.".format(ctx.message.author.mention, str(amount_split), ', '.join([x.mention for x in receivers]), str(amount))
 
         if len(long_soak_msg) > 2000:
             await self.bot.say(":moneybag: {} **Soaked {} ORE on {} users [{}]** :moneybag:".format(ctx.message.author.mention, str(amount_split), len_receivers, str(amount)))
